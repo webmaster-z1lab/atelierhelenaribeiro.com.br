@@ -1,18 +1,13 @@
-window.axios = require('axios')
+import axios from 'axios'
+import {localStorage} from "@/utils/storage";
 
-window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
+let api_token = localStorage().getItem('api_token');
 
-let token = document.head.querySelector('meta[name="csrf-token"]')
+axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
+axios.defaults.headers.common['Accept'] = 'application/json'
 
-if (token) {
-    window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
-} else {
-    console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token');
+if (api_token) {
+  axios.defaults.headers.common['Authorization'] = `Bearer ${api_token}`
 }
 
-export const HTTP = axios.create({
-    headers: {
-        'X-Requested-With': 'XMLHttpRequest',
-        'X-CSRF-TOKEN': token.content
-    }
-})
+export const HTTP = axios.create()

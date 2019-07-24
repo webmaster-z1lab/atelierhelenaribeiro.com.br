@@ -43,8 +43,7 @@ let authPages = {
 const routes = [
     {
         path: '/',
-        redirect: '/home',
-        name: 'Home'
+        redirect: '/home'
     },
     authPages
 ];

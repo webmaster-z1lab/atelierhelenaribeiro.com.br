@@ -10,42 +10,47 @@ const Home = () => import(/* webpackChunkName: "home" */ '@/views/Home.vue');
 
 // Auth
 const Login = () => import(/* webpackChunkName: "auth" */ '@/views/Auth/Login.vue');
-const Register = () => import(/* webpackChunkName: "auth" */ '@/views/Auth/Register.vue');
 
 let authPages = {
-    path: '/',
-    component: AuthLayout,
-    name: 'Authentication',
-    children: [
-        {
-            path: '/home',
-            name: 'Home',
-            component: Home,
-            meta: {
-                requiresAuth: true,
-                noBodyBackground: true
-            }
-        },
-        {
-            path: '/login',
-            name: 'Login',
-            component: Login
-        },
-        {
-            path: '/register',
-            name: 'Register',
-            component: Register
-        },
-        { path: '*', component: NotFound }
-    ]
+  path: '/',
+  component: AuthLayout,
+  name: 'Authentication',
+  children: [
+    {
+      component: Login,
+      path: '/login',
+      name: 'Login'
+    },
+    {path: '*', component: NotFound}
+  ]
+};
+
+let dashboardPages = {
+  path: '/',
+  component: DashboardLayout,
+  name: 'Dashboard layout',
+  redirect: '/dashboard',
+  children: [
+    {
+      component: Home,
+      path: '/home',
+      name: 'Home',
+      meta: {
+        requiresAuth: true,
+        noBodyBackground: true
+      }
+    }
+  ]
 };
 
 const routes = [
-    {
-        path: '/',
-        redirect: '/home'
-    },
-    authPages
+  {
+    component: Home,
+    path: '/',
+    name: 'Starter',
+  },
+  dashboardPages,
+  authPages
 ];
 
 export default routes;

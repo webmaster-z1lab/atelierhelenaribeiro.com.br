@@ -1,6 +1,5 @@
 <template>
   <div>
-    <loading :active.sync="loading" is-full-page="false" loader="spinner" color="#6000a7"/>
     <notifications/>
     <base-nav v-model="showMenu" type="light" :transparent="true" menu-classes="justify-content-end"
               class="navbar-horizontal navbar-main" expand="lg">
@@ -63,17 +62,12 @@
 </template>
 
 <script>
-  import Loading from 'vue-loading-overlay';
-  import 'vue-loading-overlay/dist/vue-loading.css';
-
   import {BaseNav} from '@/components';
   import {ZoomCenterTransition} from 'vue2-transitions';
-  import {mapState} from 'vuex'
 
   export default {
     name: 'auth-layout',
     components: {
-      Loading,
       BaseNav,
       ZoomCenterTransition
     },
@@ -93,9 +87,6 @@
       };
     },
     computed: {
-      ...mapState({
-        loading: state => state.loading
-      }),
       title() {
         return `${this.$route.name} Page`;
       }

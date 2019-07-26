@@ -1,5 +1,6 @@
 <template>
   <div>
+    <loading :loading="loading"/>
     <div class="header bg-gradient-success py-7 py-lg-8 pt-lg-9">
       <div class="container">
         <div class="header-body text-center mb-7">
@@ -43,10 +44,12 @@
               </div>
               <form role="form">
                 <base-input class="mb-3" prepend-icon="ni ni-email-83" placeholder="Email" name="email"
-                            v-model="auth.email" :error="errors.first('email')" :valid="errors.has('email')" v-validate="'required|email'"/>
+                            v-model="auth.email" :error="errors.first('email')" :valid="errors.has('email')"
+                            v-validate="'required|email'"/>
 
-                <base-input class="mb-3" prepend-icon="ni ni-lock-circle-open" type="password" placeholder="Senha" name="password"
-                            v-model="auth.password" :error="errors.first('password')" :valid="errors.has('password')" v-validate="'required|min:8'"/>
+                <base-input class="mb-3" prepend-icon="ni ni-lock-circle-open" type="password" placeholder="Senha"
+                            name="password" v-validate="'required|min:8'" :valid="errors.has('password')"
+                            v-model="auth.password" :error="errors.first('password')" />
 
                 <base-checkbox v-model="auth.rememberMe">Salvar meus dados</base-checkbox>
 
@@ -70,14 +73,21 @@
 </template>
 
 <script>
-  import {sendAPI, notifyVue, notifyError} from "@/utils";
-  import {mapActions} from 'vuex'
+  import User from '@/models/User'
+  import Loading from '@/components/Loading'
+
+  import {http, ls} from "@/services";
+  import {notifyVue, notifyError} from "@/utils";
 
   export default {
     $_veeValidate: {
       validator: 'new'
     },
+    components: {
+      Loading
+    },
     data: () => ({
+      loading: false,
       auth: {
         email: '',
         password: '',
@@ -85,21 +95,36 @@
       }
     }),
     methods: {
-      ...mapActions([]),
+      changeLoading() {
+        this.loading = !this.loading
+      },
       singIn() {
         this.$validator.validateAll().then(
           res => {
             if (res) {
+              let time_storage = null
+
               if (!this.auth.rememberMe) {
+                time_storage = process.env.VUE_APP_SESSION_LIFETIME
                 delete this.auth.rememberMe
               }
-              sendAPI(`${process.env.VUE_APP_API_URL}/api/login`, this.auth)
-                .then(result => {
 
-                  notifyVue()
+              this.changeLoading()
+
+              http.post(`${process.env.VUE_APP_API_URL}/login`, this.auth)
+                .then(async response => {
+                  await User.create({data: response.data})
+
+                  await ls.set('api_token', response.data.api_token, time_storage)
+                  await ls.set('user_id', response.data.id, time_storage)
+
+                  notifyVue(this.$notify, `${response.data.name}, Bem Vindo!`)
+
+                  this.$router.push({name: 'Home'})
                 })
                 .catch(error => {
                   notifyError(this.$notify, error)
+                  this.changeLoading()
                 })
             }
           }

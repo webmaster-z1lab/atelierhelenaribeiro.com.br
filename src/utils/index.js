@@ -1,5 +1,4 @@
 export * from './filters'
-export * from './storage'
-export * from './common'
+export * from './notify'
 export * from './throttle'
-export * from './bootstrap'
+export * from './api-ibge'

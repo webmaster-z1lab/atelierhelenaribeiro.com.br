@@ -1,6 +1,5 @@
 <template>
   <div class="wrapper">
-    <loading :active.sync="loading" is-full-page="false" loader="spinner" color="#6000a7"/>
     <notifications/>
     <side-bar>
       <template slot-scope="props" slot="links">
@@ -9,10 +8,7 @@
           <sidebar-item :link="{ name: 'Alternative', path: '/alternative' }"/>
         </sidebar-item>
 
-        <sidebar-item :link="{
-                  name: 'Examples',
-                  icon: 'ni ni-ungroup text-orange'
-                  }">
+        <sidebar-item :link="{name: 'Examples',icon: 'ni ni-ungroup text-orange'}">
           <sidebar-item :link="{ name: 'Pricing', path: '/pricing' }"/>
           <sidebar-item :link="{ name: 'Login', path: '/login' }"/>
           <sidebar-item :link="{ name: 'Register', path: '/register' }"/>
@@ -23,10 +19,7 @@
 
         </sidebar-item>
 
-        <sidebar-item :link="{
-                  name: 'Components',
-                  icon: 'ni ni-ui-04 text-info'
-                }">
+        <sidebar-item :link="{name: 'Components',icon: 'ni ni-ui-04 text-info'}">
           <sidebar-item :link="{ name: 'Buttons', path: '/components/buttons' }"/>
           <sidebar-item :link="{ name: 'Cards', path: '/components/cards' }"/>
           <sidebar-item :link="{ name: 'Grid', path: '/components/grid-system' }"/>
@@ -143,9 +136,6 @@
 </template>
 
 <script>
-  import Loading from 'vue-loading-overlay';
-  import 'vue-loading-overlay/dist/vue-loading.css';
-
   import PerfectScrollbar from 'perfect-scrollbar';
   import 'perfect-scrollbar/css/perfect-scrollbar.css';
 
@@ -167,12 +157,10 @@
   import DashboardNavbar from './Partials/DashboardNavbar';
   import ContentFooter from './Partials/ContentFooter';
   import {FadeTransition} from 'vue2-transitions';
-  import {mapState} from 'vuex'
 
   export default {
     name: 'default-layout',
     components: {
-      Loading,
       ContentFooter,
       DashboardNavbar,
       FadeTransition
@@ -184,11 +172,6 @@
           initScrollbar('scrollbar-inner');
         }
       }
-    },
-    computed: {
-      ...mapState({
-        loading: state => state.loading
-      })
     },
     mounted() {
       this.initScrollbar()

@@ -2,13 +2,14 @@ import Vue from 'vue'
 import DashboardPlugin from './plugins/dashboard-plugin';
 import App from './App'
 
+import {http} from "./services";
+
 import store from './store/store'
 
 import router from './routes/router'
 import './registerServiceWorker'
 
-import VeeValidate from 'vee-validate'
-require('./form-validate/config/validator')
+import VeeValidate from './plugins/vee-validate'
 
 Vue.config.productionTip = false
 Vue.config.devtools = process.env.VUE_APP_DEBUG
@@ -21,6 +22,7 @@ Vue.use(DashboardPlugin);
 new Vue({
   el: '#app',
   render: h => h(App),
+  created: () => http.init(),
   store,
   router
 })

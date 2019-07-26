@@ -1,17 +1,29 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import VuexORM from '@vuex-orm/core'
+import VuexORMAxios from '@vuex-orm/plugin-axios'
+import database from '@/database'
 
-import state from './state'
-import mutations from './mutations'
-import actions from './actions'
+import {ls} from "@/services";
 
 Vue.use(Vuex);
 
-export default new Vuex.Store({
-    state,
-    mutations,
-    actions,
-    modules: {
-//        checkIn
-    },
+VuexORM.use(VuexORMAxios, {
+  database,
+  http: {
+    baseURL: process.env.VUE_APP_API_URL + '/v1',
+    url: '/',
+    access_token: ls.get('api_token'),
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    }
+  }
 })
+
+const store = new Vuex.Store({
+  namespaced: true,
+  plugins: [VuexORM.install(database)]
+})
+
+export default store

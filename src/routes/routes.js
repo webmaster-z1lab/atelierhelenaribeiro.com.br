@@ -1,12 +1,13 @@
 // Layout
-import DashboardLayout from '@/views/Layout/DefaultLayout';
+import DefaultLayout from '@/views/Layout/DefaultLayout';
 import AuthLayout from '@/views/Layout/AuthLayout';
 
 // GeneralViews
 import NotFound from '@/views/GeneralViews/NotFoundPage';
 
-// Home
+// Starter
 const Home = () => import(/* webpackChunkName: "home" */ '@/views/Home.vue');
+const Welcome = () => import(/* webpackChunkName: "home" */ '@/views/Welcome.vue');
 
 // Auth
 const Login = () => import(/* webpackChunkName: "auth" */ '@/views/Auth/Login.vue');
@@ -16,6 +17,14 @@ let authPages = {
   component: AuthLayout,
   name: 'Authentication',
   children: [
+    {
+      path: '/welcome',
+      name: 'Welcome',
+      component: Welcome,
+      meta: {
+        noBodyBackground: true
+      }
+    },
     {
       component: Login,
       path: '/login',
@@ -27,9 +36,9 @@ let authPages = {
 
 let dashboardPages = {
   path: '/',
-  component: DashboardLayout,
-  name: 'Dashboard layout',
-  redirect: '/dashboard',
+  component: DefaultLayout,
+  name: 'Dashboard',
+  redirect: '/home',
   children: [
     {
       component: Home,
@@ -45,8 +54,8 @@ let dashboardPages = {
 
 const routes = [
   {
-    component: Home,
     path: '/',
+    redirect: '/welcome',
     name: 'Starter',
   },
   dashboardPages,

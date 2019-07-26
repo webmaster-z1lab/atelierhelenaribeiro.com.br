@@ -1,6 +1,9 @@
 import axios from 'axios'
 import httpBuildQuery from 'http-build-query'
 
+import NProgress from 'nprogress';
+import 'nprogress/nprogress.css'
+
 import {ls} from '@/services'
 
 export const http = {
@@ -35,11 +38,19 @@ export const http = {
 
   init: () => {
     axios.interceptors.request.use(config => {
+      NProgress.start()
+
       config.headers.Authorization = `Bearer ${ls.get('api_token')}`
       config.headers.common['X-Requested-With'] = 'XMLHttpRequest'
       config.headers.common['Accept'] = 'application/json'
 
       return config
+    })
+
+    axios.interceptors.response.use(response => {
+      NProgress.done()
+
+      return response
     })
   }
 }

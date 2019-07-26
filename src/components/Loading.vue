@@ -9,14 +9,16 @@
 </style>
 
 <script>
-  import NProgress from 'nprogress'
   import Loading from 'vue-loading-overlay';
   import 'vue-loading-overlay/dist/vue-loading.css';
+
+  import NProgress from 'nprogress';
+  import 'nprogress/nprogress.css'
 
   export default {
     name: "loading-vue",
     components: {
-      Loading
+      Loading,
     },
     props: {
       loading: {
@@ -38,7 +40,6 @@
     },
     watch: {
       loading(value) {
-        console.log(value)
         value ? NProgress.start() : NProgress.done()
       }
     }

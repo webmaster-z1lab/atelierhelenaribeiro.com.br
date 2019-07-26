@@ -1,8 +1,7 @@
 <template>
   <div>
     <notifications/>
-    <base-nav v-model="showMenu" type="light" :transparent="true" menu-classes="justify-content-end"
-              class="navbar-horizontal navbar-main" expand="lg">
+    <base-nav v-model="showMenu" type="light" :transparent="true" menu-classes="justify-content-end" class="navbar-horizontal navbar-main" expand="lg">
       <div slot="brand" class="navbar-wrapper">
         <router-link class="navbar-brand" to="/">
           <img src="img/brand/white.png">
@@ -30,7 +29,7 @@
 
     <div class="main-content">
       <zoom-center-transition :duration="pageTransitionDuration" mode="out-in">
-        <router-view></router-view>
+        <router-view/>
       </zoom-center-transition>
     </div>
 
@@ -46,8 +45,7 @@
             <ul class="nav nav-footer justify-content-center justify-content-xl-end">
               <li class="nav-item">
                 <a href="https://z1lab.com.br" class="nav-link" target="_blank">
-                  <img src="https://d35c048n9fix3e.cloudfront.net/images/z1lab/logo/developed_by_white.svg"
-                       alt="z1lab - Soluções Digitais" height="30px">
+                  <img src="https://d35c048n9fix3e.cloudfront.net/images/z1lab/logo/developed_by_white.svg" alt="z1lab - Soluções Digitais" height="30px">
                 </a>
               </li>
               <li class="nav-item">

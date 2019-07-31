@@ -33,7 +33,7 @@ export const ls = {
     let json = {}
 
     if (time) {
-      let expirarem = (new Date().getTime()) + (100000 * time);
+      let expirarem = (new Date().getTime()) + (60000 * time);
 
       json = JSON.stringify({value: value, expires: expirarem})
     } else {

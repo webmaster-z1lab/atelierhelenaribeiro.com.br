@@ -8,14 +8,11 @@ import store from './store/store';
 import router from './routes/router';
 import './registerServiceWorker';
 
-import VeeValidate from './plugins/vee-validate';
-
-Vue.config.productionTip = false;
-Vue.config.devtools = process.env.VUE_APP_DEBUG;
-Vue.config.silent = process.env.VUE_APP_SILENT;
+// Vue.config.productionTip = false;
+// Vue.config.devtools = process.env.VUE_APP_DEBUG;
+// Vue.config.silent = process.env.VUE_APP_SILENT;
 
 // plugins setup
-Vue.use(VeeValidate, { inject: false });
 Vue.use(DashboardPlugin);
 
 new Vue({

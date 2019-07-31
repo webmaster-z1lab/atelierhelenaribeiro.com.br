@@ -1,11 +1,11 @@
-import { Model } from '@vuex-orm/core'
+import {Model} from '@vuex-orm/core'
 
 export default class User extends Model {
   static entity = 'users'
 
-  static fields () {
+  static fields() {
     return {
-      id: this.increment(),
+      id: this.string(''),
       name: this.string(''),
       type: this.string(''),
       email: this.string(''),

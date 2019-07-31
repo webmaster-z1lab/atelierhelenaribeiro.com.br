@@ -35,5 +35,7 @@ export default {
         invalid: 'is-invalid'
       }
     });
+
+    require('./vee-validate')
   }
 };

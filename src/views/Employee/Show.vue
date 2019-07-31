@@ -44,12 +44,12 @@
               </div>
               <form role="form">
                 <base-input class="mb-3" prepend-icon="ni ni-email-83" placeholder="Email" name="email"
-                            v-model="auth.email" :error="getError('email')" :valid="isValid('email')"
+                            v-model="auth.email" :error="errors.first('email')" :valid="errors.has('email')"
                             v-validate="'required|email'"/>
 
                 <base-input class="mb-3" prepend-icon="ni ni-lock-circle-open" type="password" placeholder="Senha"
-                            name="password" v-validate="'required|min:8'" :valid="isValid('password')"
-                            v-model="auth.password" :error="getError('password')" @keyup.enter="singIn" />
+                            name="password" v-validate="'required|min:8'" :valid="errors.has('password')"
+                            v-model="auth.password" :error="errors.first('password')" @keyup.enter="singIn" />
 
                 <base-checkbox v-model="auth.rememberMe">Salvar meus dados</base-checkbox>
 
@@ -80,13 +80,15 @@
   import {notifyVue, notifyError} from "@/utils";
 
   export default {
-    name: 'login',
+    name: 'show',
+    $_veeValidate: {
+      validator: 'new'
+    },
     components: {
       Loading
     },
     data: () => ({
       loading: false,
-      validated: false,
       auth: {
         email: '',
         password: '',
@@ -97,47 +99,37 @@
       changeLoading() {
         this.loading = !this.loading
       },
-      getError(name){
-        return this.errors.first(name)
-      },
-      isValid(name) {
-        return this.validated && !this.errors.has(name);
-      },
-      async singIn() {
-        try {
-          await this.$validator.validateAll().then(
-            res => {
-              if (res) {
-                let time_storage = null
+      singIn() {
+        this.$validator.validateAll().then(
+          res => {
+            if (res) {
+              let time_storage = null
 
-                if (!this.auth.rememberMe) {
-                  time_storage = process.env.VUE_APP_SESSION_LIFETIME
-                  delete this.auth.rememberMe
-                }
-
-                this.changeLoading()
-
-                http.post(`${process.env.VUE_APP_API_URL}/login`, this.auth)
-                  .then(async response => {
-                    await User.create({data: response.data})
-
-                    await ls.set('api_token', response.data.api_token, time_storage)
-                    await ls.set('user_id', response.data.id, time_storage)
-
-                    notifyVue(this.$notify, `${response.data.name}, Bem Vindo!`)
-
-                    this.$router.push({name: 'home'})
-                  })
-                  .catch(error => {
-                    notifyError(this.$notify, error)
-                    this.changeLoading()
-                  })
+              if (!this.auth.rememberMe) {
+                time_storage = process.env.VUE_APP_SESSION_LIFETIME
+                delete this.auth.rememberMe
               }
+
+              this.changeLoading()
+
+              http.post(`${process.env.VUE_APP_API_URL}/login`, this.auth)
+                .then(async response => {
+                  await User.create({data: response.data})
+
+                  await ls.set('api_token', response.data.api_token, time_storage)
+                  await ls.set('user_id', response.data.id, time_storage)
+
+                  notifyVue(this.$notify, `${response.data.name}, Bem Vindo!`)
+
+                  this.$router.push({name: 'Home'})
+                })
+                .catch(error => {
+                  notifyError(this.$notify, error)
+                  this.changeLoading()
+                })
             }
-          )
-        } finally {
-          this.validated = true;
-        }
+          }
+        )
       }
     }
   };

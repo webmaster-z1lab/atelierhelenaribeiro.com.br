@@ -3,7 +3,11 @@ import axios from 'axios';
 export const ibge = {
   request: (url) => {
     return new Promise((resolve, reject) => {
-      axios.get(url).then(response => resolve(response)).catch(error => reject(error))
+      let instance = axios.create()
+
+      delete instance.defaults.headers.common['X-CSRF-TOKEN'];
+
+      instance.get(url).then(response => resolve(response)).catch(error => reject(error))
     })
   },
 

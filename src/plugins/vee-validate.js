@@ -1,10 +1,9 @@
-import VeeValidate, { Validator } from "vee-validate";
-
-import { ibge } from "@/services";
+import { Validator } from "vee-validate"
 
 import pt_BR from 'vee-validate/dist/locale/pt_BR'
 Validator.localize('pt_BR', pt_BR)
 
+import { ibge } from "@/services";
 import {isNull, isUndefined} from 'lodash'
 
 const phone = {
@@ -64,5 +63,3 @@ Validator.extend('cep', cep);
 Validator.extend('cnpj', cnpj);
 Validator.extend('cpf', cpf);
 Validator.extend('document', document);
-
-export default VeeValidate

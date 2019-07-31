@@ -17,25 +17,22 @@
       <notifications/>
       <systems/>
     </ul>
-    <nav-user/>
+    <user-menu/>
   </base-nav>
 </template>
 <script>
-  import {CollapseTransition} from 'vue2-transitions';
-  import {BaseNav, Modal} from '@/components';
-  import NavUser from './NavUser'
+  import {BaseNav} from '@/components';
+  import UserMenu from './UserMenu'
   import Notifications from './Notifications'
   import Systems from './Systems'
 
   export default {
-    name: 'navbar',
+    name: 'default-navbar',
     components: {
-      CollapseTransition,
       BaseNav,
-      Modal,
       Systems,
       Notifications,
-      NavUser
+      UserMenu
     },
     props: {
       type: {
@@ -43,11 +40,6 @@
         default: 'default', // default|light
         description: 'Look of the dashboard navbar. Default (Green) or light (gray)'
       }
-    },
-    data() {
-      return {
-        showMenu: false
-      };
     },
     methods: {
       toggleSidebar() {

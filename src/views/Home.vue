@@ -8,10 +8,6 @@
             <route-bread-crumb></route-bread-crumb>
           </nav>
         </div>
-        <div class="col-lg-6 col-5 text-right">
-          <base-button size="sm" type="neutral">New</base-button>
-          <base-button size="sm" type="neutral">Filters</base-button>
-        </div>
       </div>
       <!-- Card stats -->
       <div class="row">

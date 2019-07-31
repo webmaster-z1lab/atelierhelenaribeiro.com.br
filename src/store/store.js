@@ -11,7 +11,7 @@ Vue.use(Vuex);
 VuexORM.use(VuexORMAxios, {
   database,
   http: {
-    baseURL: process.env.VUE_APP_API_URL + '/v1',
+    baseURL: process.env.VUE_APP_API_URL,
     url: '/',
     access_token: ls.get('api_token'),
     headers: {

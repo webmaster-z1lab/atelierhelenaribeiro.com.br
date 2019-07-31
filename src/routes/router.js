@@ -5,6 +5,8 @@ import routes from './routes';
 import NProgress from 'nprogress';
 import 'nprogress/nprogress.css'
 
+import {ls} from "@/services";
+
 Vue.use(VueRouter);
 
 // configure router
@@ -25,11 +27,17 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {
-    if (localStorage.getItem('api_token') == null) {
+    if (ls.get('api_token')) {
+      next()
+    } else {
       next({
-        path: '/login',
+        name: 'login',
         params: {nextUrl: to.fullPath}
       })
+    }
+  } else if(to.matched.some(record => record.meta.guest)) {
+    if(ls.get('api_token')){
+      next({ name: 'welcome'})
     } else {
       next()
     }

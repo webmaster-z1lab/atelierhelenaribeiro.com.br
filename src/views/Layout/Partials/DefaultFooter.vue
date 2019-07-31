@@ -23,7 +23,7 @@
 </template>
 <script>
   export default {
-    name: 'footer',
+    name: 'default-footer',
     data() {
       return {
         year: new Date().getFullYear()

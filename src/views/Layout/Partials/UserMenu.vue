@@ -9,13 +9,13 @@
               <img alt="Image placeholder" src="img/theme/team-4.jpg">
             </span>
           <div class="media-body ml-2 d-none d-lg-block">
-            <span class="mb-0 text-sm  font-weight-bold">John Snow</span>
+            <span class="mb-0 text-sm  font-weight-bold">{{user.name}}</span>
           </div>
         </div>
       </a>
       <div class="dropdown-menu dropdown-menu-right" :class="[{ show: isOpen }]">
         <div class="dropdown-header noti-title">
-          <h6 class="text-overflow m-0">Welcome!</h6>
+          <h6 class="text-overflow m-0">Bem Vindo!</h6>
         </div>
         <a href="javascript:;" class="dropdown-item">
           <i class="ni ni-single-02"></i>
@@ -47,10 +47,11 @@
   import {http, ls} from "@/services";
   import {notifyError} from "@/utils";
 
-  import Loading from '@/components/Loading'
+  import Loading from '@/components/App/Loading'
+  import User from "@/models/User";
 
   export default {
-    name: 'systems',
+    name: 'user-menu',
     data() {
       return {
         loading: false,
@@ -59,6 +60,11 @@
     },
     components: {
       Loading
+    },
+    computed: {
+      user() {
+        return User.find(ls.get('user_id'))
+      }
     },
     methods: {
       changeLoading() {
@@ -75,7 +81,7 @@
           .then(async response => {
             await ls.clear()
 
-            this.$router.push({name: 'Welcome'})
+            this.$router.push({name: 'welcome'})
           })
           .catch(error => {
             notifyError(this.$notify, error)

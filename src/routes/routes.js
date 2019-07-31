@@ -5,6 +5,12 @@ import AuthLayout from '@/views/Layout/AuthLayout';
 // GeneralViews
 import NotFound from '@/views/GeneralViews/NotFoundPage';
 
+// Employee
+const IndexEmployee = () => import(/* webpackChunkName: "home" */ '@/views/Employee/Index.vue');
+const CreateEmployee = () => import(/* webpackChunkName: "home" */ '@/views/Employee/Create.vue');
+const EditEmployee = () => import(/* webpackChunkName: "home" */ '@/views/Employee/Edit.vue');
+const ShowEmployee = () => import(/* webpackChunkName: "home" */ '@/views/Employee/Show.vue');
+
 // Starter
 const Home = () => import(/* webpackChunkName: "home" */ '@/views/Home.vue');
 const Welcome = () => import(/* webpackChunkName: "home" */ '@/views/Welcome.vue');
@@ -12,53 +18,90 @@ const Welcome = () => import(/* webpackChunkName: "home" */ '@/views/Welcome.vue
 // Auth
 const Login = () => import(/* webpackChunkName: "auth" */ '@/views/Auth/Login.vue');
 
-let authPages = {
-  path: '/',
-  component: AuthLayout,
-  name: 'Authentication',
+let employeePages = {
+  path: '/employees',
+  component: DefaultLayout,
+  redirect: {name: 'employee.index'},
+  name: 'employee',
   children: [
     {
-      path: '/welcome',
-      name: 'Welcome',
-      component: Welcome,
+      path: '/',
+      name: 'employee.index',
+      component: IndexEmployee,
       meta: {
-        noBodyBackground: true
+        requiresAuth: true
       }
     },
     {
-      component: Login,
-      path: '/login',
-      name: 'Login'
+      path: '/employees/create',
+      name: 'employee.create',
+      component: CreateEmployee,
+      meta: {
+        requiresAuth: true
+      }
     },
-    {path: '*', component: NotFound}
+    {
+      path: '/employees/edit',
+      name: 'employee.edit',
+      component: EditEmployee,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/employees/show',
+      name: 'employee.show',
+      component: ShowEmployee,
+      meta: {
+        requiresAuth: true
+      }
+    }
   ]
 };
 
-let dashboardPages = {
+let authPages = {
   path: '/',
-  component: DefaultLayout,
-  name: 'Dashboard',
-  redirect: '/home',
+  component: AuthLayout,
+  name: 'auth',
   children: [
     {
-      component: Home,
-      path: '/home',
-      name: 'Home',
+      component: Login,
+      path: '/login',
+      name: 'login',
       meta: {
-        requiresAuth: true,
-        noBodyBackground: true
+        guest: true
       }
-    }
+    },
+    {path: '*', component: NotFound}
   ]
 };
 
 const routes = [
   {
     path: '/',
-    redirect: '/welcome',
-    name: 'Starter',
+    name: 'welcome',
+    component: Welcome,
+    meta: {
+      noBodyBackground: true
+    }
   },
-  dashboardPages,
+  {
+    path: '/',
+    component: DefaultLayout,
+    name: 'dashboard',
+    redirect: '/home',
+    children: [
+      {
+        component: Home,
+        path: '/home',
+        name: 'home',
+        meta: {
+          requiresAuth: true
+        }
+      }
+    ]
+  },
+  employeePages,
   authPages
 ];
 

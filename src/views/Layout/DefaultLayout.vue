@@ -3,12 +3,9 @@
     <notifications/>
     <side-bar>
       <template slot-scope="props" slot="links">
-        <sidebar-item :link="{name: 'Dashboards', icon: 'ni ni-shop text-primary'}">
-          <sidebar-item :link="{ name: 'Dashboard', path: '/dashboard' }"/>
-          <sidebar-item :link="{ name: 'Alternative', path: '/alternative' }"/>
-        </sidebar-item>
+        <sidebar-item :link="{ name: 'Home', path: {name: 'home'}, icon: 'fas fa-home text-primary'}"/>
 
-        <sidebar-item :link="{name: 'Widgets',icon: 'ni ni-archive-2 text-green',path: '/widgets'}"/>
+        <sidebar-item :link="{name: 'Employee', icon: 'fas fa-users-cog text-green', path: {name: 'employee'}}"/>
       </template>
     </side-bar>
     <div class="main-content">
@@ -44,8 +41,8 @@
     }
   }
 
-  import DefaultNavbar from './Partials/Navbar';
-  import DefaultFooter from './Partials/Footer';
+  import DefaultNavbar from './Partials/DefaultNavbar';
+  import DefaultFooter from './Partials/DefaultFooter';
   import {FadeTransition} from 'vue2-transitions';
 
   export default {

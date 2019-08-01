@@ -24,16 +24,31 @@
         <div class="col-12">
           <div class="row">
             <base-input class="col-4" name="name" label="Nome" v-model="employee.name" :error="getError('name')" :valid="isValid('name')"
-                        v-validate="'required'" required/>
+                        v-validate="'required'"/>
 
             <base-input class="col-4" type="email" name="email" label="Email" v-model="employee.email" :error="getError('email')" :valid="isValid('email')"
-                        v-validate="'required|email'" required/>
+                        v-validate="'required|email'"/>
 
-            <base-input class="col-4" name="document" label="CPF" v-model="employee.document" :error="getError('document')" :valid="isValid('document')"
-                        v-validate="'required'" required/>
+            <mask-input class="col-4" placeholder="000.000.000-00" name="document" label="CPF" v-model="employee.document" mask="###.###.###-##"
+                        :error="getError('document')" :valid="isValid('document')" v-validate="'required|cpf'"/>
 
-            <mask-input class="col-4" placeholder="(00) 00000-0000" name="phone" label="Telefone" v-model="employee.phone" mask="['(##) #####-####', '(##) ####-####']"
-                        :error="getError('phone')" :valid="isValid('phone')" v-validate="'required|phone'" required/>
+            <div class="col-4">
+              <base-checkbox class="mb-3" v-model="employee.is_whatsapp">
+                Telefone é Whatsapp?
+              </base-checkbox>
+            </div>
+            <div class="offset-8"></div>
+
+            <mask-input class="col-4" placeholder="(00) 00000-0000" name="phone" label="Telefone" v-model="employee.phone" :mask="['(##) #####-####', '(##) ####-####']"
+                        :error="getError('phone')" :valid="isValid('phone')" v-validate="'required|phone'"/>
+
+            <base-input label="Tipo" class="col-4">
+              <select class="form-control" v-model="employee.type">
+                <option value="admin">Administrador</option>
+                <option value="seller">Vendedor</option>
+                <option value="dressmaker">Costureira</option>
+              </select>
+            </base-input>
 
             <div class="col-12">
               <fieldset class="margin-fieldset my-2">
@@ -50,8 +65,8 @@
             </div>
           </div>
         </div>
-        <div slot="footer" class="col-12 d-flex justify-content-center justify-content-sm-between flex-wrap">
-
+        <div slot="footer" class="text-right">
+          <base-button type="primary" @click="submitForm">Enviar</base-button>
         </div>
       </card>
     </div>
@@ -67,23 +82,18 @@
   import {http, ls} from "@/services";
   import {notifyVue, notifyError} from "@/utils";
 
-  import { BasePagination } from '@/components';
   import RouteBreadCrumb from '@/components/Breadcrumb/RouteBreadcrumb'
-  import { Table, TableColumn, Select, Option, Tooltip } from 'element-ui';
 
   export default {
     name: 'create',
+    $_veeValidate: {
+      validator: 'new'
+    },
     components: {
       Loading,
       MaskInput,
       AddressInputs,
-      BasePagination,
-      RouteBreadCrumb,
-      [Select.name]: Select,
-      [Option.name]: Option,
-      [Table.name]: Table,
-      [TableColumn.name]: TableColumn,
-      [Tooltip.name]: Tooltip
+      RouteBreadCrumb
     },
     data () {
       return {
@@ -96,40 +106,25 @@
       changeLoading() {
         this.loading = !this.loading
       },
-      getError(name){
+      getError(name) {
         return this.errors.first(name)
       },
       isValid(name) {
         return this.validated && !this.errors.has(name);
       },
-      singIn() {
+      submitForm() {
         this.$validator.validateAll().then(
           res => {
             if (res) {
-              let time_storage = null
-
-              if (!this.auth.rememberMe) {
-                time_storage = process.env.VUE_APP_SESSION_LIFETIME
-                delete this.auth.rememberMe
-              }
-
               this.changeLoading()
 
-              http.post(`${process.env.VUE_APP_API_URL}/login`, this.auth)
-                .then(async response => {
-                  await User.create({data: response.data})
-
-                  await ls.set('api_token', response.data.api_token, time_storage)
-                  await ls.set('user_id', response.data.id, time_storage)
-
-                  notifyVue(this.$notify, `${response.data.name}, Bem Vindo!`)
-
-                  this.$router.push({name: 'Home'})
+              Employee.$create({data: this.employee})
+                .then(res => {
+                  //this.$emit('')
+                  notifyVue(this.$notify, 'Funcionário Criado com sucesso', 'success')
                 })
-                .catch(error => {
-                  notifyError(this.$notify, error)
-                  this.changeLoading()
-                })
+                .catch(error => notifyError(this.$notify, error))
+                .finally(this.changeLoading())
             }
           }
         )

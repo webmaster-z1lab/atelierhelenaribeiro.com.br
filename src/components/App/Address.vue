@@ -1,10 +1,10 @@
 <template>
   <div class="row">
     <mask-input class="col-3" placeholder="00000-000" name="postal_code" label="CEP" v-model="code" mask="#####-###"
-                :error="getError('postal_code')" :valid="isValid('postal_code')" v-validate="'required|cep'" required/>
+                :error="getError('postal_code')" :valid="isValid('postal_code')" v-validate="'required|cep'"/>
 
     <base-input class="col-5" placeholder="Nome da Rua" name="street" label="Logradouro" :error="getError('street')"
-                :valid="isValid('street')" v-model="address.street" v-validate="'required'" required/>
+                :valid="isValid('street')" v-model="address.street" v-validate="'required'"/>
 
     <base-input class="col-4" placeholder="Nome do Bairro" name="district" label="Bairro" v-model="address.district"
                 :error="getError('district')" :valid="isValid('district')" v-validate="'required'"/>
@@ -13,11 +13,11 @@
 
     <base-input class="col-2" name="state" label="Estado" :value="address.state" disabled/>
 
-    <base-input class="col-2" type="number" name="number" label="Número" v-model="address.number"
-                :error="getError('number')" :valid="isValid('number')" v-validate="'required|numeric'" required/>
+    <base-input class="col-2" type="number" name="number" label="Número" v-model="address.number" placeholder="00"
+                :error="getError('number')" :valid="isValid('number')" v-validate="'required|numeric'"/>
 
-    <base-input class="col-4" name="complement" label="Complemento" v-model="address.complement"
-                :error="getError('complement')" :valid="isValid('complement')" v-validate="'required'" required/>
+    <base-input class="col-4" name="complement" label="Complemento" v-model="address.complement" placeholder="Ap. 000"
+                :error="getError('complement')" :valid="isValid('complement')"/>
   </div>
 </template>
 
@@ -30,6 +30,7 @@
 
   export default {
     name: "address-inputs",
+    inject: ['$validator'],
     components: {
       MaskInput,
     },

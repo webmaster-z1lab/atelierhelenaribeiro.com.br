@@ -28,6 +28,7 @@ export default {
     Vue.use(Notifications);
     Vue.use(VeeValidate, {
       fieldsBagName: 'veeFields',
+      inject: false,
       classes: true,
       validity: true,
       classNames: {

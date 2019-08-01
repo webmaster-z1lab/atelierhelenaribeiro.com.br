@@ -1,4 +1,3 @@
-import Fuse from 'fuse.js';
 export default {
   computed: {
     /***
@@ -62,24 +61,19 @@ export default {
       }
     }
   },
-  mounted() {
-    // Fuse search initialization.
-    this.fuseSearch = new Fuse(this.tableData, {
-      keys: ['name', 'email'],
-      threshold: 0.3
-    });
-  },
   watch: {
     /**
      * Searches through the table data by a given query.
      * NOTE: If you have a lot of data, it's recommended to do the search on the Server Side and only display the results here.
      * @param value of the query
      */
-    searchQuery(value) {
+    async searchQuery(value) {
       let result = this.tableData;
+
       if (value !== '') {
-        result = this.fuseSearch.search(this.searchQuery);
+        result = await this.searchApi(value)
       }
+
       this.searchedData = result;
     }
   }

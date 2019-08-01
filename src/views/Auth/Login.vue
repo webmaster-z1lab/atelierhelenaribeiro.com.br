@@ -81,6 +81,9 @@
 
   export default {
     name: 'login',
+    $_veeValidate: {
+      validator: 'new'
+    },
     components: {
       Loading
     },

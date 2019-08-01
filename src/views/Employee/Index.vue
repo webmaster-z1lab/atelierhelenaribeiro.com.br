@@ -40,7 +40,18 @@
             </el-select>
 
             <div>
-              <base-input v-model="searchQuery" prepend-icon="fas fa-search" placeholder="Buscar..."/>
+              <div class="form-group">
+                <div class="input-group has-label">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">
+                      <slot name="prepend">
+                        <i class="fas fa-search"></i>
+                      </slot>
+                    </span>
+                  </div>
+                  <input type="text" class="form-control" placeholder="Buscar..." v-model.lazy="searchQuery">
+                </div>
+              </div>
             </div>
           </div>
           <el-table :data="queriedData" row-key="id" header-row-class-name="thead-light" @sort-change="sortChange">
@@ -116,7 +127,6 @@
     },
     data: () => ({
       loading: false,
-      propsToSearch: ['name', 'email'],
       tableColumns: [
         {
           prop: 'name',
@@ -136,173 +146,30 @@
           minWidth: 150,
           sortable: true
         }
-      ],
-      tableData: [
-        {
-          id: 1,
-          name: "Tiger Nixon",
-          position: "System Architect",
-          city: "Edinburgh",
-          age: "61",
-          createdAt: "2011/04/25",
-          salary: "$320,800",
-        },
-        {
-          id: 2,
-          name: "Garrett Winters",
-          position: "Accountant",
-          city: "Tokyo",
-          age: "63",
-          createdAt: "2011/07/25",
-          salary: "$170,750",
-        },
-        {
-          id: 3,
-          name: "Ashton Cox",
-          position: "Junior Technical Author",
-          city: "San Francisco",
-          age: "66",
-          createdAt: "2009/01/12",
-          salary: "$86,000",
-        },
-        {
-          id: 4,
-          name: "Cedric Kelly",
-          position: "Senior Javascript Developer",
-          city: "Edinburgh",
-          age: "22",
-          createdAt: "2012/03/29",
-          salary: "$433,060",
-        },
-        {
-          id: 5,
-          name: "Airi Satou",
-          position: "Accountant",
-          city: "Tokyo",
-          age: "33",
-          createdAt: "2008/11/28",
-          salary: "$162,700",
-        },
-        {
-          id: 6,
-          name: "Brielle Williamson",
-          position: "Integration Specialist",
-          city: "New York",
-          age: "61",
-          createdAt: "2012/12/02",
-          salary: "$372,000",
-        },
-        {
-          id: 7,
-          name: "Herrod Chandler",
-          position: "Sales Assistant",
-          city: "San Francisco",
-          age: "59",
-          createdAt: "2012/08/06",
-          salary: "$137,500",
-        },
-        {
-          id: 8,
-          name: "Rhona Davidson",
-          position: "Integration Specialist",
-          city: "Tokyo",
-          age: "55",
-          createdAt: "2010/10/14",
-          salary: "$327,900",
-        },
-        {
-          id: 9,
-          name: "Colleen Hurst",
-          position: "Javascript Developer",
-          city: "San Francisco",
-          age: "39",
-          createdAt: "2009/09/15",
-          salary: "$205,500",
-        },
-        {
-          id: 10,
-          name: "Sonya Frost",
-          position: "Software Engineer",
-          city: "Edinburgh",
-          age: "23",
-          createdAt: "2008/12/13",
-          salary: "$103,600",
-        },
-        {
-          id: 11,
-          name: "Jena Gaines",
-          position: "Office Manager",
-          city: "London",
-          age: "30",
-          createdAt: "2008/12/19",
-          salary: "$90,560",
-        },
-        {
-          id: 12,
-          name: "Quinn Flynn",
-          position: "Support Lead",
-          city: "Edinburgh",
-          age: "22",
-          createdAt: "2013/03/03",
-          salary: "$342,000",
-        },
-        {
-          id: 13,
-          name: "Charde Marshall",
-          position: "Regional Director",
-          city: "San Francisco",
-          age: "36",
-          createdAt: "2008/10/16",
-          salary: "$470,600",
-        },
-        {
-          id: 14,
-          name: "Haley Kennedy",
-          position: "Senior Marketing Designer",
-          city: "London",
-          age: "43",
-          createdAt: "2012/12/18",
-          salary: "$313,500",
-        },
-        {
-          id: 15,
-          name: "Tatyana Fitzpatrick",
-          position: "Regional Director",
-          city: "London",
-          age: "19",
-          createdAt: "2010/03/17",
-          salary: "$385,750",
-        },
-        {
-          id: 16,
-          name: "Michael Silva",
-          position: "Marketing Designer",
-          city: "London",
-          age: "66",
-          createdAt: "2012/11/27",
-          salary: "$198,500",
-        },
-        {
-          id: 17, name: "Paul Byrd",
-          position: "Chief Financial Officer (CFO)",
-          city: "New York",
-          age: "64",
-          createdAt: "2010/06/09",
-          salary: "$725,000",
-        },
-        {
-          id: 18, name: "Gloria Little",
-          position: "Systems Administrator",
-          city: "New York",
-          age: "59",
-          createdAt: "2009/04/10",
-          salary: "$237,500",
-        }
       ]
     }),
+    computed: {
+      tableData() {
+        return Employee.all()
+      }
+    },
+    created() {
+      Employee.$fetch();
+    },
     methods: {
       changeLoading() {
         this.loading = !this.loading
+      },
+      async searchApi(value) {
+        let result = [];
+
+        await http.get(process.env.VUE_APP_API_URL + '/employees', {search: value}).then(
+          async response => {
+            result = await Promise.resolve(Employee.insert({data: response.data}));
+          }
+        ).catch(error => console.dir(error))
+
+        return result.employees || []
       },
       handleDelete(index, row) {
         swal({

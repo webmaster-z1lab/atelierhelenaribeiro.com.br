@@ -1,29 +1,10 @@
-# core.helenaribeiro.com
+# [Core atelierhelenaribeiro.com](http://localhost:8080/)
 
-## Project setup
-```
-yarn install
-```
+## Quick start
 
-### Compiles and hot-reloads for development
-```
-yarn run serve
-```
+- [Download from Github](https://github.com/webmaster-z1lab/atelierhelenaribeiro.com.br/archive/master.zip).
+- Clone the repo: `https://github.com/webmaster-z1lab/atelierhelenaribeiro.com.br.git`.
 
-### Compiles and minifies for production
-```
-yarn run build
-```
+## Update Argon
 
-### Run your tests
-```
-yarn run test
-```
 
-### Lints and fixes files
-```
-yarn run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).

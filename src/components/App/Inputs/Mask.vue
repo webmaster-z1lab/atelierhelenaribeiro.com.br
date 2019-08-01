@@ -18,7 +18,7 @@
         </span>
       </div>
       <slot>
-        <the-mask class="form-control" v-model="code" :type="type" :valid="!error" :mask="mask" :masked="masked"
+        <the-mask class="form-control" v-model="code" :type="type" :valid="!error" :mask="mask" :masked="masked" v-bind="$attrs"
                   :class="[{'is-valid': valid === true}, {'is-invalid': error}, inputClasses]"/>
       </slot>
       <div v-if="appendIcon || $slots.append" class="input-group-append">
@@ -47,6 +47,7 @@
 
   export default {
     name: "mask-input",
+    inheritAttrs: false,
     components: {
       TheMask,
     },

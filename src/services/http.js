@@ -1,10 +1,10 @@
-import axios from 'axios'
-import httpBuildQuery from 'http-build-query'
+import axios from 'axios';
+import httpBuildQuery from 'http-build-query';
 
 import NProgress from 'nprogress';
-import 'nprogress/nprogress.css'
+import 'nprogress/nprogress.css';
 
-import {ls} from '@/services'
+import {ls} from '@/services';
 
 export const http = {
   request: (method, url, data, headers = {}) => {
@@ -14,43 +14,44 @@ export const http = {
         data: data,
         method: method.toLowerCase(),
         headers: headers
-      }).then(response => resolve(response)).catch(error => reject(error))
-    })
+      }).then(response => resolve(response)).catch(error => reject(error));
+    });
   },
 
   async get(url, params, headers) {
     if (params !== null) url = url + '?' + httpBuildQuery(params)
 
-    return await this.request('get', url, {}, headers)
+    return await this.request('get', url, {}, headers);
   },
 
   async post(url, data, headers) {
-    return await this.request('post', url, data, headers)
+    return await this.request('post', url, data, headers);
   },
 
   async put(url, data, headers) {
-    return await this.request('put', url, data, headers)
+    return await this.request('put', url, data, headers);
   },
 
   async delete(url, data = {}, headers) {
-    return await this.request('delete', url, data, headers)
+    return await this.request('delete', url, data, headers);
   },
 
   init: () => {
     axios.interceptors.request.use(config => {
-      NProgress.start()
+      NProgress.start();
 
-      config.headers.Authorization = `Bearer ${ls.get('api_token')}`
-      config.headers.common['X-Requested-With'] = 'XMLHttpRequest'
-      config.headers.common['Accept'] = 'application/json'
+      if (ls.get('api_token')) config.headers.Authorization = `Bearer ${ls.get('api_token')}`;
 
-      return config
-    })
+      config.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+      config.headers.common['Accept'] = 'application/json';
+
+      return config;
+    });
 
     axios.interceptors.response.use(response => {
-      NProgress.done()
+      NProgress.done();
 
-      return response
-    })
+      return response;
+    });
   }
-}
+};

@@ -51,7 +51,7 @@
                             name="password" v-validate="'required|min:8'" :valid="isValid('password')"
                             v-model="auth.password" :error="getError('password')" @keyup.enter="singIn" />
 
-                <base-checkbox v-model="auth.rememberMe">Salvar meus dados</base-checkbox>
+                <base-checkbox v-model="auth.remember">Salvar meus dados</base-checkbox>
 
                 <div class="text-center">
                   <base-button type="primary" class="my-4" @click="singIn">Entrar</base-button>
@@ -93,14 +93,14 @@
       auth: {
         email: '',
         password: '',
-        rememberMe: false
+        remember: false
       }
     }),
     methods: {
       changeLoading() {
         this.loading = !this.loading
       },
-      getError(name){
+      getError(name) {
         return this.errors.first(name)
       },
       isValid(name) {
@@ -111,28 +111,32 @@
           await this.$validator.validateAll().then(
             res => {
               if (res) {
-                let time_storage = null
+                let time_storage = null;
 
-                if (!this.auth.rememberMe) {
-                  time_storage = process.env.VUE_APP_SESSION_LIFETIME
-                  delete this.auth.rememberMe
+                if (!this.auth.remember) {
+                  time_storage = process.env.VUE_APP_SESSION_LIFETIME;
+                  delete this.auth.remember
                 }
 
-                this.changeLoading()
+                this.changeLoading();
 
                 http.post(`${process.env.VUE_APP_API_URL}/login`, this.auth)
                   .then(async response => {
-                    await User.create({data: response.data})
+                    await User.create({data: response.data});
 
-                    await ls.set('api_token', response.data.api_token, time_storage)
-                    await ls.set('user_id', response.data.id, time_storage)
+                    await ls.set('api_token', response.data.api_token, time_storage);
+                    await ls.set('user_id', response.data.id, time_storage);
 
-                    notifyVue(this.$notify, `${response.data.name}, Bem Vindo!`)
+                    notifyVue(this.$notify, `${response.data.name}, Bem Vindo!`);
 
-                    this.$router.push({name: 'home'})
+                    if(this.$route.params.nextUrl){
+                      this.$router.push(this.$route.params.nextUrl)
+                    } else {
+                      this.$router.push({name: 'home'});
+                    }
                   })
                   .catch(error => {
-                    notifyError(this.$notify, error)
+                    notifyError(this.$notify, error);
                     this.changeLoading()
                   })
               }

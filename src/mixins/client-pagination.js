@@ -1,4 +1,23 @@
+import Loading from '@/components/App/Loading'
+
 export default {
+  components: {
+    Loading
+  },
+  data() {
+    return {
+      loading: false,
+      pagination: {
+        perPage: 10,
+        currentPage: 1,
+        perPageOptions: [5, 10, 20, 30],
+        total: 0
+      },
+      searchQuery: '',
+      searchedData: [],
+      fuseSearch: null
+    }
+  },
   computed: {
     /***
      * Returns a page from the searched data or the whole data. Search is performed in the watch section below
@@ -30,25 +49,15 @@ export default {
         : this.tableData.length;
     }
   },
-  data() {
-    return {
-      pagination: {
-        perPage: 10,
-        currentPage: 1,
-        perPageOptions: [5, 10, 20, 30],
-        total: 0
-      },
-      searchQuery: '',
-      searchedData: [],
-      fuseSearch: null
-    }
-  },
   methods: {
+    changeLoading() {
+      this.loading = !this.loading
+    },
     sortChange({ prop, order }) {
       if (prop) {
         this.tableData.sort((a, b) => {
-          let aVal = a[prop]
-          let bVal = b[prop]
+          let aVal = a[prop];
+          let bVal = b[prop];
           if (order === 'ascending') {
             return aVal > bVal ? 1 : -1
           }
@@ -70,9 +79,7 @@ export default {
     async searchQuery(value) {
       let result = this.tableData;
 
-      if (value !== '') {
-        result = await this.searchApi(value)
-      }
+      if (value !== '') result = await this.searchApi(value);
 
       this.searchedData = result;
     }

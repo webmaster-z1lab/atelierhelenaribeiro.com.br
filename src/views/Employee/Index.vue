@@ -56,20 +56,20 @@
           </div>
           <el-table :data="queriedData" row-key="id" header-row-class-name="thead-light" @sort-change="sortChange">
             <el-table-column v-for="column in tableColumns" :key="column.label" v-bind="column"/>
-            <el-table-column min-width="180px" align="right" label="Ações">
+            <el-table-column min-width="60px" align="right" label="Ações">
               <div slot-scope="{$index, row}" class="d-flex">
                 <el-tooltip content="Visualizar" placement="top">
-                  <router-link :to="{name: 'employee.show'}" class="table-action" data-toggle="tooltip" data-original-title="Show">
+                  <router-link :to="{name: 'employee.show', params: {id: row.id}}" class="table-action" data-toggle="tooltip" data-original-title="Show">
                     <i class="fas fa-eye"></i>
                   </router-link>
                 </el-tooltip>
                 <el-tooltip content="Editar" placement="top">
-                  <router-link :to="{name: 'employee.edit'}" class="table-action" data-toggle="tooltip" data-original-title="Edit">
+                  <router-link :to="{name: 'employee.edit', params: {id: row.id}}" class="table-action" data-toggle="tooltip" data-original-title="Edit">
                     <i class="fas fa-user-edit"></i>
                   </router-link>
                 </el-tooltip>
                 <el-tooltip content="Deletar" placement="top">
-                  <a href="#!" @click.prevent="handleDelete(row)" class="table-action table-action-delete" data-toggle="tooltip"
+                  <a href="#!" @click.prevent="destroy(row)" class="table-action table-action-delete" data-toggle="tooltip"
                      data-original-title="Delete">
                     <i class="fas fa-trash"></i>
                   </a>
@@ -100,23 +100,22 @@
 
 <script>
   import Employee from '@/models/Employee'
-  import Loading from '@/components/App/Loading'
 
-  import {http, ls} from "@/services";
+  import {http} from "@/services";
   import {notifyVue, notifyError} from "@/utils";
   import swal from 'sweetalert2';
 
   import clientPaginationMixin from '@/mixins/client-pagination'
 
-  import { BasePagination } from '@/components';
   import RouteBreadCrumb from '@/components/Breadcrumb/RouteBreadcrumb'
+  import { BasePagination } from '@/components';
   import { Table, TableColumn, Select, Option, Tooltip } from 'element-ui';
+  import {isEmpty} from 'lodash'
 
   export default {
     name: 'index',
     mixins: [clientPaginationMixin],
     components: {
-      Loading,
       BasePagination,
       RouteBreadCrumb,
       [Select.name]: Select,
@@ -125,82 +124,77 @@
       [TableColumn.name]: TableColumn,
       [Tooltip.name]: Tooltip
     },
-    data: () => ({
-      loading: false,
-      tableColumns: [
-        {
-          prop: 'name',
-          label: 'Nome',
-          minWidth: 160,
-          sortable: true
-        },
-        {
-          prop: 'email',
-          label: 'Email',
-          minWidth: 220,
-          sortable: true
-        },
-        {
-          prop: 'created_at',
-          label: 'Data de Criação',
-          minWidth: 150,
-          sortable: true
-        }
-      ]
-    }),
+    data () {
+      return {
+        tableColumns: [
+          {
+            prop: 'name',
+            label: 'Nome',
+            minWidth: 220,
+            sortable: true
+          },
+          {
+            prop: 'email',
+            label: 'Email',
+            minWidth: 220,
+            sortable: true
+          },
+          {
+            prop: 'created_at',
+            label: 'Data de Criação',
+            minWidth: 150,
+            sortable: true
+          }
+        ]
+      }
+    },
     computed: {
       tableData() {
         return Employee.all()
       }
     },
     created() {
-      Employee.$fetch();
+      if (isEmpty(this.tableData)) {
+        Employee.$fetch();
+      }
     },
     methods: {
-      changeLoading() {
-        this.loading = !this.loading
-      },
       async searchApi(value) {
         let result = [];
 
+        this.changeLoading();
         await http.get(process.env.VUE_APP_API_URL + '/employees', {search: value}).then(
           async response => {
             result = await Promise.resolve(Employee.insert({data: response.data}));
           }
-        ).catch(error => console.dir(error))
+        ).catch(error => console.dir(error)).finally(this.changeLoading());
 
         return result.employees || []
       },
-      handleDelete(index, row) {
+      destroy(index, row) {
         swal({
-          title: 'Are you sure?',
-          text: `You won't be able to revert this!`,
+          title: 'Você tem Certeza?',
+          text: `Ao fazer isso os dados não poderão ser recuperados!`,
           type: 'warning',
           showCancelButton: true,
           confirmButtonClass: 'btn btn-success btn-fill',
           cancelButtonClass: 'btn btn-danger btn-fill',
-          confirmButtonText: 'Yes, delete it!',
+          confirmButtonText: 'Sim, apagar!',
+          cancelButtonText: 'Cancelar',
           buttonsStyling: false
         }).then(result => {
           if (result.value) {
-            this.deleteRow(row);
-            swal({
-              title: 'Deleted!',
-              text: `You deleted ${row.name}`,
-              type: 'success',
-              confirmButtonClass: 'btn btn-success btn-fill',
-              buttonsStyling: false
-            });
+            this.changeLoading();
+
+            Employee.$delete({params: {id: this.id}})
+              .then(response => {
+                notifyVue(this.$notify, 'O funcionário foi apagado!', 'success');
+                this.$router.push({name: 'employee.index'})
+              })
+              .catch(error => notifyError(this.$notify, error))
+              .finally(this.changeLoading())
           }
         });
-      },
-      deleteRow(row) {
-        let indexToDelete = this.tableData.findIndex(
-          tableRow => tableRow.id === row.id
-        );
-        if (indexToDelete >= 0) {
-          this.tableData.splice(indexToDelete, 1);
-        }
       }
     }
   };

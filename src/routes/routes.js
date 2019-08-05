@@ -41,20 +41,22 @@ let employeePages = {
       }
     },
     {
-      path: '/employees/edit',
+      path: '/employees/edit/:id',
       name: 'employee.edit',
       component: EditEmployee,
       meta: {
         requiresAuth: true
-      }
+      },
+      props: true
     },
     {
-      path: '/employees/show',
+      path: '/employees/show/:id',
       name: 'employee.show',
       component: ShowEmployee,
       meta: {
         requiresAuth: true
-      }
+      },
+      props: true
     }
   ]
 };
@@ -72,7 +74,7 @@ let authPages = {
         guest: true
       }
     },
-    {path: '*', component: NotFound}
+    {path: '*', component: NotFound, name: 'notFound'}
   ]
 };
 

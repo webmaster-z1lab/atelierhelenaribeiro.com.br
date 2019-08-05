@@ -1,132 +1,134 @@
 <template>
-  <div>
+  <div class="content">
     <loading :loading="loading"/>
-    <div class="header bg-gradient-success py-7 py-lg-8 pt-lg-9">
-      <div class="container">
-        <div class="header-body text-center mb-7">
-          <div class="row justify-content-center">
-            <div class="col-xl-5 col-lg-6 col-md-8 px-5">
-              <h1 class="text-white">Bem Vindo!</h1>
-              <p class="text-lead text-white">Use suas credenciais para fazer login abaixo.</p>
-            </div>
-          </div>
+
+    <base-header class="pb-6">
+      <div class="row align-items-center py-4">
+        <div class="col-lg-6 col-7">
+          <h6 class="h2 text-white d-inline-block mb-0">Paginated tables</h6>
+          <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+            <route-bread-crumb/>
+          </nav>
         </div>
       </div>
-      <div class="separator separator-bottom separator-skew zindex-100">
-        <svg x="0" y="0" viewBox="0 0 2560 100" preserveAspectRatio="none" version="1.1" xmlns="http://www.w3.org/2000/svg">
-          <polygon class="fill-default" points="2560 0 2560 100 0 100"></polygon>
-        </svg>
-      </div>
-    </div>
+    </base-header>
 
-    <div class="container mt--8 pb-5">
-      <div class="row justify-content-center">
-        <div class="col-lg-5 col-md-7">
-          <div class="card bg-secondary border-0 mb-0">
-            <div class="card-header bg-transparent pb-5">
-              <div class="text-muted text-center mt-2 mb-3">
-                <small>Entrar com</small>
-              </div>
-              <div class="btn-wrapper text-center">
-                <a href="#" class="btn btn-neutral btn-icon">
-                  <span class="btn-inner--icon"><img src="img/icons/common/github.svg"></span>
-                  <span class="btn-inner--text">Github</span>
-                </a>
-                <a href="#" class="btn btn-neutral btn-icon">
-                  <span class="btn-inner--icon"><img src="img/icons/common/google.svg"></span>
-                  <span class="btn-inner--text">Google</span>
-                </a>
-              </div>
-            </div>
-            <div class="card-body px-lg-5 py-lg-5">
-              <div class="text-center text-muted mb-4">
-                <small>Entre com suas credenciais</small>
-              </div>
-              <form role="form">
-                <base-input class="mb-3" prepend-icon="ni ni-email-83" placeholder="Email" name="email"
-                            v-model="auth.email" :error="errors.first('email')" :valid="errors.has('email')"
-                            v-validate="'required|email'"/>
-
-                <base-input class="mb-3" prepend-icon="ni ni-lock-circle-open" type="password" placeholder="Senha"
-                            name="password" v-validate="'required|min:8'" :valid="errors.has('password')"
-                            v-model="auth.password" :error="errors.first('password')" @keyup.enter="singIn" />
-
-                <base-checkbox v-model="auth.rememberMe">Salvar meus dados</base-checkbox>
-
-                <div class="text-center">
-                  <base-button type="primary" class="my-4" @click="singIn">Entrar</base-button>
-                </div>
-              </form>
-            </div>
-          </div>
-          <div class="row mt-3">
-            <div class="col-6">
-              <router-link to="/dashboard" class="text-light">
-                <small>Esqueceu a senha?</small>
-              </router-link>
-            </div>
-          </div>
+    <div class="container-fluid mt--6" v-if="employee">
+      <card>
+        <div slot="header">
+          <h3 class="mb-0">Criando Funcionário</h3>
+          <p class="text-sm mb-0">
+            Preencha os dados abaixo para adicionar um novo funcionário ao sistema.
+          </p>
         </div>
-      </div>
+
+        <form class="needs-validation" @submit.prevent="submitForm">
+          <h6 class="heading-small text-muted mb-4">Informações do Funcionário</h6>
+
+          <div class="form-row">
+            <div class="col-lg-4">
+              <base-input name="name" label="Nome" v-model="employee.name" :error="getError('name')" :valid="isValid('name')" v-validate="'required'"/>
+            </div>
+            <div class="col-lg-4">
+              <base-input type="email" name="email" label="Email" v-model="employee.email" :error="getError('email')" :valid="isValid('email')" v-validate="'required|email'"/>
+            </div>
+            <div class="col-lg-4">
+              <mask-input placeholder="000.000.000-00" name="document" label="CPF" v-model="employee.document" :mask="'###.###.###-##'"
+                          :error="getError('document')" :valid="isValid('document')" v-validate="'required|cpf'"/>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="col-lg-4">
+              <mask-input placeholder="(00) 00000-0000" name="phone" label="Telefone" v-model="employee.phone" :mask="['(##) #####-####', '(##) ####-####']"
+                          :append-icon="employee.is_whatsapp ? 'fab fa-whatsapp' : 'fas fa-phone'"
+                          :error="getError('phone')" :valid="isValid('phone')" v-validate="'required|phone'"/>
+            </div>
+            <div class="col-lg-4">
+              <base-input label="Tipo">
+                <select class="form-control" v-model="employee.type">
+                  <option value="admin">Administrador</option>
+                  <option value="seller">Vendedor</option>
+                  <option value="dressmaker">Costureira</option>
+                </select>
+              </base-input>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="col-lg-4">
+              <base-checkbox class="mb-3" v-model="employee.is_whatsapp">
+                Whatsapp
+              </base-checkbox>
+            </div>
+          </div>
+
+          <hr class="my-4">
+          <h6 class="heading-small text-muted mb-4">Endereço</h6>
+
+          <p class="text-sm text-muted mt--3">Informe um cep abaixo.
+            <a class="text-primary" href="http://www.buscacep.correios.com.br/sistemas/buscacep/" target="_blank">
+              <i class="fas fa-external-link-alt"></i> Não sei o CEP!
+            </a>
+          </p>
+
+          <address-inputs :address="employee.address" @loading="changeLoading"/>
+
+          <hr class="my-4">
+          <base-button type="primary" native-type="submit">Enviar</base-button>
+          <base-button type="secondary" @click="$router.back()">Voltar</base-button>
+        </form>
+      </card>
     </div>
   </div>
 </template>
 
 <script>
-  import User from '@/models/User'
-  import Loading from '@/components/App/Loading'
+  import Employee from '@/models/Employee'
+  import MaskInput from '@/components/App/Inputs/Mask'
+  import AddressInputs from '@/components/App/Address'
+  import crudSettingsMixin from '@/mixins/crud-settings'
 
-  import {http, ls} from "@/services";
   import {notifyVue, notifyError} from "@/utils";
+
+  import RouteBreadCrumb from '@/components/Breadcrumb/RouteBreadcrumb'
 
   export default {
     name: 'edit',
-    $_veeValidate: {
-      validator: 'new'
+    mixins: [crudSettingsMixin],
+    props:{
+      id: {
+        type: String,
+        required: true
+      }
     },
     components: {
-      Loading
+      MaskInput,
+      AddressInputs,
+      RouteBreadCrumb
     },
-    data: () => ({
-      loading: false,
-      auth: {
-        email: '',
-        password: '',
-        rememberMe: false
+    data () {
+      return {
+        loading: true,
+        employee: Employee.find(this.id)
       }
-    }),
+    },
+    async created() {
+      if (!this.employee) this.employee = await Employee.$get({params: {id: this.id}});
+
+      this.changeLoading();
+    },
     methods: {
-      changeLoading() {
-        this.loading = !this.loading
-      },
-      singIn() {
+      submitForm() {
         this.$validator.validateAll().then(
           res => {
             if (res) {
-              let time_storage = null
+              this.changeLoading();
 
-              if (!this.auth.rememberMe) {
-                time_storage = process.env.VUE_APP_SESSION_LIFETIME
-                delete this.auth.rememberMe
-              }
-
-              this.changeLoading()
-
-              http.post(`${process.env.VUE_APP_API_URL}/login`, this.auth)
-                .then(async response => {
-                  await User.create({data: response.data})
-
-                  await ls.set('api_token', response.data.api_token, time_storage)
-                  await ls.set('user_id', response.data.id, time_storage)
-
-                  notifyVue(this.$notify, `${response.data.name}, Bem Vindo!`)
-
-                  this.$router.push({name: 'Home'})
+              Employee.$update({params: {id: this.id}, data: this.employee})
+                .then(res => {
+                  notifyVue(this.$notify, 'Funcionário atualizado com sucesso', 'success')
                 })
-                .catch(error => {
-                  notifyError(this.$notify, error)
-                  this.changeLoading()
-                })
+                .catch(error => notifyError(this.$notify, error))
+                .finally(this.changeLoading())
             }
           }
         )
@@ -134,10 +136,3 @@
     }
   };
 </script>
-
-<style>
-  .ct-example .btn {
-    margin-top: .5rem;
-    margin-bottom: .5rem;
-  }
-</style>

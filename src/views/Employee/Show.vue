@@ -1,143 +1,150 @@
 <template>
-  <div>
-    <loading :loading="loading"/>
-    <div class="header bg-gradient-success py-7 py-lg-8 pt-lg-9">
-      <div class="container">
-        <div class="header-body text-center mb-7">
-          <div class="row justify-content-center">
-            <div class="col-xl-5 col-lg-6 col-md-8 px-5">
-              <h1 class="text-white">Bem Vindo!</h1>
-              <p class="text-lead text-white">Use suas credenciais para fazer login abaixo.</p>
-            </div>
-          </div>
+  <div class="content">
+    <loading :loading="loading" :is-full-page="false"/>
+
+    <base-header class="pb-6">
+      <div class="row align-items-center py-4">
+        <div class="col-lg-6 col-7">
+          <h6 class="h2 text-white d-inline-block mb-0">Paginated tables</h6>
+          <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+            <route-bread-crumb/>
+          </nav>
         </div>
       </div>
-      <div class="separator separator-bottom separator-skew zindex-100">
-        <svg x="0" y="0" viewBox="0 0 2560 100" preserveAspectRatio="none" version="1.1" xmlns="http://www.w3.org/2000/svg">
-          <polygon class="fill-default" points="2560 0 2560 100 0 100"></polygon>
-        </svg>
-      </div>
-    </div>
+    </base-header>
 
-    <div class="container mt--8 pb-5">
-      <div class="row justify-content-center">
-        <div class="col-lg-5 col-md-7">
-          <div class="card bg-secondary border-0 mb-0">
-            <div class="card-header bg-transparent pb-5">
-              <div class="text-muted text-center mt-2 mb-3">
-                <small>Entrar com</small>
-              </div>
-              <div class="btn-wrapper text-center">
-                <a href="#" class="btn btn-neutral btn-icon">
-                  <span class="btn-inner--icon"><img src="img/icons/common/github.svg"></span>
-                  <span class="btn-inner--text">Github</span>
-                </a>
-                <a href="#" class="btn btn-neutral btn-icon">
-                  <span class="btn-inner--icon"><img src="img/icons/common/google.svg"></span>
-                  <span class="btn-inner--text">Google</span>
-                </a>
-              </div>
-            </div>
-            <div class="card-body px-lg-5 py-lg-5">
-              <div class="text-center text-muted mb-4">
-                <small>Entre com suas credenciais</small>
-              </div>
-              <form role="form">
-                <base-input class="mb-3" prepend-icon="ni ni-email-83" placeholder="Email" name="email"
-                            v-model="auth.email" :error="errors.first('email')" :valid="errors.has('email')"
-                            v-validate="'required|email'"/>
-
-                <base-input class="mb-3" prepend-icon="ni ni-lock-circle-open" type="password" placeholder="Senha"
-                            name="password" v-validate="'required|min:8'" :valid="errors.has('password')"
-                            v-model="auth.password" :error="errors.first('password')" @keyup.enter="singIn" />
-
-                <base-checkbox v-model="auth.rememberMe">Salvar meus dados</base-checkbox>
-
-                <div class="text-center">
-                  <base-button type="primary" class="my-4" @click="singIn">Entrar</base-button>
-                </div>
-              </form>
-            </div>
-          </div>
-          <div class="row mt-3">
+    <div class="container-fluid mt--6" v-if="employee">
+      <card class="no-border-card" body-classes="px-0 pb-1" footer-classes="pb-2">
+        <div slot="header">
+          <div class="row">
             <div class="col-6">
-              <router-link to="/dashboard" class="text-light">
-                <small>Esqueceu a senha?</small>
-              </router-link>
+              <h3 class="mb-0">{{employee.name}}</h3>
+              <p class="text-sm mb-0">
+                Informações específicas do funcionário selecionado.
+              </p>
+            </div>
+            <div class="col-6 text-right">
+              <el-tooltip content="Editar Funcionário" placement="top">
+                <router-link :to="{name: 'employee.edit', params: {id: id}}" class="btn btn-icon btn-fab btn-sm btn-warning">
+                  <span class="btn-inner--icon"><i class="fas fa-user-edit"></i></span>
+                  <span class="btn-inner--text">Editar</span>
+                </router-link>
+              </el-tooltip>
+              <el-tooltip content="Apagar Funcionário" placement="top">
+                <base-button type="danger" size="sm" @click="destroy">
+                  <i class="fas fa-trash"></i>Deletar
+                </base-button>
+              </el-tooltip>
             </div>
           </div>
         </div>
-      </div>
+        <div class="mx-4">
+          <ul class="list-group list-group-flush list mt--3">
+            <li class="list-group-item px-0">
+              <h6 class="heading-small text-muted mb-4">Informações do Funcionário</h6>
+
+              <div class="row align-items-center">
+                <div class="col-lg-4 mb-4">
+                  <h4>Nome:</h4>
+                  <h5 class="mb-0">{{employee.name}}</h5>
+                </div>
+                <div class="col-lg-4 mb-4">
+                  <h4>Email:</h4>
+                  <h5 class="mb-0">{{employee.email}}</h5>
+                </div>
+                <div class="col-lg-4 mb-4">
+                  <h4>CPF:</h4>
+                  <h5 class="mb-0">{{employee.document}}</h5>
+                </div>
+                <div class="col-lg-3 mb-4">
+                  <h4>Telefone:</h4>
+                  <h5 class="mb-0"><i class="fab fa-whatsapp mr-1"></i> {{employee.phone}}</h5>
+                </div>
+                <div class="col-lg-3 mb-4">
+                  <h4>Tipo:</h4>
+                  <h5 class="mb-0">{{employee.type}}</h5>
+                </div>
+                <div class="col-lg-6 mb-4">
+                  <h4>Endereço:</h4>
+                  <h5 class="mb-0">{{employee.address.formatted}}</h5>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </card>
     </div>
   </div>
 </template>
 
-<script>
-  import User from '@/models/User'
-  import Loading from '@/components/App/Loading'
+<style>
+  .no-border-card .card-footer{
+    border-top: 0;
+  }
+</style>
 
-  import {http, ls} from "@/services";
+<script>
+  import Employee from '@/models/Employee'
+
   import {notifyVue, notifyError} from "@/utils";
+  import swal from 'sweetalert2';
+
+  import RouteBreadCrumb from '@/components/Breadcrumb/RouteBreadcrumb'
+  import Loading from '@/components/App/Loading'
 
   export default {
     name: 'show',
-    $_veeValidate: {
-      validator: 'new'
-    },
     components: {
-      Loading
+      Loading,
+      RouteBreadCrumb
+    },
+    props: {
+      id: {
+        type: String,
+        required: true
+      }
     },
     data: () => ({
-      loading: false,
-      auth: {
-        email: '',
-        password: '',
-        rememberMe: false
-      }
+      loading: true,
     }),
+    computed: {
+      employee() {
+        return Employee.find(this.id)
+      }
+    },
+    async created() {
+      if (!this.employee) {
+       await Employee.$get({params: {id: this.id}})
+      }
+
+      this.changeLoading()
+    },
     methods: {
       changeLoading() {
         this.loading = !this.loading
       },
-      singIn() {
-        this.$validator.validateAll().then(
-          res => {
-            if (res) {
-              let time_storage = null
-
-              if (!this.auth.rememberMe) {
-                time_storage = process.env.VUE_APP_SESSION_LIFETIME
-                delete this.auth.rememberMe
-              }
-
-              this.changeLoading()
-
-              http.post(`${process.env.VUE_APP_API_URL}/login`, this.auth)
-                .then(async response => {
-                  await User.create({data: response.data})
-
-                  await ls.set('api_token', response.data.api_token, time_storage)
-                  await ls.set('user_id', response.data.id, time_storage)
-
-                  notifyVue(this.$notify, `${response.data.name}, Bem Vindo!`)
-
-                  this.$router.push({name: 'Home'})
-                })
-                .catch(error => {
-                  notifyError(this.$notify, error)
-                  this.changeLoading()
-                })
-            }
+      destroy() {
+        swal({
+          title: 'Você tem Certeza?',
+          text: `Ao fazer isso os dados não poderão ser recuperados!`,
+          type: 'warning',
+          showCancelButton: true,
+          confirmButtonClass: 'btn btn-success btn-fill',
+          cancelButtonClass: 'btn btn-danger btn-fill',
+          confirmButtonText: 'Sim, apagar!',
+          cancelButtonText: 'Cancelar',
+          buttonsStyling: false
+        }).then(result => {
+          if (result.value) {
+            Employee.$delete({params: {id: this.id}})
+              .then(response => {
+                notifyVue(this.$notify, 'O funcionário foi apagado!', 'success');
+                this.$router.push({name: 'employee.index'})
+              })
+              .catch(error => notifyError(this.$notify, error))
           }
-        )
+        });
       }
     }
   };
 </script>
-
-<style>
-  .ct-example .btn {
-    margin-top: .5rem;
-    margin-bottom: .5rem;
-  }
-</style>

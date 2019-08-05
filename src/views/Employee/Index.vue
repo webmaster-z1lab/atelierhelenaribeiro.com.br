@@ -154,9 +154,7 @@
       }
     },
     created() {
-      if (isEmpty(this.tableData)) {
-        Employee.$fetch();
-      }
+      Employee.$fetch();
     },
     methods: {
       async searchApi(value) {

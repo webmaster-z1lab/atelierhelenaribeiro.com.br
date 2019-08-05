@@ -24,6 +24,10 @@
               </p>
             </div>
             <div class="col-6 text-right">
+              <base-button type="secondary" @click="$router.back()" size="sm">
+                <span class="btn-inner--icon"><i class="fas fa-arrow-left"></i></span>
+                Voltar
+              </base-button>
               <el-tooltip content="Editar Funcionário" placement="top">
                 <router-link :to="{name: 'employee.edit', params: {id: id}}" class="btn btn-icon btn-fab btn-sm btn-warning">
                   <span class="btn-inner--icon"><i class="fas fa-user-edit"></i></span>

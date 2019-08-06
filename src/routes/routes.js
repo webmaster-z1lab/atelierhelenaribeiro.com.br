@@ -6,10 +6,16 @@ import AuthLayout from '@/views/Layout/AuthLayout';
 import NotFound from '@/views/GeneralViews/NotFoundPage';
 
 // Employee
-const IndexEmployee = () => import(/* webpackChunkName: "home" */ '@/views/Employee/Index.vue');
-const CreateEmployee = () => import(/* webpackChunkName: "home" */ '@/views/Employee/Create.vue');
-const EditEmployee = () => import(/* webpackChunkName: "home" */ '@/views/Employee/Edit.vue');
-const ShowEmployee = () => import(/* webpackChunkName: "home" */ '@/views/Employee/Show.vue');
+const IndexEmployee = () => import(/* webpackChunkName: "employee" */ '@/views/Employee/Index.vue');
+const CreateEmployee = () => import(/* webpackChunkName: "employee" */ '@/views/Employee/Create.vue');
+const EditEmployee = () => import(/* webpackChunkName: "employee" */ '@/views/Employee/Edit.vue');
+const ShowEmployee = () => import(/* webpackChunkName: "employee" */ '@/views/Employee/Show.vue');
+
+// Customer
+const IndexCustomer = () => import(/* webpackChunkName: "customer" */ '@/views/Customer/Index.vue');
+const CreateCustomer = () => import(/* webpackChunkName: "customer" */ '@/views/Customer/Create.vue');
+const EditCustomer = () => import(/* webpackChunkName: "customer" */ '@/views/Customer/Edit.vue');
+const ShowCustomer = () => import(/* webpackChunkName: "customer" */ '@/views/Customer/Show.vue');
 
 // Starter
 const Home = () => import(/* webpackChunkName: "home" */ '@/views/Home.vue');
@@ -61,6 +67,49 @@ let employeePages = {
   ]
 };
 
+let customerPages = {
+  path: '/customers',
+  component: DefaultLayout,
+  redirect: {name: 'customer.index'},
+  name: 'customer',
+  children: [
+    {
+      path: '/',
+      name: 'customer.index',
+      component: IndexCustomer,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/customers/create',
+      name: 'customer.create',
+      component: CreateCustomer,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/customers/edit/:id',
+      name: 'customer.edit',
+      component: EditCustomer,
+      meta: {
+        requiresAuth: true
+      },
+      props: true
+    },
+    {
+      path: '/customers/show/:id',
+      name: 'customer.show',
+      component: ShowCustomer,
+      meta: {
+        requiresAuth: true
+      },
+      props: true
+    }
+  ]
+};
+
 let authPages = {
   path: '/',
   component: AuthLayout,
@@ -104,6 +153,7 @@ const routes = [
     ]
   },
   employeePages,
+  customerPages,
   authPages
 ];
 

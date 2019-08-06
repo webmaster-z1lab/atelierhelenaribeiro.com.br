@@ -48,27 +48,29 @@
               <h6 class="heading-small text-muted mb-4">Informações do Funcionário</h6>
 
               <div class="row align-items-center">
-                <div class="col-lg-4 mb-4">
+                <div class="col-12 mb-4">
                   <h4>Nome:</h4>
                   <h5 class="mb-0">{{employee.name}}</h5>
                 </div>
-                <div class="col-lg-4 mb-4">
+                <div class="col-12 mb-4">
                   <h4>Email:</h4>
                   <h5 class="mb-0">{{employee.email}}</h5>
                 </div>
-                <div class="col-lg-4 mb-4">
+                <div class="col-12 mb-4">
                   <h4>CPF:</h4>
                   <h5 class="mb-0">{{employee.document}}</h5>
                 </div>
-                <div class="col-lg-3 mb-4">
+                <div class="col-12 mb-4">
                   <h4>Telefone:</h4>
-                  <h5 class="mb-0"><i class="fab fa-whatsapp mr-1"></i> {{employee.phone}}</h5>
+                  <h5 class="mb-0">
+                    <i :class="employee.phone.is_whatsapp ? 'fab fa-whatsapp mr-1' : 'fas fa-phone mr-1'"></i> {{employee.phone.formatted}}
+                  </h5>
                 </div>
-                <div class="col-lg-3 mb-4">
+                <div class="col-12 mb-4">
                   <h4>Tipo:</h4>
                   <h5 class="mb-0">{{employee.type}}</h5>
                 </div>
-                <div class="col-lg-6 mb-4">
+                <div class="col-12 mb-4">
                   <h4>Endereço:</h4>
                   <h5 class="mb-0">{{employee.address.formatted}}</h5>
                 </div>

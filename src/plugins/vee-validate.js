@@ -1,4 +1,5 @@
 import { Validator } from "vee-validate"
+import { parse, isBefore} from 'date-fns';
 
 import pt_BR from 'vee-validate/dist/locale/pt_BR'
 Validator.localize('pt_BR', pt_BR)
@@ -39,7 +40,6 @@ const cnpj = {
     }
 };
 
-
 const cpf = {
     getMessage(field, args, data) {
         return (data && data.message) || `O valor do campo ${field} não é válido.`;
@@ -58,8 +58,18 @@ const document = {
     }
 };
 
+const beforeToday = {
+  getMessage(field, args, data) {
+    return (data && data.message) || `O valor do campo ${field} deve ser menor que o dia atual.`;
+  },
+  validate(value, args) {
+    return isBefore(parse(value, 'dd/MM/yyyy', new Date()), new Date())
+  }
+};
+
 Validator.extend('phone', phone);
 Validator.extend('cep', cep);
 Validator.extend('cnpj', cnpj);
 Validator.extend('cpf', cpf);
 Validator.extend('document', document);
+Validator.extend('before_today', beforeToday);

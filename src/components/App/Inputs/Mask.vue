@@ -28,15 +28,9 @@
               </slot>
           </span>
       </div>
-      <slot name="infoBlock"></slot>
       <slot name="error">
         <div v-if="error" class="invalid-feedback" style="display: block;">
           {{ error }}
-        </div>
-      </slot>
-      <slot name="success">
-        <div class="valid-feedback" v-if="!error && valid">
-          {{successMessage}}
         </div>
       </slot>
     </div>

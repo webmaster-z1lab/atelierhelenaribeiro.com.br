@@ -43,11 +43,11 @@
           {{ error }}
         </div>
       </slot>
-      <slot name="success">
-        <div class="valid-feedback" v-if="!error && valid">
-          {{successMessage}}
-        </div>
-      </slot>
+<!--      <slot name="success">-->
+<!--        <div class="valid-feedback" v-if="!error && valid">-->
+<!--          {{successMessage}}-->
+<!--        </div>-->
+<!--      </slot>-->
     </div>
   </div>
 </template>

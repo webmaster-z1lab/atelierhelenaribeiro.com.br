@@ -16,9 +16,9 @@
     <div class="container-fluid mt--6" v-if="employee">
       <card>
         <div slot="header">
-          <h3 class="mb-0">Criando Funcionário</h3>
+          <h3 class="mb-0">Editando Funcionário</h3>
           <p class="text-sm mb-0">
-            Preencha os dados abaixo para adicionar um novo funcionário ao sistema.
+            Modifique os dados abaixo para atualizar informações do funcionário.
           </p>
         </div>
 
@@ -26,24 +26,20 @@
           <h6 class="heading-small text-muted mb-4">Informações do Funcionário</h6>
 
           <div class="form-row">
-            <div class="col-lg-4">
+            <div class="col-lg-3">
               <base-input name="name" label="Nome" v-model="employee.name" :error="getError('name')" :valid="isValid('name')" v-validate="'required'"/>
             </div>
-            <div class="col-lg-4">
+            <div class="col-lg-3">
               <base-input type="email" name="email" label="Email" v-model="employee.email" :error="getError('email')" :valid="isValid('email')" v-validate="'required|email'"/>
             </div>
-            <div class="col-lg-4">
+            <div class="col-lg-2">
               <mask-input placeholder="000.000.000-00" name="document" label="CPF" v-model="employee.document" :mask="'###.###.###-##'"
                           :error="getError('document')" :valid="isValid('document')" v-validate="'required|cpf'"/>
             </div>
-          </div>
-          <div class="form-row">
-            <div class="col-lg-4">
-              <mask-input placeholder="(00) 00000-0000" name="phone" label="Telefone" v-model="employee.phone" :mask="['(##) #####-####', '(##) ####-####']"
-                          :append-icon="employee.is_whatsapp ? 'fab fa-whatsapp' : 'fas fa-phone'"
-                          :error="getError('phone')" :valid="isValid('phone')" v-validate="'required|phone'"/>
+            <div class="col-lg-2">
+              <phone-input :phone="employee.phone" name="phone" :validate="true"/>
             </div>
-            <div class="col-lg-4">
+            <div class="col-lg-2">
               <base-input label="Tipo">
                 <select class="form-control" v-model="employee.type">
                   <option value="admin">Administrador</option>
@@ -53,17 +49,9 @@
               </base-input>
             </div>
           </div>
-          <div class="form-row">
-            <div class="col-lg-4">
-              <base-checkbox class="mb-3" v-model="employee.is_whatsapp">
-                Whatsapp
-              </base-checkbox>
-            </div>
-          </div>
 
           <hr class="my-4">
           <h6 class="heading-small text-muted mb-4">Endereço</h6>
-
           <p class="text-sm text-muted mt--3">Informe um cep abaixo.
             <a class="text-primary" href="http://www.buscacep.correios.com.br/sistemas/buscacep/" target="_blank">
               <i class="fas fa-external-link-alt"></i> Não sei o CEP!
@@ -84,6 +72,7 @@
 <script>
   import Employee from '@/models/Employee'
   import MaskInput from '@/components/App/Inputs/Mask'
+  import PhoneInput from '@/components/App/Inputs/Phone'
   import AddressInputs from '@/components/App/Address'
   import crudSettingsMixin from '@/mixins/crud-settings'
 
@@ -102,6 +91,7 @@
     },
     components: {
       MaskInput,
+      PhoneInput,
       AddressInputs,
       RouteBreadCrumb
     },
@@ -117,21 +107,25 @@
       this.changeLoading();
     },
     methods: {
-      submitForm() {
-        this.$validator.validateAll().then(
-          res => {
-            if (res) {
-              this.changeLoading();
+      async submitForm() {
+        try {
+          this.$validator.validateAll().then(
+            res => {
+              if (res) {
+                this.changeLoading();
 
-              Employee.$update({params: {id: this.id}, data: this.employee})
-                .then(res => {
-                  notifyVue(this.$notify, 'Funcionário atualizado com sucesso', 'success')
-                })
-                .catch(error => notifyError(this.$notify, error))
-                .finally(this.changeLoading())
+                Employee.$update({params: {id: this.id}, data: this.employee})
+                  .then(res => {
+                    notifyVue(this.$notify, 'Funcionário atualizado com sucesso', 'success')
+                  })
+                  .catch(error => notifyError(this.$notify, error))
+                  .finally(this.changeLoading())
+              }
             }
-          }
-        )
+          )
+        } finally {
+          this.validated = true;
+        }
       }
     }
   };

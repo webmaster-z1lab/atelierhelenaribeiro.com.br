@@ -3,9 +3,9 @@
     <notifications/>
     <side-bar>
       <template slot-scope="props" slot="links">
-        <sidebar-item :link="{ name: 'Home', path: {name: 'home'}, icon: 'fas fa-home text-primary'}"/>
-
-        <sidebar-item :link="{name: 'Employee', icon: 'fas fa-users-cog text-green', path: {name: 'employee'}}"/>
+        <sidebar-item :link="{name: 'Home', path: '/home', icon: 'fas fa-home text-primary'}"/>
+        <sidebar-item :link="{name: 'Funcionários', icon: 'fas fa-users-cog text-green', path: '/employees'}"/>
+        <sidebar-item :link="{name: 'Clientes', icon: 'fas fa-users text-info', path: '/customers'}"/>
       </template>
     </side-bar>
     <div class="main-content">

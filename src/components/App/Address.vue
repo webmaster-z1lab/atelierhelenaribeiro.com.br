@@ -48,13 +48,11 @@
     },
     props: {
       address: {
-        type: [Array, Object],
-        default: {}
+        type: [Array, Object]
       }
     },
     data() {
       return {
-        validated: false,
         code: this.address.postal_code
       }
     },
@@ -89,7 +87,7 @@
         return this.errors.first(name);
       },
       isValid(name) {
-        return this.validated && !this.errors.has(name);
+        return !this.errors.has(name);
       }
     }
   }

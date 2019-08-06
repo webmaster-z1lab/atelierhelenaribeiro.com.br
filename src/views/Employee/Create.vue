@@ -26,26 +26,23 @@
           <h5 class="heading mb-4">Informações do Funcionário</h5>
 
           <div class="form-row">
-            <div class="col-lg-4">
+            <div class="col-lg-3">
               <base-input name="name" label="Nome" v-model="employee.name" :error="getError('name')" :valid="isValid('name')" v-validate="'required'"/>
             </div>
-            <div class="col-lg-4">
+            <div class="col-lg-3">
               <base-input type="email" name="email" label="Email" v-model="employee.email" :error="getError('email')" :valid="isValid('email')" v-validate="'required|email'"/>
             </div>
-            <div class="col-lg-4">
+            <div class="col-lg-2">
               <mask-input placeholder="000.000.000-00" name="document" label="CPF" v-model="employee.document" :mask="'###.###.###-##'"
                           :error="getError('document')" :valid="isValid('document')" v-validate="'required|cpf'"/>
             </div>
-          </div>
-          <div class="form-row">
-            <div class="col-lg-4">
-              <mask-input placeholder="(00) 00000-0000" name="phone" label="Telefone" v-model="employee.phone" :mask="['(##) #####-####', '(##) ####-####']"
-                          :append-icon="employee.is_whatsapp ? 'fab fa-whatsapp' : 'fas fa-phone'"
-                          :error="getError('phone')" :valid="isValid('phone')" v-validate="'required|phone'"/>
+            <div class="col-lg-2">
+              <phone-input :phone="employee.phone" name="phone" :validate="true"/>
             </div>
-            <div class="col-lg-4">
+            <div class="col-lg-2">
               <base-input label="Tipo">
                 <select class="form-control" v-model="employee.type">
+                  <option value="" selected>Selecione o tipo do funcionário.</option>
                   <option value="admin">Administrador</option>
                   <option value="seller">Vendedor</option>
                   <option value="dressmaker">Costureira</option>
@@ -53,15 +50,8 @@
               </base-input>
             </div>
           </div>
-          <div class="form-row">
-            <div class="col-lg-4">
-              <base-checkbox class="mb-3" v-model="employee.is_whatsapp">
-                Whatsapp
-              </base-checkbox>
-            </div>
-          </div>
-          <hr class="my-4">
 
+          <hr class="my-4">
           <h5 class="heading mb-4">Endereço</h5>
           <p class="text-sm text-muted mt--3">Informe um cep abaixo.
             <a class="text-primary" href="http://www.buscacep.correios.com.br/sistemas/buscacep/" target="_blank">
@@ -83,6 +73,7 @@
 <script>
   import Employee from '@/models/Employee'
   import MaskInput from '@/components/App/Inputs/Mask'
+  import PhoneInput from '@/components/App/Inputs/Phone'
   import AddressInputs from '@/components/App/Address'
   import crudSettingsMixin from '@/mixins/crud-settings'
 
@@ -95,6 +86,7 @@
     mixins: [crudSettingsMixin],
     components: {
       MaskInput,
+      PhoneInput,
       AddressInputs,
       RouteBreadCrumb
     },
@@ -104,22 +96,26 @@
       }
     },
     methods: {
-      submitForm() {
-        this.$validator.validateAll().then(
-          async res => {
-            if (res) {
-              this.changeLoading();
+      async submitForm() {
+        try {
+          this.$validator.validateAll().then(
+            async res => {
+              if (res) {
+                this.changeLoading();
 
-              await Employee.$create({data: this.employee})
-                .then(response => {
-                  notifyVue(this.$notify, 'Funcionário Criado com sucesso', 'success');
-                  this.$router.push({name: 'employee.show', params: {id: response.id}})
-                })
-                .catch(error => notifyError(this.$notify, error))
-                .finally(this.changeLoading());
+                await Employee.$create({data: this.employee})
+                  .then(response => {
+                    notifyVue(this.$notify, 'Funcionário criado com sucesso', 'success');
+                    this.$router.push({name: 'employee.show', params: {id: response.id}})
+                  })
+                  .catch(error => notifyError(this.$notify, error))
+                  .finally(this.changeLoading());
+              }
             }
-          }
-        )
+          )
+        } finally {
+          this.validated = true;
+        }
       }
     }
   };

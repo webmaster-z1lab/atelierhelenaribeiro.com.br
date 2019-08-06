@@ -11,8 +11,7 @@ export default class Employee extends Model {
       document: this.string(''),
       type: this.string(''),
       address: this.attr({}),
-      phone: this.attr(''),
-      is_whatsapp: this.boolean(false),
+      phone: this.attr({is_whatsapp: false, number: ''}),
       created_at: this.attr('')
     }
   }

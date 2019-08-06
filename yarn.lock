@@ -2411,9 +2411,9 @@ code-point-at@^1.0.0:
   integrity sha1-DQcLTQQ6W+ozovGkDi7bPZpMz3c=
 
 collect.js@^4.0.28:
-  version "4.15.0"
-  resolved "https://registry.yarnpkg.com/collect.js/-/collect.js-4.15.0.tgz#b0b9711aad50a7c12e3f7ce716e81c13e9851b59"
-  integrity sha512-5qinri2hJRMVyjkaRpAsm1Ixa1Tze02xBzQmXgpDD0In84IiK0CXNJeSbGTjtBOZQ5/iMssm8hC5/m3SG6WmuA==
+  version "4.16.0"
+  resolved "https://registry.yarnpkg.com/collect.js/-/collect.js-4.16.0.tgz#bc23265efd4f3c276041026d1b1c5a9cf7de3422"
+  integrity sha512-N1ay5gDZaQhED7PSfBt7y3b0S8n6fARrhnOyOdNF1IbvRryzf+1VJxLc3FPqPYYMavgtQ5epLkI7RO83XlmWGw==
 
 collection-visit@^1.0.0:
   version "1.0.0"
@@ -3227,10 +3227,10 @@ datamaps@^0.5.9:
     d3 "^3.5.6"
     topojson "^1.6.19"
 
-date-fns@^1.30.1:
-  version "1.30.1"
-  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-1.30.1.tgz#2e71bf0b119153dbb4cc4e88d9ea5acfb50dc05c"
-  integrity sha512-hBSVCvSmWC+QypYObzwGOd9wqdDpOt+0wl0KbU+R+uuZBS1jN8VsD1ss3irQDknRj5NvxiTF6oj/nDRnN/UQNw==
+date-fns@2.0.0-alpha.25:
+  version "2.0.0-alpha.25"
+  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.0.0-alpha.25.tgz#651a5d1f59a01af6cf0371e39b2ae29df5d521ee"
+  integrity sha512-iQzJkHF0L4wah9Ae9PkvwemwFz6qmRLuNZcghmvf2t+ptLs1qXzONLiGtjmPQzL6+JpC01JjlTopY2AEy4NFAg==
 
 date-now@^0.1.4:
   version "0.1.4"
@@ -6176,7 +6176,7 @@ mkdirp@0.5.1, mkdirp@0.5.x, "mkdirp@>=0.5 0", mkdirp@^0.5.0, mkdirp@^0.5.1, mkdi
   dependencies:
     minimist "0.0.8"
 
-moment@^2.10.2, moment@^2.20.1:
+moment@^2.10.2:
   version "2.24.0"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.24.0.tgz#0d055d53f5052aa653c9f6eb68bb5d12bf5c2b5b"
   integrity sha512-bV7f+6l2QigeBBZSM/6yTNq4P2fNpSWj/0e7jQcy87A8e7o2nAfP/34/2ky5Vw4B9S446EtIhodAzkFCcR4dQg==
@@ -6506,7 +6506,7 @@ npm-run-path@^2.0.0:
     gauge "~2.7.3"
     set-blocking "~2.0.0"
 
-nprogress@0.2.0, nprogress@^0.2.0:
+nprogress@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/nprogress/-/nprogress-0.2.0.tgz#cb8f34c53213d895723fcbab907e9422adbcafb1"
   integrity sha1-y480xTIT2JVyP8urkH6UIq28r7E=
@@ -9327,9 +9327,9 @@ vary@~1.1.2:
   integrity sha1-IpnwLG3tMNSllhsLn3RSShj2NPw=
 
 vee-validate@^2.2.4:
-  version "2.2.13"
-  resolved "https://registry.yarnpkg.com/vee-validate/-/vee-validate-2.2.13.tgz#d77714eeb1bedea24efaaf1774bb2eb3165551ce"
-  integrity sha512-Mj5vFyrSnqIAFZOfhF1asLqymV/rEWQNv7gjWCQIydQ1evKoQ7TzP0F9HZzuWEIWotI2/UumMK5QI8wRkeL0kQ==
+  version "2.2.14"
+  resolved "https://registry.yarnpkg.com/vee-validate/-/vee-validate-2.2.14.tgz#94f914cd30db5928887be98eee4eb635ad617b08"
+  integrity sha512-EDiEk8/PthLn9/1FISLCcviCzjvsc9Jv9B4wmyz0GoGqa0DT8yiTWuTORjSFQQ+UW0GLhXcPNfRhG3EdEOx0gw==
 
 vendors@^1.0.0:
   version "1.0.3"
@@ -9412,17 +9412,10 @@ vue-native-notification@^1.0.5:
   resolved "https://registry.yarnpkg.com/vue-native-notification/-/vue-native-notification-1.0.5.tgz#44fa185e4b48f376ef7ce2d2ddde8740f2aa40dc"
   integrity sha512-ssuJtSMP2LwL5P15JDxHbpW4s6xt9oyE06wvUoqJsgwB5yp6vvohiCGIBd5Ew7HcBZnb/T+b6Rihdo0dJNMLqQ==
 
-vue-nprogress@^0.1.5:
-  version "0.1.5"
-  resolved "https://registry.yarnpkg.com/vue-nprogress/-/vue-nprogress-0.1.5.tgz#574b412f1034012daaf46299d5505d5812f406e6"
-  integrity sha1-V0tBLxA0AS2q9GKZ1VBdWBL0BuY=
-  dependencies:
-    nprogress "0.2.0"
-
 vue-router@^3.0.6:
-  version "3.0.7"
-  resolved "https://registry.yarnpkg.com/vue-router/-/vue-router-3.0.7.tgz#b36ca107b4acb8ff5bc4ff824584059c23fcb87b"
-  integrity sha512-utJ+QR3YlIC/6x6xq17UMXeAfxEvXA0VKD3PiSio7hBOZNusA1jXcbxZxVEfJunLp48oonjTepY8ORoIlRx/EQ==
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/vue-router/-/vue-router-3.1.1.tgz#0893c29548ba2dbe35ed104dcd1aa06743aa0ead"
+  integrity sha512-RAFCIQjs4gbDV7YNH44c1GT0jXSTFvNhKh3o0xiA/UWI1EM7Eriv45n8kM+R8NZ58wXEGtKVaDVBlrXJBuM/Bg==
 
 vue-style-loader@^4.1.0:
   version "4.1.2"
@@ -9451,9 +9444,9 @@ vue-the-mask@^0.11.1:
   integrity sha512-UquSfnSWejD0zAfcD+3jJ1chUAkOAyoxya9Lxh9acCRtrlmGcAIvd0cQYraWqKenbuZJUdum+S174atv2AuEHQ==
 
 vue2-editor@^2.6.6:
-  version "2.9.1"
-  resolved "https://registry.yarnpkg.com/vue2-editor/-/vue2-editor-2.9.1.tgz#4aa724fcb36d70971eee8918a2a634fb0163ddf9"
-  integrity sha512-4974JVg9i+Bgh5jaPDdeMJLC62//xE9dtYebBi9hoJ2ozTohqN49gP5mmV67Ddwsy70FmFWPOXoQI07wEk/VBA==
+  version "2.10.0"
+  resolved "https://registry.yarnpkg.com/vue2-editor/-/vue2-editor-2.10.0.tgz#340dd6d9f72151892deb640957c9d3d576828514"
+  integrity sha512-JZHd94Hy9fgLYlUeinte3uT5lQyD9Ws7HpPsuO/uB/RyJr7KfeLP5OmBz2MhjVGq4edhBGjCXJ8o3chsDDG35w==
   dependencies:
     quill "^1.3.6"
 

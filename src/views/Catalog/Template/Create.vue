@@ -13,12 +13,12 @@
       </div>
     </base-header>
 
-    <div class="container-fluid mt--6" v-if="customer">
+    <div class="container-fluid mt--6">
       <card>
         <div slot="header">
-          <h3 class="mb-0">Editando Cliente</h3>
+          <h3 class="mb-0">Criando Cliente</h3>
           <p class="text-sm mb-0">
-            Modifique os dados abaixo para atualizar informações do cliente.
+            Preencha os dados abaixo para adicionar um novo cliente ao sistema.
           </p>
         </div>
 
@@ -59,7 +59,7 @@
               <base-input label="Representante" :error="getError('seller')" :valid="isValid('seller')">
                 <select name="seller" class="form-control" v-model="customer.seller" :class="[{'is-invalid': getError('seller')}]" v-validate="'required'">
                   <option value="" selected>Selecione um vendedor responsável.</option>
-                  <option :value="seller.id" v-for="seller in sellers" :key="seller.id">{{seller.name}}</option>
+                  <option :value="seller.id" v-for="seller in sellers">{{seller.name}}</option>
                 </select>
               </base-input>
             </div>
@@ -82,10 +82,10 @@
                           placeholder="contato@example.com.br"/>
             </div>
             <div class="col-lg-2">
-              <phone-input :phone="customer.phones[0]" label=" 1" name="phone1" :validate="true"/>
+              <phone-input :phone="phone1" label=" 1" name="phone1" :validate="true"/>
             </div>
             <div class="col-lg-2">
-              <phone-input :phone="customer.phones[1] || phone" label=" 2"/>
+              <phone-input :phone="phone2" label=" 2"/>
             </div>
           </div>
 
@@ -99,7 +99,7 @@
             </div>
           </div>
 
-          <div class="form-row" v-for="(owner, key) in customer.owners" :key="owner.id">
+          <div class="form-row" v-for="(owner, key) in owners">
             <div class="col-lg-3">
               <base-input :name="`name_owners-${key}`" label="Nome" v-model="owner.name" placeholder="Nome do proprietário."
                           :error="getError(`name_owners-${key}`)" :valid="isValid(`name_owners-${key}`)" v-validate="'required'"/>
@@ -158,14 +158,8 @@
   import {http} from "@/services";
 
   export default {
-    name: 'edit',
+    name: 'create',
     mixins: [crudSettingsMixin],
-    props:{
-      id: {
-        type: String,
-        required: true
-      }
-    },
     components: {
       MaskInput,
       PhoneInput,
@@ -176,28 +170,40 @@
     data () {
       return {
         loading: true,
-        sellers: [],
-        phone: {
+        customer: new Customer(),
+        phone1: {
           number: '',
           is_whatsapp: false
         },
-        customer: Customer.find(this.id)
+        phone2: {
+          number: '',
+          is_whatsapp: false
+        },
+        sellers: [],
+        owners: [
+          {
+            name: '',
+            document: '',
+            birth_date: '',
+            email: '',
+            phone: {
+              number: '',
+              is_whatsapp: false
+            }
+          }
+        ]
       }
     },
-    async created() {
+    async created(){
       await http.get(process.env.VUE_APP_API_URL + '/employees', {search: 'seller'}).then(
         async response => {
           this.sellers = response.data
         }
-      ).catch(error => console.dir(error));
-
-      if (!this.customer) this.customer = await Customer.$get({params: {id: this.id}});
-
-      this.changeLoading();
+      ).catch(error => console.dir(error)).finally(this.changeLoading());
     },
     methods: {
       addOwner() {
-        this.customer.owners.push({
+        this.owners.push({
           name: '',
           document: '',
           birth_date: '',
@@ -209,23 +215,26 @@
         })
       },
       removeOwner(key) {
-        this.customer.owners.splice(key, 1)
+        this.owners.splice(key, 1)
       },
-      submitForm() {
+      async submitForm() {
         try {
           this.$validator.validateAll().then(
-            res => {
+            async res => {
               if (res) {
                 this.changeLoading();
 
-                if (this.phone.number) this.customer.phones[1] = this.phone;
+                this.customer.phones = [this.phone1];
+                this.customer.owners = this.owners;
+                if (this.phone2.number) this.customer.phones.push(this.phone2);
 
-                Customer.$update({params: {id: this.id}, data: this.customer})
-                  .then(res => {
-                    notifyVue(this.$notify, 'Cliente atualizado com sucesso', 'success')
+                await Customer.$create({data: this.customer})
+                  .then(response => {
+                    notifyVue(this.$notify, 'Cliente criado com sucesso', 'success');
+                    this.$router.push({name: 'customer.show', params: {id: response.id}})
                   })
                   .catch(error => notifyError(this.$notify, error))
-                  .finally(this.changeLoading())
+                  .finally(this.changeLoading());
               }
             }
           )

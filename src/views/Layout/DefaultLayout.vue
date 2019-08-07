@@ -6,6 +6,12 @@
         <sidebar-item :link="{name: 'Home', path: '/home', icon: 'fas fa-home text-primary'}"/>
         <sidebar-item :link="{name: 'Funcionários', icon: 'fas fa-users-cog text-green', path: '/employees'}"/>
         <sidebar-item :link="{name: 'Clientes', icon: 'fas fa-users text-info', path: '/customers'}"/>
+        <sidebar-item :link="{name: 'Catálogo',icon: 'fas fa-book-open text-danger'}">
+          <sidebar-item :link="{ name: 'Modelos', path: '/catalog/templates' }"/>
+        </sidebar-item>
+        <sidebar-item :link="{name: 'Estoque',icon: 'fas fa-boxes text-warning'}">
+          <sidebar-item :link="{ name: 'Produtos', path: '/stock/products' }"/>
+        </sidebar-item>
       </template>
     </side-bar>
     <div class="main-content">

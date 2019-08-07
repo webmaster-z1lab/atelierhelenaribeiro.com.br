@@ -126,6 +126,7 @@
 <script>
   import StatsCard from '@/components/Cards/StatsCard'
   import RouteBreadCrumb from '@/components/Breadcrumb/RouteBreadcrumb'
+  import {toUpper} from 'lodash'
 
   export default {
     components: {

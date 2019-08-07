@@ -17,6 +17,18 @@ const CreateCustomer = () => import(/* webpackChunkName: "customer" */ '@/views/
 const EditCustomer = () => import(/* webpackChunkName: "customer" */ '@/views/Customer/Edit.vue');
 const ShowCustomer = () => import(/* webpackChunkName: "customer" */ '@/views/Customer/Show.vue');
 
+// Stock
+const IndexProductStock = () => import(/* webpackChunkName: "stock" */ '@/views/Stock/Product/Index.vue');
+const CreateProductStock = () => import(/* webpackChunkName: "stock" */ '@/views/Stock/Product/Create.vue');
+const EditProductStock = () => import(/* webpackChunkName: "stock" */ '@/views/Stock/Product/Edit.vue');
+const ShowProductStock = () => import(/* webpackChunkName: "stock" */ '@/views/Stock/Product/Show.vue');
+
+// Catalog
+const IndexTemplateCatalog = () => import(/* webpackChunkName: "catalog" */ '@/views/Catalog/Template/Index.vue');
+const CreateTemplateCatalog = () => import(/* webpackChunkName: "catalog" */ '@/views/Catalog/Template/Create.vue');
+const EditTemplateCatalog = () => import(/* webpackChunkName: "catalog" */ '@/views/Catalog/Template/Edit.vue');
+const ShowTemplateCatalog = () => import(/* webpackChunkName: "catalog" */ '@/views/Catalog/Template/Show.vue');
+
 // Starter
 const Home = () => import(/* webpackChunkName: "home" */ '@/views/Home.vue');
 const Welcome = () => import(/* webpackChunkName: "home" */ '@/views/Welcome.vue');
@@ -24,108 +36,14 @@ const Welcome = () => import(/* webpackChunkName: "home" */ '@/views/Welcome.vue
 // Auth
 const Login = () => import(/* webpackChunkName: "auth" */ '@/views/Auth/Login.vue');
 
-let employeePages = {
-  path: '/employees',
-  component: DefaultLayout,
-  redirect: {name: 'employee.index'},
-  name: 'employee',
-  children: [
-    {
-      path: '/',
-      name: 'employee.index',
-      component: IndexEmployee,
-      meta: {
-        requiresAuth: true
-      }
-    },
-    {
-      path: '/employees/create',
-      name: 'employee.create',
-      component: CreateEmployee,
-      meta: {
-        requiresAuth: true
-      }
-    },
-    {
-      path: '/employees/edit/:id',
-      name: 'employee.edit',
-      component: EditEmployee,
-      meta: {
-        requiresAuth: true
-      },
-      props: true
-    },
-    {
-      path: '/employees/show/:id',
-      name: 'employee.show',
-      component: ShowEmployee,
-      meta: {
-        requiresAuth: true
-      },
-      props: true
-    }
-  ]
-};
-
-let customerPages = {
-  path: '/customers',
-  component: DefaultLayout,
-  redirect: {name: 'customer.index'},
-  name: 'customer',
-  children: [
-    {
-      path: '/',
-      name: 'customer.index',
-      component: IndexCustomer,
-      meta: {
-        requiresAuth: true
-      }
-    },
-    {
-      path: '/customers/create',
-      name: 'customer.create',
-      component: CreateCustomer,
-      meta: {
-        requiresAuth: true
-      }
-    },
-    {
-      path: '/customers/edit/:id',
-      name: 'customer.edit',
-      component: EditCustomer,
-      meta: {
-        requiresAuth: true
-      },
-      props: true
-    },
-    {
-      path: '/customers/show/:id',
-      name: 'customer.show',
-      component: ShowCustomer,
-      meta: {
-        requiresAuth: true
-      },
-      props: true
-    }
-  ]
-};
-
-let authPages = {
-  path: '/',
-  component: AuthLayout,
-  name: 'auth',
-  children: [
-    {
-      component: Login,
-      path: '/login',
-      name: 'login',
-      meta: {
-        guest: true
-      }
-    },
-    {path: '*', component: NotFound, name: 'notFound'}
-  ]
-};
+// Config
+const withPrefix = (prefix, as, auth, routes) =>
+  routes.map((route) => {
+    route.name = as + route.name;
+    route.path = prefix + route.path;
+    if (auth) route.meta ? route.meta.requiresAuth = true : route.meta = {requiresAuth: true}
+    return route;
+  });
 
 const routes = [
   {
@@ -152,9 +70,71 @@ const routes = [
       }
     ]
   },
-  employeePages,
-  customerPages,
-  authPages
+  {
+    path: '/employees',
+    component: DefaultLayout,
+    redirect: {name: 'employee.index'},
+    name: 'employee',
+    children: [
+      ...withPrefix('/employees', 'employee.', true, [
+        {path: '/', name: 'index', component: IndexEmployee},
+        {path: '/create', name: 'create', component: CreateEmployee},
+        {path: '/edit', name: 'edit', component: EditEmployee, props: true},
+        {path: '/show', name: 'show', component: ShowEmployee, props: true},
+      ])
+    ]
+  },
+  {
+    path: '/customers',
+    component: DefaultLayout,
+    redirect: {name: 'customer.index'},
+    name: 'customer',
+    children: [
+      ...withPrefix('/customers', 'customer.', true, [
+        {path: '/', name: 'index', component: IndexCustomer},
+        {path: '/create', name: 'create', component: CreateCustomer},
+        {path: '/edit', name: 'edit', component: EditCustomer, props: true},
+        {path: '/show', name: 'show', component: ShowCustomer, props: true},
+      ])
+    ]
+  },
+  {
+    path: '/catalog',
+    component: DefaultLayout,
+    redirect: {name: 'catalog.template.index'},
+    name: 'catalog',
+    children: [
+      ...withPrefix('/catalog/templates', 'catalog.template.', true, [
+        {path: '/', name: 'index', component: IndexTemplateCatalog},
+        {path: '/create', name: 'create', component: CreateTemplateCatalog},
+        {path: '/edit', name: 'edit', component: EditTemplateCatalog, props: true},
+        {path: '/show', name: 'show', component: ShowTemplateCatalog, props: true},
+      ])
+    ]
+  },
+  {
+    path: '/stock',
+    component: DefaultLayout,
+    redirect: {name: 'stock.product.index'},
+    name: 'stock',
+    children: [
+      ...withPrefix('/stock/products', 'stock.product.', true, [
+        {path: '/', name: 'index', component: IndexProductStock},
+        {path: '/create', name: 'create', component: CreateProductStock},
+        {path: '/edit', name: 'edit', component: EditProductStock, props: true},
+        {path: '/show', name: 'show', component: ShowProductStock, props: true},
+      ])
+    ]
+  },
+  {
+    path: '/',
+    component: AuthLayout,
+    name: 'auth',
+    children: [
+      {component: Login, path: '/login', name: 'login', meta: {guest: true}},
+      {path: '*', component: NotFound, name: 'notFound'}
+    ]
+  }
 ];
 
 export default routes;

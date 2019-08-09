@@ -48,11 +48,6 @@ const withPrefix = (prefix, as, auth, routes) =>
 const routes = [
   {
     path: '/',
-    name: 'welcome',
-    redirect: {name: 'login'},
-  },
-  {
-    path: '/',
     component: DefaultLayout,
     name: 'dashboard',
     redirect: '/home',

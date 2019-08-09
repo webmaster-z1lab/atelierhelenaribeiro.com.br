@@ -79,12 +79,12 @@
       logout() {
         http.post(`${process.env.VUE_APP_API_URL}/logout`, {})
           .then(async response => {
-            await ls.clear()
+            await ls.clear();
 
-            this.$router.push({name: 'welcome'})
+            this.$router.push({patch: '/'})
           })
           .catch(error => {
-            notifyError(this.$notify, error)
+            notifyError(this.$notify, error);
             this.changeLoading()
           })
       }

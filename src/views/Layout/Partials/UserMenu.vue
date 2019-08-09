@@ -81,7 +81,7 @@
           .then(async response => {
             await ls.clear();
 
-            this.$router.push({patch: '/'})
+            this.$router.push({name: 'login'})
           })
           .catch(error => {
             notifyError(this.$notify, error);

@@ -6,9 +6,10 @@ export default class Template extends Model {
   static fields() {
     return {
       id: this.attr(null),
-      price_base: this.attr(0),
+      price: this.attr(0),
       reference: this.attr(''),
-      status: this.attr(''),
+      is_active: this.boolean(true),
+      images: this.attr([]),
       created_at: this.attr('')
     }
   }

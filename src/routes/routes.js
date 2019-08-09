@@ -49,10 +49,7 @@ const routes = [
   {
     path: '/',
     name: 'welcome',
-    component: Welcome,
-    meta: {
-      noBodyBackground: true
-    }
+    redirect: {name: 'login'},
   },
   {
     path: '/',
@@ -79,8 +76,8 @@ const routes = [
       ...withPrefix('/employees', 'employee.', true, [
         {path: '/', name: 'index', component: IndexEmployee},
         {path: '/create', name: 'create', component: CreateEmployee},
-        {path: '/edit', name: 'edit', component: EditEmployee, props: true},
-        {path: '/show', name: 'show', component: ShowEmployee, props: true},
+        {path: '/edit/:id', name: 'edit', component: EditEmployee, props: true},
+        {path: '/show/:id', name: 'show', component: ShowEmployee, props: true},
       ])
     ]
   },
@@ -93,8 +90,8 @@ const routes = [
       ...withPrefix('/customers', 'customer.', true, [
         {path: '/', name: 'index', component: IndexCustomer},
         {path: '/create', name: 'create', component: CreateCustomer},
-        {path: '/edit', name: 'edit', component: EditCustomer, props: true},
-        {path: '/show', name: 'show', component: ShowCustomer, props: true},
+        {path: '/edit/:id', name: 'edit', component: EditCustomer, props: true},
+        {path: '/show/:id', name: 'show', component: ShowCustomer, props: true},
       ])
     ]
   },
@@ -107,8 +104,8 @@ const routes = [
       ...withPrefix('/catalog/templates', 'catalog.template.', true, [
         {path: '/', name: 'index', component: IndexTemplateCatalog},
         {path: '/create', name: 'create', component: CreateTemplateCatalog},
-        {path: '/edit', name: 'edit', component: EditTemplateCatalog, props: true},
-        {path: '/show', name: 'show', component: ShowTemplateCatalog, props: true},
+        {path: '/edit/:id', name: 'edit', component: EditTemplateCatalog, props: true},
+        {path: '/show/:id', name: 'show', component: ShowTemplateCatalog, props: true},
       ])
     ]
   },
@@ -121,8 +118,8 @@ const routes = [
       ...withPrefix('/stock/products', 'stock.product.', true, [
         {path: '/', name: 'index', component: IndexProductStock},
         {path: '/create', name: 'create', component: CreateProductStock},
-        {path: '/edit', name: 'edit', component: EditProductStock, props: true},
-        {path: '/show', name: 'show', component: ShowProductStock, props: true},
+        {path: '/edit/:id', name: 'edit', component: EditProductStock, props: true},
+        {path: '/show/:id', name: 'show', component: ShowProductStock, props: true},
       ])
     ]
   },

@@ -7,7 +7,7 @@
         <div class="col-lg-6 col-7">
           <h6 class="h2 text-white d-inline-block mb-0">Paginated tables</h6>
           <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
-            <route-bread-crumb/>
+            <route-breadcrumb/>
           </nav>
         </div>
       </div>
@@ -69,8 +69,7 @@
                   </router-link>
                 </el-tooltip>
                 <el-tooltip content="Deletar" placement="top">
-                  <a href="#!" @click.prevent="destroy(row)" class="table-action table-action-delete" data-toggle="tooltip"
-                     data-original-title="Delete">
+                  <a href="#!" @click.prevent="destroy(row)" class="table-action table-action-delete" data-toggle="tooltip" data-original-title="Delete">
                     <i class="fas fa-trash"></i>
                   </a>
                 </el-tooltip>
@@ -107,7 +106,6 @@
 
   import clientPaginationMixin from '@/mixins/client-pagination'
 
-  import RouteBreadCrumb from '@/components/Breadcrumb/RouteBreadcrumb'
   import { BasePagination } from '@/components';
   import { Table, TableColumn, Select, Option, Tooltip } from 'element-ui';
   import {isEmpty} from 'lodash'
@@ -117,7 +115,6 @@
     mixins: [clientPaginationMixin],
     components: {
       BasePagination,
-      RouteBreadCrumb,
       [Select.name]: Select,
       [Option.name]: Option,
       [Table.name]: Table,
@@ -159,8 +156,8 @@
     methods: {
       async searchApi(value) {
         let result = [];
-
         this.changeLoading();
+
         await http.get(process.env.VUE_APP_API_URL + '/employees', {search: value}).then(
           async response => {
             result = await Promise.resolve(Employee.insert({data: response.data}));
@@ -169,7 +166,7 @@
 
         return result.employees || []
       },
-      destroy(index, row) {
+      destroy(row) {
         swal({
           title: 'Você tem Certeza?',
           text: `Ao fazer isso os dados não poderão ser recuperados!`,
@@ -184,11 +181,8 @@
           if (result.value) {
             this.changeLoading();
 
-            Employee.$delete({params: {id: this.id}})
-              .then(response => {
-                notifyVue(this.$notify, 'O funcionário foi apagado!', 'success');
-                this.$router.push({name: 'employee.index'})
-              })
+            Employee.$delete({params: {id: row.id}})
+              .then(response => notifyVue(this.$notify, 'O funcionário foi apagado!', 'success'))
               .catch(error => notifyError(this.$notify, error))
               .finally(this.changeLoading())
           }

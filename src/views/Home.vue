@@ -5,7 +5,7 @@
         <div class="col-lg-6 col-7">
           <h6 class="h2 text-white d-inline-block mb-0">Widgets</h6>
           <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
-            <route-bread-crumb></route-bread-crumb>
+            <route-breadcrumb/>
           </nav>
         </div>
       </div>
@@ -125,13 +125,11 @@
 </template>
 <script>
   import StatsCard from '@/components/Cards/StatsCard'
-  import RouteBreadCrumb from '@/components/Breadcrumb/RouteBreadcrumb'
   import {toUpper} from 'lodash'
 
   export default {
     components: {
-      StatsCard,
-      RouteBreadCrumb
+      StatsCard
     }
   };
 </script>

@@ -7,7 +7,7 @@
         <div class="col-lg-6 col-7">
           <h6 class="h2 text-white d-inline-block mb-0">Paginated tables</h6>
           <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
-            <route-bread-crumb/>
+            <route-breadcrumb/>
           </nav>
         </div>
       </div>
@@ -95,14 +95,12 @@
   import {notifyVue, notifyError} from "@/utils";
   import swal from 'sweetalert2';
 
-  import RouteBreadCrumb from '@/components/Breadcrumb/RouteBreadcrumb'
   import Loading from '@/components/App/Loading'
 
   export default {
     name: 'show',
     components: {
-      Loading,
-      RouteBreadCrumb
+      Loading
     },
     props: {
       id: {

@@ -7,7 +7,7 @@
         <div class="col-lg-6 col-7">
           <h6 class="h2 text-white d-inline-block mb-0">Paginated tables</h6>
           <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
-            <route-bread-crumb/>
+            <route-breadcrumb/>
           </nav>
         </div>
       </div>
@@ -153,8 +153,6 @@
   import crudSettingsMixin from '@/mixins/crud-settings'
 
   import {notifyVue, notifyError} from "@/utils";
-
-  import RouteBreadCrumb from '@/components/Breadcrumb/RouteBreadcrumb'
   import {http} from "@/services";
 
   export default {
@@ -164,8 +162,7 @@
       MaskInput,
       PhoneInput,
       HtmlEditor,
-      AddressInputs,
-      RouteBreadCrumb
+      AddressInputs
     },
     data () {
       return {
@@ -195,11 +192,11 @@
       }
     },
     async created(){
-      await http.get(process.env.VUE_APP_API_URL + '/employees', {search: 'seller'}).then(
-        async response => {
-          this.sellers = response.data
-        }
-      ).catch(error => console.dir(error)).finally(this.changeLoading());
+      await http.get(process.env.VUE_APP_API_URL + '/employees', {search: 'seller'})
+        .then(response => this.sellers = response.data)
+        .catch(error => console.dir(error));
+
+      this.changeLoading()
     },
     methods: {
       addOwner() {

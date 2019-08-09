@@ -7,20 +7,20 @@
         <div class="col-lg-6 col-7">
           <h6 class="h2 text-white d-inline-block mb-0">Paginated tables</h6>
           <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
-            <route-bread-crumb/>
+            <route-breadcrumb/>
           </nav>
         </div>
       </div>
     </base-header>
 
-    <div class="container-fluid mt--6" v-if="customer">
+    <div class="container-fluid mt--6" v-if="template">
       <card class="no-border-card" body-classes="px-0 pb-1" footer-classes="pb-2">
         <div slot="header">
           <div class="row">
             <div class="col-6">
-              <h3 class="mb-0">{{customer.name}}</h3>
+              <h3 class="mb-0">{{template.reference}}</h3>
               <p class="text-sm mb-0">
-                Informações específicas do cliente selecionado.
+                Informações específicas do modelo selecionado.
               </p>
             </div>
             <div class="col-6 text-right">
@@ -28,13 +28,13 @@
                 <span class="btn-inner--icon"><i class="fas fa-arrow-left"></i></span>
                 Voltar
               </base-button>
-              <el-tooltip content="Editar Cliente" placement="top">
-                <router-link :to="{name: 'customer.edit', params: {id: id}}" class="btn btn-icon btn-fab btn-sm btn-warning">
+              <el-tooltip content="Editar Modelo" placement="top">
+                <router-link :to="{name: 'catalog.template.edit', params: {id: id}}" class="btn btn-icon btn-fab btn-sm btn-warning">
                   <span class="btn-inner--icon"><i class="fas fa-user-edit"></i></span>
                   <span class="btn-inner--text">Editar</span>
                 </router-link>
               </el-tooltip>
-              <el-tooltip content="Apagar Cliente" placement="top">
+              <el-tooltip content="Apagar Modelo" placement="top">
                 <base-button type="danger" size="sm" @click="destroy">
                   <i class="fas fa-trash"></i>Deletar
                 </base-button>
@@ -45,92 +45,40 @@
         <div class="mx-4">
           <ul class="list-group list-group-flush list mt--3">
             <li class="list-group-item px-0">
-              <div class="row">
-                <div class="col-lg-4">
-                  <h6 class="heading-small text-muted mb-4">Informações do Cliente</h6>
+              <h6 class="heading-small text-muted mb-4">Informações do Modelo</h6>
 
-                  <div class="row align-items-center">
-                    <div class="col-12 mb-4">
-                      <h4>Nome da Empresa:</h4>
-                      <h5 class="mb-0">{{customer.company_name}}</h5>
-                    </div>
-                    <div class="col-12 mb-4">
-                      <h4>Nome Fantasia:</h4>
-                      <h5 class="mb-0">{{customer.trading_name}}</h5>
-                    </div>
-                    <div class="col-12 mb-4">
-                      <h4>Documento:</h4>
-                      <h5 class="mb-0">{{customer.document}}</h5>
-                    </div>
-                    <div class="col-12 mb-4">
-                      <h4>Inscrição Estadual:</h4>
-                      <h5 class="mb-0">{{customer.state_registration}}</h5>
-                    </div>
-                    <div class="col-12 mb-4">
-                      <h4>Inscrição Municipal:</h4>
-                      <h5 class="mb-0">{{customer.municipal_registration}}</h5>
-                    </div>
-                    <div class="col-12 mb-4">
-                      <h4>Status:</h4>
-                      <h5 class="mb-0">{{customer.status}}</h5>
-                    </div>
-                    <div class="col-12 mb-4">
-                      <h4>Representante:</h4>
-                      <h5 class="mb-0">{{customer.seller}}</h5>
-                    </div>
-                  </div>
+              <div class="row align-items-center">
+                <div class="col mb-4">
+                  <h4>Modelo:</h4>
+                  <h5 class="mb-0">{{template.template}}</h5>
                 </div>
-                <div class="col-lg-8">
-                  <div class="row">
-                    <div class="col-12">
-                      <h6 class="heading-small text-muted mb-4">Dados de Contato</h6>
-
-                      <div class="row align-items-center">
-                        <div class="col mb-4">
-                          <h4>Nome do Contato:</h4>
-                          <h5 class="mb-0">{{customer.contact}}</h5>
-                        </div>
-                        <div class="col mb-4">
-                          <h4>Email da Empresa:</h4>
-                          <h5 class="mb-0">{{customer.email}}</h5>
-                        </div>
-                        <div class="col mb-4">
-                          <h4>Endereço:</h4>
-                          <h5 class="mb-0">{{customer.address.formatted}}</h5>
-                        </div>
-                        <div class="col mb-4" v-for="(phone, key) in customer.phones" :key="`phone-${key}`">
-                          <h4>Telefone {{++key}}:</h4>
-                          <h5 class="mb-0">
-                            <i :class="phone.is_whatsapp ? 'fab fa-whatsapp mr-1' : 'fas fa-phone mr-1'"></i> {{phone.formatted}}
-                          </h5>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-12">
-                      <h6 class="heading-small text-muted mb-4">Dados do(s) Proprietário(s)</h6>
-
-                      <ul class="list-group list-group-flush" data-toggle="checklist">
-                        <li class="checklist-entry list-group-item flex-column align-items-start py-4 px-4" v-for="owner in customer.owners" :key="owner.id">
-                          <div class="checklist-item">
-                            <div class="checklist-info">
-                              <h5 class="checklist-title mb-0">{{owner.name}}</h5>
-                              <small><strong>Email: </strong> {{owner.email}}</small>
-                              <small class="mx-3">
-                                <strong>Contato: </strong>
-                                <i :class="owner.phone.is_whatsapp ? 'fab fa-whatsapp mr-1' : 'fas fa-phone mr-1'"></i> {{owner.phone.formatted}}</small>
-                              <small class="mx-3"><strong>Documento: </strong> {{owner.document}}</small>
-                            </div>
-                          </div>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
+                <div class="col mb-4">
+                  <h4>Preço Base:</h4>
+                  <h5 class="mb-0">{{template.price}}</h5>
                 </div>
-                <div class="col-12">
-                  <h4>Anotações:</h4>
-                  <h5 class="mb-0" v-html="customer.annotation"></h5>
+                <div class="col mb-4">
+                  <h4>Status:</h4>
+                  <h5 class="mb-0">{{template.is_active}}</h5>
                 </div>
               </div>
+
+              <h6 class="heading-small text-muted mb-4">Album de Imagens</h6>
+
+              <ul class="list-group list-group-flush" data-toggle="checklist">
+                <li class="checklist-entry list-group-item flex-column align-items-start py-4 px-4" v-for="(image, key) in template.images" :key="image.id">
+                  <div class="checklist-item">
+                    <div class="checklist-info">
+                      <h5 class="checklist-title mb-0">{{image.name}}</h5>
+                      <small>{{Number((image.size_in_bytes / 1024).toFixed(1))}} kb</small>
+                    </div>
+                    <div>
+                      <base-button type="danger" size="sm" @click="deleteImage(image.id, key)">
+                        <i class="fas fa-trash"></i>
+                      </base-button>
+                    </div>
+                  </div>
+                </li>
+              </ul>
             </li>
           </ul>
         </div>
@@ -146,19 +94,18 @@
 </style>
 
 <script>
-  import Customer from '@/models/Customer'
+  import Template from '@/models/Catalog/Template'
 
   import {notifyVue, notifyError} from "@/utils";
   import swal from 'sweetalert2';
 
-  import RouteBreadCrumb from '@/components/Breadcrumb/RouteBreadcrumb'
   import Loading from '@/components/App/Loading'
+  import {http} from "@/services";
 
   export default {
     name: 'show',
     components: {
-      Loading,
-      RouteBreadCrumb
+      Loading
     },
     props: {
       id: {
@@ -166,24 +113,53 @@
         required: true
       }
     },
-    data: () => ({
-      loading: true,
-    }),
+    data () {
+      return {
+        loading: true
+      }
+    },
     computed: {
-      customer() {
-        return Customer.find(this.id)
+      template() {
+        return Template.find(this.id)
       }
     },
     async created() {
-      if (!this.customer) {
-       await Customer.$get({params: {id: this.id}})
-      }
+      if (!this.template) await Template.$get({params: {id: this.id}})
 
       this.changeLoading()
     },
     methods: {
       changeLoading() {
         this.loading = !this.loading
+      },
+      deleteImage(id, key) {
+        swal({
+          title: 'Você tem Certeza?',
+          text: `Ao fazer isso os dados não poderão ser recuperados!`,
+          type: 'warning',
+          showCancelButton: true,
+          confirmButtonClass: 'btn btn-success btn-fill',
+          cancelButtonClass: 'btn btn-danger btn-fill',
+          confirmButtonText: 'Sim, apagar!',
+          cancelButtonText: 'Cancelar',
+          buttonsStyling: false
+        }).then(async result => {
+          if (result.value) {
+            this.changeLoading();
+            await http.delete(process.env.VUE_APP_API_URL + `/images/${id}/templates/${this.id}`)
+              .then(res => {
+                let template = this.template;
+                template.images.splice(key, 1);
+
+                Template.update({where: id, data: {template}})
+                  .then(response => notifyVue(this.$notify, 'O Arquivo foi apagado!', 'success'))
+                  .catch(error => notifyError(this.$notify, error))
+              })
+              .catch(error => notifyError(this.$notify, error));
+
+            this.changeLoading();
+          }
+        });
       },
       destroy() {
         swal({
@@ -196,14 +172,18 @@
           confirmButtonText: 'Sim, apagar!',
           cancelButtonText: 'Cancelar',
           buttonsStyling: false
-        }).then(result => {
+        }).then(async result => {
           if (result.value) {
-            Customer.$delete({params: {id: this.id}})
+            this.changeLoading();
+
+            await Template.$delete({params: {id: this.id}})
               .then(response => {
-                notifyVue(this.$notify, 'O Cliente foi apagado!', 'success');
-                this.$router.push({name: 'customer.index'})
+                notifyVue(this.$notify, 'O Modelo foi apagado!', 'success');
+                this.$router.push({name: 'catalog.template.index'})
               })
               .catch(error => notifyError(this.$notify, error))
+
+            this.changeLoading()
           }
         });
       }

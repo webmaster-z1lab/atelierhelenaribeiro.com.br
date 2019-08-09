@@ -19,7 +19,7 @@ export const http = {
   },
 
   async get(url, params, headers) {
-    if (params !== null) url = url + '?' + httpBuildQuery(params)
+    if (params) url = url + '?' + httpBuildQuery(params)
 
     return await this.request('get', url, {}, headers);
   },

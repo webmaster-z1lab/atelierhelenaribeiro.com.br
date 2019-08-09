@@ -7,7 +7,7 @@
         <div class="col-lg-6 col-7">
           <h6 class="h2 text-white d-inline-block mb-0">Paginated tables</h6>
           <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
-            <route-bread-crumb/>
+            <route-breadcrumb/>
           </nav>
         </div>
       </div>
@@ -18,14 +18,14 @@
         <div slot="header">
           <div class="row">
             <div class="col-6">
-              <h3 class="mb-0">Lista de Clientes</h3>
+              <h3 class="mb-0">Lista de Produtos</h3>
               <p class="text-sm mb-0">
-                Lista de todos os clientes cadastrados no sistema.
+                Lista de todos os produtos cadastrados no sistema.
               </p>
             </div>
             <div class="col-6 text-right">
               <el-tooltip content="Criar Novo Funcionário" placement="top">
-                <router-link :to="{name: 'customer.create'}" class="btn btn-icon btn-fab btn-sm btn-primary">
+                <router-link :to="{name: 'stock.product.create'}" class="btn btn-icon btn-fab btn-sm btn-primary">
                   <span class="btn-inner&#45;&#45;icon"><i class="fas fa-user-plus"></i></span>
                   <span class="btn-inner--text">Add</span>
                 </router-link>
@@ -59,12 +59,12 @@
             <el-table-column min-width="60px" align="right" label="Ações">
               <div slot-scope="{$index, row}" class="d-flex">
                 <el-tooltip content="Visualizar" placement="top">
-                  <router-link :to="{name: 'customer.show', params: {id: row.id}}" class="table-action" data-toggle="tooltip" data-original-title="Show">
+                  <router-link :to="{name: 'stock.product.show', params: {id: row.id}}" class="table-action" data-toggle="tooltip" data-original-title="Show">
                     <i class="fas fa-eye"></i>
                   </router-link>
                 </el-tooltip>
                 <el-tooltip content="Editar" placement="top">
-                  <router-link :to="{name: 'customer.edit', params: {id: row.id}}" class="table-action" data-toggle="tooltip" data-original-title="Edit">
+                  <router-link :to="{name: 'stock.product.edit', params: {id: row.id}}" class="table-action" data-toggle="tooltip" data-original-title="Edit">
                     <i class="fas fa-user-edit"></i>
                   </router-link>
                 </el-tooltip>
@@ -99,7 +99,7 @@
 </style>
 
 <script>
-  import Customer from '@/models/Customer'
+  import Product from '@/models/Stock/Product'
 
   import {http} from "@/services";
   import {notifyVue, notifyError} from "@/utils";
@@ -107,7 +107,6 @@
 
   import clientPaginationMixin from '@/mixins/client-pagination'
 
-  import RouteBreadCrumb from '@/components/Breadcrumb/RouteBreadcrumb'
   import { BasePagination } from '@/components';
   import { Table, TableColumn, Select, Option, Tooltip } from 'element-ui';
   import {isEmpty} from 'lodash'
@@ -117,7 +116,6 @@
     mixins: [clientPaginationMixin],
     components: {
       BasePagination,
-      RouteBreadCrumb,
       [Select.name]: Select,
       [Option.name]: Option,
       [Table.name]: Table,
@@ -128,14 +126,14 @@
       return {
         tableColumns: [
           {
-            prop: 'company_name',
-            label: 'Nome',
+            prop: 'id',
+            label: 'Produto',
             minWidth: 220,
             sortable: true
           },
           {
-            prop: 'document',
-            label: 'Documento',
+            prop: 'template.reference',
+            label: 'Modelo',
             minWidth: 220,
             sortable: true
           },
@@ -150,24 +148,24 @@
     },
     computed: {
       tableData() {
-        return Customer.all()
+        return Product.all()
       }
     },
     created() {
-      Customer.$fetch();
+      Product.$fetch();
     },
     methods: {
       async searchApi(value) {
         let result = [];
 
         this.changeLoading();
-        await http.get(process.env.VUE_APP_API_URL + '/customers', {search: value}).then(
+        await http.get(process.env.VUE_APP_API_URL + '/products', {search: value}).then(
           async response => {
-            result = await Promise.resolve(Customer.insert({data: response.data}));
+            result = await Promise.resolve(Product.insert({data: response.data}));
           }
         ).catch(error => console.dir(error)).finally(this.changeLoading());
 
-        return result.customers || []
+        return result.products || []
       },
       destroy(index, row) {
         swal({
@@ -184,11 +182,8 @@
           if (result.value) {
             this.changeLoading();
 
-            Employee.$delete({params: {id: this.id}})
-              .then(response => {
-                notifyVue(this.$notify, 'O cliente foi apagado!', 'success');
-                this.$router.push({name: 'customer.index'})
-              })
+            Product.$delete({params: {id: this.id}})
+              .then(response => notifyVue(this.$notify, 'O produto foi apagado!', 'success'))
               .catch(error => notifyError(this.$notify, error))
               .finally(this.changeLoading())
           }

@@ -174,7 +174,7 @@
           buttonsStyling: false
         }).then(async result => {
           if (result.value) {
-            this.changeLoading();
+            await this.changeLoading();
 
             await Template.$delete({params: {id: this.id}})
               .then(response => {

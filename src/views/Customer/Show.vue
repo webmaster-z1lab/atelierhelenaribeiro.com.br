@@ -194,14 +194,18 @@
           confirmButtonText: 'Sim, apagar!',
           cancelButtonText: 'Cancelar',
           buttonsStyling: false
-        }).then(result => {
+        }).then(async result => {
           if (result.value) {
-            Customer.$delete({params: {id: this.id}})
+            await this.changeLoading();
+
+            await Customer.$delete({params: {id: this.id}})
               .then(response => {
                 notifyVue(this.$notify, 'O Cliente foi apagado!', 'success');
                 this.$router.push({name: 'customer.index'})
               })
-              .catch(error => notifyError(this.$notify, error))
+              .catch(error => notifyError(this.$notify, error));
+
+            this.changeLoading()
           }
         });
       }

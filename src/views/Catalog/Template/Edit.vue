@@ -90,17 +90,18 @@
       submitForm() {
         try {
           this.$validator.validateAll().then(
-            res => {
+            async res => {
               if (res) {
-                this.changeLoading();
+                await this.changeLoading();
 
                 isEmpty(this.image) ? delete this.template.images : this.template.images = this.images;
                 delete this.template.reference;
 
-                Template.$update({params: {id: this.id}, data: this.template})
+                await Template.$update({params: {id: this.id}, data: this.template})
                   .then(res => notifyVue(this.$notify, 'Modelo atualizado com sucesso', 'success'))
                   .catch(error => notifyError(this.$notify, error))
-                  .finally(this.changeLoading())
+
+                this.changeLoading()
               }
             }
           )

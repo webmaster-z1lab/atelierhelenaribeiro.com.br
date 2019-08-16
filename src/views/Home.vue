@@ -119,17 +119,108 @@
             </div>
           </div>
         </div>
+        <div class="col-lg-8">
+<!--          <uppy/>-->
+        </div>
       </div>
     </div>
   </div>
 </template>
 <script>
   import StatsCard from '@/components/Cards/StatsCard'
-  import {toUpper} from 'lodash'
+  //import Product from "@/models/Stock/Product";
+  //import Uppy from './UppyComp'
 
   export default {
+    name: 'home',
     components: {
-      StatsCard
-    }
+      StatsCard,
+      //Uppy
+    },
+    // computed: {
+    //   test() {
+    //     return Product.query().with('template').first()
+    //   }
+    // },
+    // created() {
+    //   Product.insert({
+    //     data: [{
+    //       "id":"5d52fe02dd04072594006907",
+    //       "barcode":"St3OmMGQbOB6BgAE",
+    //       "size":"m",
+    //       "color":"branco",
+    //       template_id: '5d4c7027dd04073060004f1b',
+    //       "template": {
+    //         "id":"5d4c7027dd04073060004f1b",
+    //         "reference":"Y7NAXGOP",
+    //         "price":1230,
+    //         "is_active":false,
+    //         "created_at":"2019-08-08T15:55:35-03:00",
+    //         "images":[
+    //           {
+    //             "id":"5d4c7028dd04073060004f1d",
+    //             "name":"Naruto-Uzumaki-Strong-Wallpaper-2880x1800",
+    //             "extension":"webp",
+    //             "path":"images\/Naruto-Uzumaki-Strong-Wallpaper-2880x1800.jpg",
+    //             "icon":null,
+    //             "size":null,
+    //             "size_in_bytes":510784
+    //           }
+    //         ],
+    //       },
+    //       "price":2000,
+    //       "images": [
+    //         {
+    //           "id":"5d52fe02dd04072594006908",
+    //           "name":"ChibiNaruto",
+    //           "extension":"webp",
+    //           "path":"images\/chibinarutowebp",
+    //           "icon":null,
+    //           "size":null,
+    //           "size_in_bytes":41736
+    //         }
+    //       ],
+    //       "created_at":"2019-08-13T15:14:26-03:00"
+    //     },
+    //       {
+    //         "id":"5d52fe02dd04072594006905",
+    //         "barcode":"St3OmMGQbOB6BgAE",
+    //         "size":"m",
+    //         "color":"branco",
+    //         template_id: '5d4c7027dd04073060004f11',
+    //         "template": {
+    //           "id":"5d4c7027dd04073060004f11",
+    //           "reference":"Y7NAXGOP",
+    //           "price":1230,
+    //           "is_active":false,
+    //           "created_at":"2019-08-08T15:55:35-03:00",
+    //           "images":[
+    //             {
+    //               "id":"5d4c7028dd04073060004f1d",
+    //               "name":"Naruto-Uzumaki-Strong-Wallpaper-2880x1800",
+    //               "extension":"webp",
+    //               "path":"images\/Naruto-Uzumaki-Strong-Wallpaper-2880x1800.jpg",
+    //               "icon":null,
+    //               "size":null,
+    //               "size_in_bytes":510784
+    //             }
+    //           ],
+    //         },
+    //         "price":2000,
+    //         "images": [
+    //           {
+    //             "id":"5d52fe02dd04072594006908",
+    //             "name":"ChibiNaruto",
+    //             "extension":"webp",
+    //             "path":"images\/chibinarutowebp",
+    //             "icon":null,
+    //             "size":null,
+    //             "size_in_bytes":41736
+    //           }
+    //         ],
+    //         "created_at":"2019-08-13T15:14:26-03:00"
+    //       }]
+    //   }).then(res => console.log(res)).catch(err => console.log(err))
+    // }
   };
 </script>

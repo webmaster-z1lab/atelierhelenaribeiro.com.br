@@ -4,7 +4,7 @@
 
 <style>
   .vld-overlay {
-    z-index: 99 !important;
+    z-index: 9999 !important;
   }
 </style>
 

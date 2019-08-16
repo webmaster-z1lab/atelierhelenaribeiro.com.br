@@ -19,11 +19,11 @@ VuexORM.use(VuexORMAxios, {
       'Content-Type': 'application/json'
     }
   }
-})
+});
 
 const store = new Vuex.Store({
   namespaced: true,
   plugins: [VuexORM.install(database)]
-})
+});
 
 export default store

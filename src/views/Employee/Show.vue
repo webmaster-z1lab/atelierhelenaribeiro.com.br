@@ -138,14 +138,18 @@
           confirmButtonText: 'Sim, apagar!',
           cancelButtonText: 'Cancelar',
           buttonsStyling: false
-        }).then(result => {
+        }).then(async result => {
           if (result.value) {
-            Employee.$delete({params: {id: this.id}})
+            await this.changeLoading();
+
+            await Employee.$delete({params: {id: this.id}})
               .then(response => {
                 notifyVue(this.$notify, 'O funcionário foi apagado!', 'success');
                 this.$router.push({name: 'employee.index'})
               })
               .catch(error => notifyError(this.$notify, error))
+
+            this.changeLoading()
           }
         });
       }

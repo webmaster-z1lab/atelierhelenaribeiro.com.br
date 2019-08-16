@@ -98,15 +98,16 @@
           this.$validator.validateAll().then(
             async res => {
               if (res) {
-                this.changeLoading();
+                await this.changeLoading();
 
                 await Employee.$create({data: this.employee})
                   .then(response => {
                     notifyVue(this.$notify, 'Funcionário criado com sucesso', 'success');
                     this.$router.push({name: 'employee.show', params: {id: response.id}})
                   })
-                  .catch(error => notifyError(this.$notify, error))
-                  .finally(this.changeLoading());
+                  .catch(error => notifyError(this.$notify, error));
+
+                this.changeLoading()
               }
             }
           )

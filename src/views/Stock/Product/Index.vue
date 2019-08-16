@@ -178,14 +178,15 @@
           confirmButtonText: 'Sim, apagar!',
           cancelButtonText: 'Cancelar',
           buttonsStyling: false
-        }).then(result => {
+        }).then(async result => {
           if (result.value) {
-            this.changeLoading();
+            await this.changeLoading();
 
-            Product.$delete({params: {id: this.id}})
+            await Product.$delete({params: {id: this.id}})
               .then(response => notifyVue(this.$notify, 'O produto foi apagado!', 'success'))
-              .catch(error => notifyError(this.$notify, error))
-              .finally(this.changeLoading())
+              .catch(error => notifyError(this.$notify, error));
+
+            this.changeLoading()
           }
         });
       }

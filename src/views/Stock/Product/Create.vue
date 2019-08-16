@@ -123,7 +123,7 @@
           this.$validator.validateAll().then(
             async res => {
               if (res) {
-                this.changeLoading();
+                await this.changeLoading();
 
                 this.product.amount = this.amount;
 
@@ -132,8 +132,9 @@
                     notifyVue(this.$notify, 'Produto criado com sucesso', 'success');
                     this.$router.push({name: 'stock.product.show', params: {id: response.id}})
                   })
-                  .catch(error => notifyError(this.$notify, error))
-                  .finally(this.changeLoading());
+                  .catch(error => notifyError(this.$notify, error));
+
+                this.changeLoading()
               }
             }
           )

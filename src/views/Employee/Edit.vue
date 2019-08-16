@@ -107,14 +107,15 @@
       async submitForm() {
         try {
           this.$validator.validateAll().then(
-            res => {
+            async res => {
               if (res) {
-                this.changeLoading();
+                await this.changeLoading();
 
-                Employee.$update({params: {id: this.id}, data: this.employee})
+                await Employee.$update({params: {id: this.id}, data: this.employee})
                   .then(res => notifyVue(this.$notify, 'Funcionário atualizado com sucesso', 'success'))
-                  .catch(error => notifyError(this.$notify, error))
-                  .finally(this.changeLoading())
+                  .catch(error => notifyError(this.$notify, error));
+
+                this.changeLoading()
               }
             }
           )

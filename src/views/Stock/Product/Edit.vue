@@ -99,7 +99,7 @@
       }
     },
     async created() {
-      if (!this.product) this.product = await Product.$get({params: {id: this.id}});
+      if (!this.product) this.product = await Product.$get({params: {id: this.id}, headers: {"If-None-Match": 'sasasas'}});
 
       this.changeLoading();
     },
@@ -107,19 +107,18 @@
       submitForm() {
         try {
           this.$validator.validateAll().then(
-            res => {
+            async res => {
               if (res) {
-                this.changeLoading();
+                await this.changeLoading();
 
                 isEmpty(this.image) ? delete this.product.images : this.product.images = this.images;
                 if (this.product.price === 0) delete this.product.price;
 
-                Product.$update({params: {id: this.id}, data: this.product})
-                  .then(res => {
-                    notifyVue(this.$notify, 'Produto atualizado com sucesso', 'success')
-                  })
-                  .catch(error => notifyError(this.$notify, error))
-                  .finally(this.changeLoading())
+                await Product.$update({params: {id: this.id}, data: this.product})
+                  .then(res => notifyVue(this.$notify, 'Produto atualizado com sucesso', 'success'))
+                  .catch(error => notifyError(this.$notify, error));
+
+                this.changeLoading()
               }
             }
           )

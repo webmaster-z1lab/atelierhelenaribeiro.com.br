@@ -177,14 +177,15 @@
           confirmButtonText: 'Sim, apagar!',
           cancelButtonText: 'Cancelar',
           buttonsStyling: false
-        }).then(result => {
+        }).then(async result => {
           if (result.value) {
-            this.changeLoading();
+            await this.changeLoading();
 
-            Employee.$delete({params: {id: row.id}})
+            await Employee.$delete({params: {id: row.id}})
               .then(response => notifyVue(this.$notify, 'O funcionário foi apagado!', 'success'))
               .catch(error => notifyError(this.$notify, error))
-              .finally(this.changeLoading())
+
+            this.changeLoading()
           }
         });
       }

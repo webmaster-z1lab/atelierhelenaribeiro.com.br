@@ -86,12 +86,16 @@
           this.$validator.validateAll().then(
             async res => {
               if (res) {
-                this.changeLoading();
+                await this.changeLoading();
 
-                await Template.$create({data: this.template}).then(response => {
+                await Template.$create({data: this.template})
+                  .then(response => {
                     notifyVue(this.$notify, 'Modelo criado com sucesso', 'success');
+
                     this.$router.push({name: 'catalog.template.show', params: {id: response.id}})
-                  }).catch(error => notifyError(this.$notify, error)).finally(this.changeLoading());
+                  }).catch(error => notifyError(this.$notify, error));
+
+                this.changeLoading()
               }
             }
           )

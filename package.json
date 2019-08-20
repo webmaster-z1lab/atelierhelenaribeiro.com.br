@@ -63,7 +63,6 @@
     "@vue/cli-plugin-pwa": "^3.9.0",
     "@vue/cli-service": "^3.9.0",
     "@vue/eslint-config-prettier": "^4.0.1",
-    "@z1lab/plugin-axios": "file:C:\\www\\3.PACKAGES\\npm\\plugin-axios",
     "babel-plugin-component": "^1.1.0",
     "node-sass": "^4.12.0",
     "sass-loader": "^7.1.0",

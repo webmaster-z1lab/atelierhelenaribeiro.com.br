@@ -59,7 +59,7 @@
               <base-input label="Representante" :error="getError('seller')" :valid="isValid('seller')">
                 <select name="seller" class="form-control" v-model="customer.seller" :class="[{'is-invalid': getError('seller')}]" v-validate="'required'">
                   <option value="" selected>Selecione um vendedor responsável.</option>
-                  <option :value="seller.id" v-for="seller in sellers">{{seller.name}}</option>
+                  <option :value="seller.id" v-for="seller in sellers" :key="seller.id">{{seller.name}}</option>
                 </select>
               </base-input>
             </div>
@@ -99,7 +99,7 @@
             </div>
           </div>
 
-          <div class="form-row" v-for="(owner, key) in owners">
+          <div class="form-row" v-for="(owner, key) in owners" :key="key">
             <div class="col-lg-3">
               <base-input :name="`name_owners-${key}`" label="Nome" v-model="owner.name" placeholder="Nome do proprietário."
                           :error="getError(`name_owners-${key}`)" :valid="isValid(`name_owners-${key}`)" v-validate="'required'"/>

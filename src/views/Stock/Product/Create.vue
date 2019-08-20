@@ -27,7 +27,7 @@
             <div class="col-lg-4">
               <base-input label="Referência" :error="getError('reference')" :valid="isValid('reference')">
                 <el-select v-model="product.template" filterable placeholder="Selecione o modelo do produto." name="reference" v-validate="'required'"
-                           :class="[{'is-invalid': getError('reference')}]">
+                           :class="[{'is-invalid': getError('reference')}]" @change="setPriceBase">
                   <el-option v-for="option in templates" :key="option.id" :label="option.reference" :value="option.id"/>
                 </el-select>
               </base-input>
@@ -59,7 +59,7 @@
               <base-input type="number" name="amount" label="Quantidade" v-model="amount" :error="getError('amount')" :valid="isValid('amount')" v-validate="'required'"/>
             </div>
             <div class="col-lg-4">
-              <money-input label="Preço" v-model="product.price" name="price" :error="getError('price')" :valid="isValid('price')" v-validate="'required'"/>
+              <money-input label="Preço" v-model="product.price" name="price" :error="getError('price')" :valid="isValid('price')" v-validate="'required'" :key="product.template"/>
             </div>
             <div class="col-lg-12">
               <dropzone-file-upload v-model="product.images" multiple/>
@@ -114,11 +114,12 @@
       this.changeLoading();
     },
     methods: {
-      setPriceBase(price) {
-        console.log(price)
-        this.product.price = price
+      setPriceBase(id) {
+        this.$validator.pause();
+        this.product.price = Template.find(id).price;
       },
       async submitForm() {
+        this.$validator.resume();
         try {
           this.$validator.validateAll().then(
             async res => {
@@ -145,11 +146,3 @@
     }
   };
 </script>
-
-<style>
-  @media (min-width: 992px) {
-    .d-lg-block {
-      display: inline !important;
-    }
-  }
-</style>

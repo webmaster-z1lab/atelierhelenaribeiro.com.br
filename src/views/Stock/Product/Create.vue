@@ -61,8 +61,12 @@
             <div class="col-lg-4">
               <money-input label="Preço" v-model="product.price" name="price" :error="getError('price')" :valid="isValid('price')" v-validate="'required'" :key="product.template"/>
             </div>
-            <div class="col-lg-12">
-              <dropzone-file-upload v-model="product.images" multiple/>
+            <div class="col-lg-6">
+              <div id="DashboardContainer"></div>
+            </div>
+            <div class="col-lg-6">
+              <p>img test</p>
+              <img :src="index.url_test" alt="" v-for="(index, key) in gallery" :key="key">
             </div>
           </div>
 
@@ -76,11 +80,13 @@
 </template>
 
 <script>
-  import Product from '@/models/Stock/Product'
+  import Product from '@/models/Stock/Product';
   import Template from "@/models/Catalog/Template";
-  import MoneyInput from '@/components/App/Inputs/Money'
-  import DropzoneFileUpload from '@/components/Inputs/DropzoneFileUpload'
-  import crudSettingsMixin from '@/mixins/crud-settings'
+
+  import MoneyInput from '@/components/App/Inputs/Money';
+  import UploadUppy from '@/components/App/UploadUppy';
+  import crudSettingsMixin from '@/mixins/crud-settings';
+  import clientUploadUppyMixin from '@/mixins/client-upload-uppy';
 
   import {notifyVue, notifyError} from "@/utils";
   import { Select, Option } from 'element-ui'
@@ -89,18 +95,30 @@
 
   export default {
     name: 'create',
-    mixins: [crudSettingsMixin],
+    mixins: [crudSettingsMixin, clientUploadUppyMixin],
     components: {
       MoneyInput,
-      DropzoneFileUpload,
+      UploadUppy,
       [Select.name]: Select,
       [Option.name]: Option,
     },
     data () {
       return {
+        gallery: [],
         loading: true,
         amount: 1,
         product: new Product()
+      }
+    },
+    watch: {
+      async gallery(value) {
+        for (let item of value) {
+          await this.s3.getObject({Bucket: 'storage-chr', Key: 'undefined/ChibiNaruto.jpg'}, async (error, data) => {
+            if (null === error) {
+              item.url_test = await window.URL.createObjectURL(new Blob([data.Body], {type: data.ContentType}));
+            }
+          });
+        }
       }
     },
     computed: {
@@ -117,31 +135,33 @@
       setPriceBase(id) {
         this.$validator.pause();
         this.product.price = Template.find(id).price;
+        http.get(process.env.VUE_APP_API_URL + `/templates/${id}/gallery`).then(res => {this.gallery = res.data})
       },
       async submitForm() {
-        this.$validator.resume();
-        try {
-          this.$validator.validateAll().then(
-            async res => {
-              if (res) {
-                await this.changeLoading();
-
-                this.product.amount = this.amount;
-
-                await Product.$create({data: this.product})
-                  .then(response => {
-                    notifyVue(this.$notify, 'Produto criado com sucesso', 'success');
-                    this.$router.push({name: 'stock.product.show', params: {id: response.id}})
-                  })
-                  .catch(error => notifyError(this.$notify, error));
-
-                this.changeLoading()
-              }
-            }
-          )
-        } finally {
-          this.validated = true;
-        }
+        this.uppy.upload().then(res => console.log(res))
+        // this.$validator.resume();
+        // try {
+        //   this.$validator.validateAll().then(
+        //     async res => {
+        //       if (res) {
+        //         await this.changeLoading();
+        //
+        //         this.product.amount = this.amount;
+        //
+        //         await Product.$create({data: this.product})
+        //           .then(response => {
+        //             notifyVue(this.$notify, 'Produto criado com sucesso', 'success');
+        //             this.$router.push({name: 'stock.product.show', params: {id: response.id}})
+        //           })
+        //           .catch(error => notifyError(this.$notify, error));
+        //
+        //         this.changeLoading()
+        //       }
+        //     }
+        //   )
+        // } finally {
+        //   this.validated = true;
+        // }
       }
     }
   };

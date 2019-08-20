@@ -32,14 +32,31 @@
             <div class="col-lg-3">
               <base-input type="email" name="email" label="Email" v-model="employee.email" :error="getError('email')" :valid="isValid('email')" v-validate="'required|email'"/>
             </div>
-            <div class="col-lg-2">
-              <mask-input placeholder="000.000.000-00" name="document" label="CPF" v-model="employee.document" :mask="'###.###.###-##'"
-                          :error="getError('document')" :valid="isValid('document')" v-validate="'required|cpf'"/>
+            <div class="col-lg-3">
+              <mask-input placeholder="000.000.000-00" name="document" label="CPF" v-model="employee.document" :mask="'###.###.###-##'" :error="getError('document')" :valid="isValid('document')"
+                          v-validate="'required|cpf'"/>
             </div>
-            <div class="col-lg-2">
+            <div class="col-lg-3">
+              <base-input name="identity" label="Identidade" v-model="employee.identity" :error="getError('identity')" :valid="isValid('identity')" v-validate="'required'"/>
+            </div>
+            <div class="col-lg-3">
+              <base-input name="work_card" label="Carteira de Trabalho" v-model="employee.work_card" :error="getError('work_card')" :valid="isValid('work_card')" v-validate="'required'"/>
+            </div>
+            <div class="col-lg-3">
+              <mask-input name="birth_date" placeholder="##/##/####" label="Data de Nascimento" v-model="employee.birth_date" :mask="'##/##/####'" :masked="true"
+                          :error="getError('birth_date')" :valid="isValid('birth_date')" v-validate="'required|date_format:dd/MM/yyyy|before_today'"/>
+            </div>
+            <div class="col-lg-3">
+              <mask-input name="admission_date" placeholder="##/##/####" label="Data de Admissão" v-model="employee.admission_date" :mask="'##/##/####'" :masked="true"
+                          :error="getError('admission_date')" :valid="isValid('admission_date')" v-validate="'required|date_format:dd/MM/yyyy|before_today'"/>
+            </div>
+            <div class="col-lg-3">
+              <money-input label="Remuneração" v-model="employee.remuneration" name="remuneration"/>
+            </div>
+            <div class="col-lg-4">
               <phone-input :phone="employee.phone" name="phone" :validate="true"/>
             </div>
-            <div class="col-lg-2">
+            <div class="col-lg-4">
               <base-input label="Tipo">
                 <select class="form-control" v-model="employee.type">
                   <option value="" selected>Selecione o tipo do funcionário.</option>
@@ -74,6 +91,7 @@
   import Employee from '@/models/Employee'
   import MaskInput from '@/components/App/Inputs/Mask'
   import PhoneInput from '@/components/App/Inputs/Phone'
+  import MoneyInput from '@/components/App/Inputs/Money'
   import AddressInputs from '@/components/App/Address'
   import crudSettingsMixin from '@/mixins/crud-settings'
 
@@ -83,6 +101,7 @@
     name: 'create',
     mixins: [crudSettingsMixin],
     components: {
+      MoneyInput,
       MaskInput,
       PhoneInput,
       AddressInputs

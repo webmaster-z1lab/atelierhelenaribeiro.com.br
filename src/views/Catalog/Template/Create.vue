@@ -37,7 +37,7 @@
               </div>
             </div>
             <div class="col-lg-12">
-              <dropzone-file-upload v-model="template.images" multiple />
+              <dropzone-file-upload v-model="template.images" multiple/>
             </div>
           </div>
 
@@ -73,7 +73,7 @@
         test: []
       }
     },
-    async created(){
+    async created() {
       await http.get(process.env.VUE_APP_API_URL + '/templates/reference')
         .then(response => this.template.reference = response.data.reference)
         .catch(error => console.dir(error));

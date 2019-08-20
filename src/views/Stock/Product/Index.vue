@@ -13,14 +13,14 @@
       </div>
     </base-header>
 
-    <div class="container-fluid mt--6">
+    <div class="container-fluid mt--6" v-if="!subIndex">
       <card class="no-border-card" body-classes="px-0 pb-1" footer-classes="pb-2">
         <div slot="header">
           <div class="row">
             <div class="col-6">
               <h3 class="mb-0">Lista de Produtos</h3>
               <p class="text-sm mb-0">
-                Lista de todos os produtos cadastrados no sistema.
+                Lista de todos os produtos cadastrados no sistema agrupados por modelo para facilitar buscas.
               </p>
             </div>
             <div class="col-6 text-right">
@@ -59,19 +59,8 @@
             <el-table-column min-width="60px" align="right" label="Ações">
               <div slot-scope="{$index, row}" class="d-flex">
                 <el-tooltip content="Visualizar" placement="top">
-                  <router-link :to="{name: 'stock.product.show', params: {id: row.id}}" class="table-action" data-toggle="tooltip" data-original-title="Show">
+                  <a href="javascript:;" class="table-action" data-toggle="tooltip" data-original-title="Show" @click="showSubIndex(row)">
                     <i class="fas fa-eye"></i>
-                  </router-link>
-                </el-tooltip>
-                <el-tooltip content="Editar" placement="top">
-                  <router-link :to="{name: 'stock.product.edit', params: {id: row.id}}" class="table-action" data-toggle="tooltip" data-original-title="Edit">
-                    <i class="fas fa-user-edit"></i>
-                  </router-link>
-                </el-tooltip>
-                <el-tooltip content="Deletar" placement="top">
-                  <a href="#!" @click.prevent="destroy(row)" class="table-action table-action-delete" data-toggle="tooltip"
-                     data-original-title="Delete">
-                    <i class="fas fa-trash"></i>
                   </a>
                 </el-tooltip>
               </div>
@@ -89,24 +78,23 @@
         </div>
       </card>
     </div>
+
+    <SubIndex :data="subProducts" @close="closeSubIndex" v-else/>
   </div>
 </template>
 
 <style>
-  .no-border-card .card-footer{
+  .no-border-card .card-footer {
     border-top: 0;
   }
 </style>
 
 <script>
-  import Product from '@/models/Stock/Product'
-
   import {http} from "@/services";
-  import {notifyVue, notifyError} from "@/utils";
-  import swal from 'sweetalert2';
 
   import clientPaginationMixin from '@/mixins/client-pagination'
 
+  import SubIndex from './Index/SubIndex'
   import { BasePagination } from '@/components';
   import { Table, TableColumn, Select, Option, Tooltip } from 'element-ui';
   import {isEmpty} from 'lodash'
@@ -115,6 +103,7 @@
     name: 'index',
     mixins: [clientPaginationMixin],
     components: {
+      SubIndex,
       BasePagination,
       [Select.name]: Select,
       [Option.name]: Option,
@@ -124,23 +113,32 @@
     },
     data () {
       return {
+        products: [],
+        subIndex: false,
+        subProducts: [],
         tableColumns: [
           {
-            prop: 'id',
-            label: 'Produto',
-            minWidth: 220,
-            sortable: true
-          },
-          {
-            prop: 'template.reference',
+            prop: 'template',
             label: 'Modelo',
             minWidth: 220,
             sortable: true
           },
           {
-            prop: 'created_at',
-            label: 'Data de Criação',
+            prop: 'color',
+            label: 'Cor',
             minWidth: 150,
+            sortable: true
+          },
+          {
+            prop: 'size',
+            label: 'Tamanho',
+            minWidth: 150,
+            sortable: true
+          },
+          {
+            prop: 'amount',
+            label: 'Quant. Produtos',
+            minWidth: 220,
             sortable: true
           }
         ]
@@ -148,47 +146,30 @@
     },
     computed: {
       tableData() {
-        return Product.all()
+        return this.products
       }
     },
     created() {
-      Product.$fetch();
+      http.get(process.env.VUE_APP_API_URL + '/products').then(res => this.products = res.data);
     },
     methods: {
+      showSubIndex(row) {
+        this.subProducts = row;
+        this.subIndex = !this.subIndex
+      },
+      closeSubIndex() {
+        this.subIndex = !this.subIndex
+      },
       async searchApi(value) {
-        let result = [];
+        this.changeLoading();
+
+        await http.get(process.env.VUE_APP_API_URL + '/products', {search: value})
+          .then(response => this.products = response.data)
+          .catch(error => console.dir(error));
 
         this.changeLoading();
-        await http.get(process.env.VUE_APP_API_URL + '/products', {search: value}).then(
-          async response => {
-            result = await Promise.resolve(Product.insert({data: response.data}));
-          }
-        ).catch(error => console.dir(error)).finally(this.changeLoading());
 
-        return result.products || []
-      },
-      destroy(index, row) {
-        swal({
-          title: 'Você tem Certeza?',
-          text: `Ao fazer isso os dados não poderão ser recuperados!`,
-          type: 'warning',
-          showCancelButton: true,
-          confirmButtonClass: 'btn btn-success btn-fill',
-          cancelButtonClass: 'btn btn-danger btn-fill',
-          confirmButtonText: 'Sim, apagar!',
-          cancelButtonText: 'Cancelar',
-          buttonsStyling: false
-        }).then(async result => {
-          if (result.value) {
-            await this.changeLoading();
-
-            await Product.$delete({params: {id: this.id}})
-              .then(response => notifyVue(this.$notify, 'O produto foi apagado!', 'success'))
-              .catch(error => notifyError(this.$notify, error));
-
-            this.changeLoading()
-          }
-        });
+        return this.products || []
       }
     }
   };

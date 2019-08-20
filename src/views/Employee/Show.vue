@@ -61,6 +61,26 @@
                   <h5 class="mb-0">{{employee.document}}</h5>
                 </div>
                 <div class="col-12 mb-4">
+                  <h4>Data de Nascimento:</h4>
+                  <h5 class="mb-0">{{employee.birth_date}}</h5>
+                </div>
+                <div class="col-12 mb-4">
+                  <h4>Data de Admissão:</h4>
+                  <h5 class="mb-0">{{employee.admission_date}}</h5>
+                </div>
+                <div class="col-12 mb-4">
+                  <h4>Identidade:</h4>
+                  <h5 class="mb-0">{{employee.identity}}</h5>
+                </div>
+                <div class="col-12 mb-4">
+                  <h4>Carteira de Trabalho:</h4>
+                  <h5 class="mb-0">{{employee.work_card}}</h5>
+                </div>
+                <div class="col-12 mb-4">
+                  <h4>Remuneração:</h4>
+                  <h5 class="mb-0">{{employee.remuneration}}</h5>
+                </div>
+                <div class="col-12 mb-4">
                   <h4>Telefone:</h4>
                   <h5 class="mb-0">
                     <i :class="employee.phone.is_whatsapp ? 'fab fa-whatsapp mr-1' : 'fas fa-phone mr-1'"></i> {{employee.phone.formatted}}

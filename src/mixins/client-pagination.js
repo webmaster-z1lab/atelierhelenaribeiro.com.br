@@ -14,8 +14,7 @@ export default {
         total: 0
       },
       searchQuery: '',
-      searchedData: [],
-      fuseSearch: null
+      searchedData: []
     }
   },
   computed: {

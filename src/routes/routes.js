@@ -37,11 +37,12 @@ const Welcome = () => import(/* webpackChunkName: "home" */ '@/views/Welcome.vue
 const Login = () => import(/* webpackChunkName: "auth" */ '@/views/Auth/Login.vue');
 
 // Config
-const withPrefix = (prefix, as, auth, routes) =>
+const withPrefix = (prefix, as, auth, subTitle, routes) =>
   routes.map((route) => {
     route.name = as + route.name;
     route.path = prefix + route.path;
     if (auth) route.meta ? route.meta.requiresAuth = true : route.meta = {requiresAuth: true}
+    if (subTitle) route.meta ? route.meta.subTitle = subTitle : route.meta = {subTitle: subTitle}
     return route;
   });
 
@@ -51,12 +52,14 @@ const routes = [
     component: DefaultLayout,
     name: 'dashboard',
     redirect: '/home',
+    meta: {BreadCrumb: 'Dashboard'},
     children: [
       {
         component: Home,
         path: '/home',
         name: 'home',
         meta: {
+          BreadCrumb: 'Home',
           requiresAuth: true
         }
       }
@@ -67,12 +70,13 @@ const routes = [
     component: DefaultLayout,
     redirect: {name: 'employee.index'},
     name: 'employee',
+    meta: {BreadCrumb: 'Funcionários'},
     children: [
-      ...withPrefix('/employees', 'employee.', true, [
-        {path: '/', name: 'index', component: IndexEmployee},
-        {path: '/create', name: 'create', component: CreateEmployee},
-        {path: '/edit/:id', name: 'edit', component: EditEmployee, props: true},
-        {path: '/show/:id', name: 'show', component: ShowEmployee, props: true},
+      ...withPrefix('/employees', 'employee.', true, 'Funcionários', [
+        {path: '/', name: 'index', component: IndexEmployee, meta: {BreadCrumb: 'Listagem'}},
+        {path: '/create', name: 'create', component: CreateEmployee, meta: {BreadCrumb: 'Criação'}},
+        {path: '/edit/:id', name: 'edit', component: EditEmployee, props: true, meta: {BreadCrumb: 'Edição'}},
+        {path: '/show/:id', name: 'show', component: ShowEmployee, props: true, meta: {BreadCrumb: 'Exibição'}},
       ])
     ]
   },
@@ -81,12 +85,13 @@ const routes = [
     component: DefaultLayout,
     redirect: {name: 'customer.index'},
     name: 'customer',
+    meta: {BreadCrumb: 'Clientes'},
     children: [
-      ...withPrefix('/customers', 'customer.', true, [
-        {path: '/', name: 'index', component: IndexCustomer},
-        {path: '/create', name: 'create', component: CreateCustomer},
-        {path: '/edit/:id', name: 'edit', component: EditCustomer, props: true},
-        {path: '/show/:id', name: 'show', component: ShowCustomer, props: true},
+      ...withPrefix('/customers', 'customer.', true, 'Clientes',[
+        {path: '/', name: 'index', component: IndexCustomer, meta: {BreadCrumb: 'Listagem'}},
+        {path: '/create', name: 'create', component: CreateCustomer, meta: {BreadCrumb: 'Criação'}},
+        {path: '/edit/:id', name: 'edit', component: EditCustomer, props: true, meta: {BreadCrumb: 'Edição'}},
+        {path: '/show/:id', name: 'show', component: ShowCustomer, props: true, meta: {BreadCrumb: 'Exibição'}},
       ])
     ]
   },
@@ -95,12 +100,13 @@ const routes = [
     component: DefaultLayout,
     redirect: {name: 'catalog.template.index'},
     name: 'catalog',
+    meta: {BreadCrumb: 'Catálogo'},
     children: [
-      ...withPrefix('/catalog/templates', 'catalog.template.', true, [
-        {path: '/', name: 'index', component: IndexTemplateCatalog},
-        {path: '/create', name: 'create', component: CreateTemplateCatalog},
-        {path: '/edit/:id', name: 'edit', component: EditTemplateCatalog, props: true},
-        {path: '/show/:id', name: 'show', component: ShowTemplateCatalog, props: true},
+      ...withPrefix('/catalog/templates', 'catalog.template.', true, 'Catálogo',  [
+        {path: '/', name: 'index', component: IndexTemplateCatalog, meta: {BreadCrumb: 'Listagem'}},
+        {path: '/create', name: 'create', component: CreateTemplateCatalog, meta: {BreadCrumb: 'Criação'}},
+        {path: '/edit/:id', name: 'edit', component: EditTemplateCatalog, props: true, meta: {BreadCrumb: 'Edição'}},
+        {path: '/show/:id', name: 'show', component: ShowTemplateCatalog, props: true, meta: {BreadCrumb: 'Exibição'}},
       ])
     ]
   },
@@ -109,12 +115,13 @@ const routes = [
     component: DefaultLayout,
     redirect: {name: 'stock.product.index'},
     name: 'stock',
+    meta: {BreadCrumb: 'Estoque'},
     children: [
-      ...withPrefix('/stock/products', 'stock.product.', true, [
-        {path: '/', name: 'index', component: IndexProductStock},
-        {path: '/create', name: 'create', component: CreateProductStock},
-        {path: '/edit/:id', name: 'edit', component: EditProductStock, props: true},
-        {path: '/show/:id', name: 'show', component: ShowProductStock, props: true},
+      ...withPrefix('/stock/products', 'stock.product.', true, 'Estoque', [
+        {path: '/', name: 'index', component: IndexProductStock, meta: {BreadCrumb: 'Listagem'}},
+        {path: '/create', name: 'create', component: CreateProductStock, meta: {BreadCrumb: 'Criação'}},
+        {path: '/edit/:id', name: 'edit', component: EditProductStock, props: true, meta: {BreadCrumb: 'Edição'}},
+        {path: '/show/:id', name: 'show', component: ShowProductStock, props: true, meta: {BreadCrumb: 'Exibição'}},
       ])
     ]
   },

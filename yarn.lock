@@ -1909,13 +1909,6 @@
   resolved "https://registry.yarnpkg.com/@xtuc/long/-/long-4.2.1.tgz#5c85d662f76fa1d34575766c5dcd6615abcd30d8"
   integrity sha512-FZdkNBDqBRHKQ2MEbSC17xnPFOhZxeJ2YGSfr2BKf3sujG49Qe3bB+rGCwQfIaA7WHnGeGkSijX4FuBCdrzW/g==
 
-"@z1lab/plugin-axios@file:../../3.PACKAGES/npm/plugin-axios":
-  version "0.1.0"
-  dependencies:
-    "@vuex-orm/core" "^0.31.13"
-    axios "^0.19.0"
-    lodash "^4.17.11"
-
 abbrev@1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/abbrev/-/abbrev-1.1.1.tgz#f8f2c887ad10bf67f634f005b6987fed3179aac8"

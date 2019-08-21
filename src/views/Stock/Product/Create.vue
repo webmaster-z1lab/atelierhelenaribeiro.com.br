@@ -68,7 +68,7 @@
                         <small>{{image.size_in_bytes}} Kbs</small>
                       </div>
                       <div>
-                        <base-checkbox :value="image.id" v-model="product.images"/>
+                        <base-checkbox :value="image.id" v-model="product.template_images"/>
                       </div>
                     </div>
                   </li>
@@ -142,6 +142,7 @@
               if (res) {
                 await this.changeLoading();
                 this.product.amount = this.amount;
+                if (isEmpty(this.product.template_images)) delete this.product.template_images
 
                 if (isEmpty(this.uppy.getFiles())) {
                   await Product.$create({data: this.product})
@@ -150,7 +151,7 @@
                       this.$router.push({name: 'stock.product.index'})
                     }).catch(error => notifyError(this.$notify, error));
                 } else {
-                  await this.uppy.setMeta({folder: `/templates/${this.product.template}`});
+                  await this.uppy.setMeta({folder: `templates/${this.product.template}`});
                   await this.uppy.upload().then(async res => {
                     for (let image of res.successful) {
                       this.product.images.push({

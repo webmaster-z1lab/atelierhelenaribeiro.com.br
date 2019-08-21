@@ -80,7 +80,7 @@
                 if (isEmpty(this.uppy.getFiles())) throw 'Adicione uma Imagem!';
                 await this.changeLoading();
 
-                await this.uppy.setMeta({folder: '/templates'});
+                await this.uppy.setMeta({folder: 'templates'});
                 await this.uppy.upload().then(async res => {
                   for (let image of res.successful) {
                     this.template.images.push({

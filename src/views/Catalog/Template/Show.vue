@@ -41,7 +41,7 @@
               <div class="row align-items-center">
                 <div class="col mb-4">
                   <h4>Modelo:</h4>
-                  <h5 class="mb-0">{{template.template}}</h5>
+                  <h5 class="mb-0">{{template.reference}}</h5>
                 </div>
                 <div class="col mb-4">
                   <h4>Preço Base:</h4>

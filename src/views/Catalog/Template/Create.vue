@@ -19,7 +19,7 @@
               <base-input label="Modelo" v-model="template.reference" name="reference" :error="getError('reference')" :valid="isValid('reference')" v-validate="'required'"/>
             </div>
             <div class="col-lg-4">
-              <money-input label="Preço Base" v-model="template.price" name="price" :error="getError('price')" :valid="isValid('price')" v-validate="'required'"/>
+              <money-input label="Preço Base" v-model="template.price" name="price" :error="getError('price')" :valid="isValid('price')" v-validate="'required|min_value:1'"/>
             </div>
             <div class="col-lg-3 ml-3">
               <label class="form-control-label">Modelo Ativo?</label>
@@ -28,7 +28,7 @@
               </div>
             </div>
             <div class="col-lg-12">
-              <dropzone-file-upload v-model="template.images" multiple/>
+              <div id="DashboardContainer"></div>
             </div>
           </div>
 
@@ -44,18 +44,18 @@
 <script>
   import Template from '@/models/Catalog/Template'
   import MoneyInput from '@/components/App/Inputs/Money'
-  import DropzoneFileUpload from '@/components/Inputs/DropzoneFileUpload'
   import crudSettingsMixin from '@/mixins/crud-settings'
+  import clientUploadUppyMixin from '@/mixins/client-upload-uppy';
 
   import {notifyVue, notifyError} from "@/utils";
+  import {isEmpty} from 'lodash'
   import {http} from "@/services";
 
   export default {
     name: 'create',
-    mixins: [crudSettingsMixin],
+    mixins: [crudSettingsMixin, clientUploadUppyMixin],
     components: {
-      MoneyInput,
-      DropzoneFileUpload
+      MoneyInput
     },
     data () {
       return {
@@ -72,24 +72,38 @@
       this.changeLoading()
     },
     methods: {
-      async submitForm() {
+      submitForm() {
         try {
           this.$validator.validateAll().then(
             async res => {
               if (res) {
+                if (isEmpty(this.uppy.getFiles())) throw 'Adicione uma Imagem!';
                 await this.changeLoading();
 
-                await Template.$create({data: this.template})
-                  .then(response => {
-                    notifyVue(this.$notify, 'Modelo criado com sucesso', 'success');
+                await this.uppy.setMeta({folder: '/templates'});
+                await this.uppy.upload().then(async res => {
+                  for (let image of res.successful) {
+                    this.template.images.push({
+                      path: image.s3Multipart.key,
+                      name: image.data.name,
+                      extension: image.extension,
+                      mime_type:  image.type,
+                      size_in_bytes:  image.size
+                    })
+                  }
 
-                    this.$router.push({name: 'catalog.template.show', params: {id: response.id}})
-                  }).catch(error => notifyError(this.$notify, error));
+                  await Template.$create({data: this.template})
+                    .then(response => {
+                      notifyVue(this.$notify, 'Modelo criado com sucesso', 'success');
 
-                this.changeLoading()
+                      this.$router.push({name: 'catalog.template.show', params: {id: response.id}})
+                    }).catch(error => notifyError(this.$notify, error));
+
+                  this.changeLoading()
+                }).catch(err => {throw err});
               }
             }
-          )
+          ).catch(e => notifyVue(this.$notify, e, 'danger', 'ni ni-fat-remove'))
         } finally {
           this.validated = true;
         }

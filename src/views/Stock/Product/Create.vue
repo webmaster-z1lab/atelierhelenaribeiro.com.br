@@ -50,14 +50,30 @@
               <base-input type="number" name="amount" label="Quantidade" v-model="amount" :error="getError('amount')" :valid="isValid('amount')" v-validate="'required'"/>
             </div>
             <div class="col-lg-4">
-              <money-input label="Preço" v-model="product.price" name="price" :error="getError('price')" :valid="isValid('price')" v-validate="'required'" :key="product.template"/>
+              <money-input label="Preço" v-model="product.price" name="price" :error="getError('price')" :valid="isValid('price')" v-validate="'required|min_value:1'" :key="product.template"/>
             </div>
             <div class="col-lg-6">
               <div id="DashboardContainer"></div>
             </div>
             <div class="col-lg-6">
-              <p>img test</p>
-              <img :src="index.url_test" alt="" v-for="(index, key) in gallery" :key="key">
+              <card body-classes="p-0" v-if="product.template">
+                <h5 slot="header" class="h3 mb-0">Selecione as Imagens</h5>
+                <ul class="list-group list-group-flush" data-toggle="checklist">
+                  <li class="checklist-entry list-group-item flex-column align-items-start py-4 px-4" v-for="image in gallery" :key="image.id">
+                    <div class="checklist-item">
+
+                      <div class="checklist-info">
+                        <img :src="image.url" alt="" width="15%">
+                        <h5 class="checklist-title mb-0">{{image.name}}</h5>
+                        <small>{{image.size_in_bytes}} Kbs</small>
+                      </div>
+                      <div>
+                        <base-checkbox :value="image.id" v-model="product.images"/>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+              </card>
             </div>
           </div>
 
@@ -80,6 +96,7 @@
   import clientUploadUppyMixin from '@/mixins/client-upload-uppy';
 
   import {notifyVue, notifyError} from "@/utils";
+  import {isEmpty} from 'lodash';
   import { Select, Option } from 'element-ui'
 
   import {http} from "@/services";
@@ -101,17 +118,6 @@
         product: new Product()
       }
     },
-    watch: {
-      async gallery(value) {
-        for (let item of value) {
-          await this.s3.getObject({Bucket: 'storage-chr', Key: 'undefined/ChibiNaruto.jpg'}, async (error, data) => {
-            if (null === error) {
-              item.url_test = await window.URL.createObjectURL(new Blob([data.Body], {type: data.ContentType}));
-            }
-          });
-        }
-      }
-    },
     computed: {
       templates() {
         return Template.all()
@@ -129,30 +135,46 @@
         http.get(process.env.VUE_APP_API_URL + `/templates/${id}/gallery`).then(res => {this.gallery = res.data})
       },
       async submitForm() {
-        this.uppy.upload().then(res => console.log(res))
-        // this.$validator.resume();
-        // try {
-        //   this.$validator.validateAll().then(
-        //     async res => {
-        //       if (res) {
-        //         await this.changeLoading();
-        //
-        //         this.product.amount = this.amount;
-        //
-        //         await Product.$create({data: this.product})
-        //           .then(response => {
-        //             notifyVue(this.$notify, 'Produto criado com sucesso', 'success');
-        //             this.$router.push({name: 'stock.product.show', params: {id: response.id}})
-        //           })
-        //           .catch(error => notifyError(this.$notify, error));
-        //
-        //         this.changeLoading()
-        //       }
-        //     }
-        //   )
-        // } finally {
-        //   this.validated = true;
-        // }
+        this.$validator.resume();
+        try {
+          this.$validator.validateAll().then(
+            async res => {
+              if (res) {
+                await this.changeLoading();
+                this.product.amount = this.amount;
+
+                if (isEmpty(this.uppy.getFiles())) {
+                  await Product.$create({data: this.product})
+                    .then(response => {
+                      notifyVue(this.$notify, 'Produto criado com sucesso', 'success');
+                      this.$router.push({name: 'stock.product.index'})
+                    }).catch(error => notifyError(this.$notify, error));
+                } else {
+                  await this.uppy.setMeta({folder: `/templates/${this.product.template}`});
+                  await this.uppy.upload().then(async res => {
+                    for (let image of res.successful) {
+                      this.product.images.push({
+                        path: image.s3Multipart.key,
+                        name: image.data.name,
+                        extension: image.extension,
+                        mime_type:  image.type,
+                        size_in_bytes:  image.size
+                      })
+                    }
+
+                    await Product.$create({data: this.product})
+                      .then(response => {
+                        notifyVue(this.$notify, 'Produto criado com sucesso', 'success');
+                        this.$router.push({name: 'stock.product.index'})
+                      }).catch(error => notifyError(this.$notify, error));
+                  }).catch(err => {throw err});
+                }
+              }
+            }
+          )
+        } finally {
+          this.validated = true;
+        }
       }
     }
   };

@@ -10,6 +10,7 @@ export default class Product extends Model {
       size: this.attr(''),
       color: this.attr(''),
       template_id: this.attr(''),
+      amount: this.attr(1),
       template: this.belongsTo(Template, 'template_id'),
       images: this.attr([]),
       price: this.attr(0),

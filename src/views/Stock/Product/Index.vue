@@ -104,6 +104,7 @@
     },
     data () {
       return {
+        loading: true,
         products: [],
         subIndex: false,
         subProducts: [],
@@ -140,8 +141,10 @@
         return this.products
       }
     },
-    created() {
-      http.get(process.env.VUE_APP_API_URL + '/products').then(res => this.products = res.data);
+    async created() {
+      await http.get(process.env.VUE_APP_API_URL + '/products').then(res => this.products = res.data);
+
+      this.changeLoading()
     },
     methods: {
       showSubIndex(row) {

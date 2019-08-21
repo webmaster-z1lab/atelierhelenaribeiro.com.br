@@ -4,6 +4,7 @@
        {disabled: disabled},
        {[`custom-checkbox-${type}`]: type},inlineClass]">
     <input :id="cbId"
+           :value="value"
            class="custom-control-input"
            :class="inputClasses"
            type="checkbox"
@@ -23,6 +24,10 @@
       prop: "checked"
     },
     props: {
+      value: {
+        type: String,
+        description: "Value set v-model"
+      },
       checked: {
         type: [Array, Boolean],
         description: "Whether checkbox is checked"

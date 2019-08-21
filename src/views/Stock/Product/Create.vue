@@ -169,6 +169,8 @@
                       }).catch(error => notifyError(this.$notify, error));
                   }).catch(err => {throw err});
                 }
+
+                this.changeLoading();
               }
             }
           )

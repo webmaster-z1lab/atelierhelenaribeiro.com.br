@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper">
     <notifications/>
-    <side-bar>
+    <side-bar logo="/img/brand/chr-icon.png">
       <template slot-scope="props" slot="links">
         <sidebar-item :link="{name: 'Home', path: '/home', icon: 'fas fa-home text-primary'}"/>
         <sidebar-item :link="{name: 'Funcionários', icon: 'fas fa-users-cog text-green', path: '/employees'}"/>

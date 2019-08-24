@@ -13,7 +13,7 @@ export default class Customer extends Model {
       municipal_registration: this.string(''),
       email: this.string(''),
       contact: this.string(''),
-      status: this.string(''),
+      status: this.string('active'),
       annotation: this.string(''),
       phones: this.attr([]),
       owners: this.attr([]),

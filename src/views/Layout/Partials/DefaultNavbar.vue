@@ -1,5 +1,5 @@
 <template>
-  <base-nav container-classes="container-fluid" class="navbar-top border-bottom navbar-expand" :class="{'bg-success navbar-dark': type === 'default'}">
+  <base-nav container-classes="container-fluid" class="navbar-top border-bottom navbar-expand" :class="{'bg-default navbar-dark': type === 'default'}">
     <!-- Navbar links -->
     <ul class="navbar-nav align-items-center ml-md-auto">
       <li class="nav-item d-xl-none">
@@ -14,8 +14,8 @@
         </div>
       </li>
 
-      <notifications/>
-      <systems/>
+<!--      <notifications/>-->
+<!--      <systems/>-->
     </ul>
     <user-menu/>
   </base-nav>

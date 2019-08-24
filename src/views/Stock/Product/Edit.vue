@@ -4,7 +4,7 @@
 
     <base-header-app/>
 
-    <div class="container-fluid mt--6" v-if="product">
+    <div class="container-fluid mt--6">
       <card>
         <div slot="header">
           <h3 class="mb-0">Editando Produto</h3>
@@ -44,8 +44,29 @@
             <div class="col-lg-4">
               <money-input label="Preço" v-model="product.price" name="price" :error="getError('price')" :valid="isValid('price')" v-validate="'required'"/>
             </div>
-            <div class="col-lg-12">
-              <dropzone-file-upload v-model="images" multiple/>
+            <div class="col-lg-6"></div>
+            <div class="col-lg-6">
+              <div id="DashboardContainer"></div>
+            </div>
+            <div class="col-lg-6">
+              <card body-classes="p-0" v-if="product.template">
+                <h5 slot="header" class="h3 mb-0">Selecione as Imagens</h5>
+                <ul class="list-group list-group-flush" data-toggle="checklist">
+                  <li class="checklist-entry list-group-item flex-column align-items-start py-4 px-4" v-for="image in gallery" :key="image.id">
+                    <div class="checklist-item">
+
+                      <div class="checklist-info">
+                        <img :src="image.url" alt="" width="15%">
+                        <h5 class="checklist-title mb-0">{{image.name}}</h5>
+                        <small>{{image.size_in_bytes}} Kbs</small>
+                      </div>
+                      <div>
+                        <base-checkbox :value="image.id" v-model="product.template_images"/>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+              </card>
             </div>
           </div>
 
@@ -61,8 +82,8 @@
 <script>
   import Product from '@/models/Stock/Product'
   import MoneyInput from '@/components/App/Inputs/Money'
-  import DropzoneFileUpload from '@/components/Inputs/DropzoneFileUpload'
   import crudSettingsMixin from '@/mixins/crud-settings'
+  import clientUploadUppyMixin from '@/mixins/client-upload-uppy';
 
   import {notifyVue, notifyError} from "@/utils";
 
@@ -71,7 +92,7 @@
 
   export default {
     name: 'edit',
-    mixins: [crudSettingsMixin],
+    mixins: [crudSettingsMixin, clientUploadUppyMixin],
     props:{
       id: {
         type: String,
@@ -79,18 +100,18 @@
       }
     },
     components: {
-      MoneyInput,
-      DropzoneFileUpload
+      MoneyInput
     },
     data () {
       return {
+        gallery: [],
         loading: true,
-        images: [],
-        product: Product.find(this.id)
+        product: Product.find(this.id) || {template: {}}
       }
     },
     async created() {
-      if (!this.product) this.product = await Product.$get({params: {id: this.id}, headers: {"If-None-Match": 'sasasas'}});
+      if (isEmpty(this.product.template)) this.product = await Product.$get({params: {id: this.id}});
+      await http.get(process.env.VUE_APP_API_URL + `/templates/${this.product.template_id}/gallery`).then(res => {this.gallery = res.data});
 
       this.changeLoading();
     },
@@ -101,15 +122,34 @@
             async res => {
               if (res) {
                 await this.changeLoading();
+                this.product.images = [];
+                if (isEmpty(this.product.template_images)) delete this.product.template_images
 
-                isEmpty(this.image) ? delete this.product.images : this.product.images = this.images;
-                if (this.product.price === 0) delete this.product.price;
+                if (isEmpty(this.uppy.getFiles())) {
+                  delete this.product.images;
+                  await Product.$update({params: {id: this.id}, data: this.product})
+                    .then(res => notifyVue(this.$notify, 'Produto atualizado com sucesso', 'success'))
+                    .catch(error => notifyError(this.$notify, error));
+                } else {
+                  await this.uppy.setMeta({folder: `templates/${this.product.template}`});
+                  await this.uppy.upload().then(async res => {
+                    for (let image of res.successful) {
+                      this.product.images.push({
+                        path: image.s3Multipart.key,
+                        name: image.data.name,
+                        extension: image.extension,
+                        mime_type:  image.type,
+                        size_in_bytes:  image.size
+                      })
+                    }
 
-                await Product.$update({params: {id: this.id}, data: this.product})
-                  .then(res => notifyVue(this.$notify, 'Produto atualizado com sucesso', 'success'))
-                  .catch(error => notifyError(this.$notify, error));
+                    await Product.$update({params: {id: this.id}, data: this.product})
+                      .then(res => notifyVue(this.$notify, 'Produto atualizado com sucesso', 'success'))
+                      .catch(error => notifyError(this.$notify, error));
+                  }).catch(err => {throw err});
+                }
 
-                this.changeLoading()
+                this.changeLoading();
               }
             }
           )
@@ -120,11 +160,3 @@
     }
   };
 </script>
-
-<style>
-  @media (min-width: 992px) {
-    .d-lg-block {
-      display: inline !important;
-    }
-  }
-</style>

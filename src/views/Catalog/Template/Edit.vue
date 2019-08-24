@@ -4,7 +4,7 @@
 
     <base-header-app/>
 
-    <div class="container-fluid mt--6" v-if="template">
+    <div class="container-fluid mt--6">
       <card>
         <div slot="header">
           <h3 class="mb-0">Editando Modelo</h3>
@@ -28,7 +28,7 @@
               </div>
             </div>
             <div class="col-lg-12">
-              <dropzone-file-upload v-model="images" multiple />
+              <div id="DashboardContainer"></div>
             </div>
           </div>
 
@@ -44,8 +44,8 @@
 <script>
   import Template from '@/models/Catalog/Template'
   import MoneyInput from '@/components/App/Inputs/Money'
-  import DropzoneFileUpload from '@/components/Inputs/DropzoneFileUpload'
   import crudSettingsMixin from '@/mixins/crud-settings'
+  import clientUploadUppyMixin from '@/mixins/client-upload-uppy';
 
   import {notifyVue, notifyError} from "@/utils";
 
@@ -54,7 +54,7 @@
 
   export default {
     name: 'edit',
-    mixins: [crudSettingsMixin],
+    mixins: [crudSettingsMixin, clientUploadUppyMixin],
     props:{
       id: {
         type: String,
@@ -62,14 +62,12 @@
       }
     },
     components: {
-      MoneyInput,
-      DropzoneFileUpload
+      MoneyInput
     },
     data () {
       return {
         loading: true,
-        images: [],
-        template: Template.find(this.id)
+        template: Template.find(this.id) || []
       }
     },
     async created() {
@@ -85,17 +83,37 @@
               if (res) {
                 await this.changeLoading();
 
-                isEmpty(this.image) ? delete this.template.images : this.template.images = this.images;
+                this.template.images = [];
                 delete this.template.reference;
 
-                await Template.$update({params: {id: this.id}, data: this.template})
-                  .then(res => notifyVue(this.$notify, 'Modelo atualizado com sucesso', 'success'))
-                  .catch(error => notifyError(this.$notify, error))
+                if (isEmpty(this.uppy.getFiles())) {
+                  delete this.template.images;
+                  await Template.$update({params: {id: this.id}, data: this.template})
+                    .then(res => notifyVue(this.$notify, 'Modelo atualizado com sucesso', 'success'))
+                    .catch(error => notifyError(this.$notify, error))
+                } else {
+                  await this.uppy.setMeta({folder: 'templates'});
+                  await this.uppy.upload().then(async res => {
+                    for (let image of res.successful) {
+                      this.template.images.push({
+                        path: image.s3Multipart.key,
+                        name: image.data.name,
+                        extension: image.extension,
+                        mime_type:  image.type,
+                        size_in_bytes:  image.size
+                      })
+                    }
+
+                    await Template.$update({params: {id: this.id}, data: this.template})
+                      .then(res => notifyVue(this.$notify, 'Modelo atualizado com sucesso', 'success'))
+                      .catch(error => notifyError(this.$notify, error));
+                  }).catch(err => {throw err});
+                }
 
                 this.changeLoading()
               }
             }
-          )
+          ).catch(e => notifyVue(this.$notify, e, 'danger', 'ni ni-fat-remove'))
         } finally {
           this.validated = true;
         }
@@ -103,11 +121,3 @@
     }
   };
 </script>
-
-<style>
-  @media (min-width: 992px) {
-    .d-lg-block {
-      display: inline !important;
-    }
-  }
-</style>

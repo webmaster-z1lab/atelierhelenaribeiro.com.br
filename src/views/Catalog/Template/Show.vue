@@ -9,16 +9,16 @@
         <div slot="header">
           <div class="row">
             <div class="col-6">
-              <h3 class="mb-0">{{template.reference}}</h3>
+              <h3 class="mb-0">Modelo {{template.reference}}</h3>
               <p class="text-sm mb-0">
                 Informações específicas do modelo selecionado.
               </p>
             </div>
             <div class="col-6 text-right">
-              <base-button type="secondary" @click="$router.back()" size="sm">
+              <router-link :to="{name: 'catalog.template.index'}" class="btn btn-icon btn-fab btn-sm btn-secondary">
                 <span class="btn-inner--icon"><i class="fas fa-arrow-left"></i></span>
-                Voltar
-              </base-button>
+                <span class="btn-inner--text">Voltar</span>
+              </router-link>
               <el-tooltip content="Editar Modelo" placement="top">
                 <router-link :to="{name: 'catalog.template.edit', params: {id: id}}" class="btn btn-icon btn-fab btn-sm btn-warning">
                   <span class="btn-inner--icon"><i class="fas fa-user-edit"></i></span>

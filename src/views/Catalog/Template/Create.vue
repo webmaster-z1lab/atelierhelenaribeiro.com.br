@@ -60,8 +60,7 @@
     data () {
       return {
         loading: true,
-        template: new Template(),
-        test: []
+        template: new Template()
       }
     },
     async created() {
@@ -82,6 +81,8 @@
 
                 await this.uppy.setMeta({folder: 'templates'});
                 await this.uppy.upload().then(async res => {
+                  this.template.images = [];
+
                   for (let image of res.successful) {
                     this.template.images.push({
                       path: image.s3Multipart.key,

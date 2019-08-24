@@ -6,7 +6,7 @@
     <div class="scrollbar-inner" ref="sidebarScrollArea">
       <div class="sidenav-header d-flex align-items-center">
         <a class="navbar-brand" href="/">
-          <img :src="logo" class="navbar-brand-img" alt="Sidebar logo">
+          <img :src="logo" class="navbar-brand-img" alt="Sidebar logo"> H. Ribeiro
         </a>
         <div class="ml-auto">
           <!-- Sidenav toggler -->

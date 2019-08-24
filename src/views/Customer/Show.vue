@@ -15,10 +15,10 @@
               </p>
             </div>
             <div class="col-6 text-right">
-              <base-button type="secondary" @click="$router.back()" size="sm">
+              <router-link :to="{name: 'customer.index'}" class="btn btn-icon btn-fab btn-sm btn-secondary">
                 <span class="btn-inner--icon"><i class="fas fa-arrow-left"></i></span>
-                Voltar
-              </base-button>
+                <span class="btn-inner--text">Voltar</span>
+              </router-link>
               <el-tooltip content="Editar Cliente" placement="top">
                 <router-link :to="{name: 'customer.edit', params: {id: id}}" class="btn btn-icon btn-fab btn-sm btn-warning">
                   <span class="btn-inner--icon"><i class="fas fa-user-edit"></i></span>

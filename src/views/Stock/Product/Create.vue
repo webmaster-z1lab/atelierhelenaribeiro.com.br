@@ -91,7 +91,6 @@
   import Template from "@/models/Catalog/Template";
 
   import MoneyInput from '@/components/App/Inputs/Money';
-  import UploadUppy from '@/components/App/UploadUppy';
   import crudSettingsMixin from '@/mixins/crud-settings';
   import clientUploadUppyMixin from '@/mixins/client-upload-uppy';
 
@@ -106,7 +105,6 @@
     mixins: [crudSettingsMixin, clientUploadUppyMixin],
     components: {
       MoneyInput,
-      UploadUppy,
       [Select.name]: Select,
       [Option.name]: Option,
     },
@@ -142,6 +140,7 @@
               if (res) {
                 await this.changeLoading();
                 this.product.amount = this.amount;
+                this.product.images = [];
                 if (isEmpty(this.product.template_images)) delete this.product.template_images
 
                 if (isEmpty(this.uppy.getFiles())) {

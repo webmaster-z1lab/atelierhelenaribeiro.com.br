@@ -18,8 +18,7 @@
 
           <div class="form-row">
             <div class="col-lg-4">
-              <base-input name="company_name" label="Nome da Empresa" v-model="customer.company_name" :error="getError('company_name')" :valid="isValid('company_name')"
-                          v-validate="'required'"/>
+              <base-input name="company_name" label="Nome da Empresa" v-model="customer.company_name" :error="getError('company_name')" :valid="isValid('company_name')" v-validate="'required'"/>
             </div>
             <div class="col-lg-4">
               <base-input name="trading_name" label="Nome Fantasia" v-model="customer.trading_name"/>
@@ -37,7 +36,7 @@
               <base-input name="municipal_registration" label="Inscrição Municipal" v-model="customer.municipal_registration"/>
             </div>
             <div class="col-lg-3">
-              <base-input label="Tipo" :error="getError('status')" :valid="isValid('status')">
+              <base-input label="Status" :error="getError('status')" :valid="isValid('status')">
                 <select name="status" class="form-control" v-model="customer.status" :class="[{'is-invalid': getError('status')}]" v-validate="'required'">
                   <option value="" selected>Selecione o status do cliente.</option>
                   <option value="active">Ativo</option>
@@ -48,10 +47,9 @@
             </div>
             <div class="col-lg-3">
               <base-input label="Representante" :error="getError('seller')" :valid="isValid('seller')">
-                <select name="seller" class="form-control" v-model="customer.seller" :class="[{'is-invalid': getError('seller')}]" v-validate="'required'">
-                  <option value="" selected>Selecione um vendedor responsável.</option>
-                  <option :value="seller.id" v-for="seller in sellers" :key="seller.id">{{seller.name}}</option>
-                </select>
+                <el-select v-model="customer.seller" filterable placeholder="Selecione o representante do cliente." name="seller" v-validate="'required'" :class="[{'is-invalid': getError('seller')}]">
+                  <el-option v-for="seller in sellers" :key="seller.id" :label="seller.name" :value="seller.id"/>
+                </el-select>
               </base-input>
             </div>
             <div class="col-12">
@@ -143,6 +141,8 @@
   import AddressInputs from '@/components/App/Address'
   import crudSettingsMixin from '@/mixins/crud-settings'
 
+  import { Select, Option } from 'element-ui'
+
   import {notifyVue, notifyError} from "@/utils";
   import {http} from "@/services";
 
@@ -153,7 +153,9 @@
       MaskInput,
       PhoneInput,
       HtmlEditor,
-      AddressInputs
+      AddressInputs,
+      [Select.name]: Select,
+      [Option.name]: Option,
     },
     data () {
       return {

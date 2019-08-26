@@ -40,9 +40,24 @@
               <base-input label="Cor" :error="getError('color')" :valid="isValid('color')">
                 <select name="color" class="form-control" v-model="product.color" :class="[{'is-invalid': getError('color')}]" v-validate="'required'">
                   <option value="" selected>Selecione a cor do produto.</option>
-                  <option value="azul">Azul</option>
-                  <option value="branco">Branco</option>
-                  <option value="preto">Preto</option>
+                  <option value="Nude">Nude</option>
+                  <option value="Branco">Branco</option>
+                  <option value="Preto">Preto</option>
+                  <option value="Rose">Rose</option>
+                  <option value="Rosa">Rosa</option>
+                  <option value="Salmao">Salmao</option>
+                  <option value="Pink">Pink</option>
+                  <option value="Tifany">Tifany</option>
+                  <option value="Verde acqua">Verde acqua</option>
+                  <option value="Verde">Verde</option>
+                  <option value="Esmeralda">Esmeralda</option>
+                  <option value="Verde menta">Verde Menta</option>
+                  <option value="Serenity">Serenity</option>
+                  <option value="Azul claro">Azul claro</option>
+                  <option value="Azul bic">Azul bic</option>
+                  <option value="Azul marinho">Azul marinho</option>
+                  <option value="Vermelho">Vermelho</option>
+                  <option value="Marsala">Marsala</option>
                 </select>
               </base-input>
             </div>

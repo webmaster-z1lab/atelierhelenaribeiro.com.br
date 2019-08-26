@@ -59,6 +59,7 @@
                 <li class="checklist-entry list-group-item flex-column align-items-start py-4 px-4" v-for="(image, key) in template.images" :key="image.id">
                   <div class="checklist-item">
                     <div class="checklist-info">
+                      <img :src="image.thumbnail_url" alt="" class="img img-thumbnail" width="50%">
                       <h5 class="checklist-title mb-0">{{image.name}}</h5>
                       <small>{{Number((image.size_in_bytes / 1024).toFixed(1))}} kb</small>
                     </div>
@@ -88,10 +89,11 @@
   import Template from '@/models/Catalog/Template'
 
   import {notifyVue, notifyError} from "@/utils";
+  import {http} from "@/services";
   import swal from 'sweetalert2';
 
   import Loading from '@/components/App/Loading'
-  import {http} from "@/services";
+  import { Image } from 'element-ui';
 
   export default {
     name: 'show',

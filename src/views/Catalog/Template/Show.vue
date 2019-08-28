@@ -71,6 +71,9 @@
                   </div>
                 </li>
               </ul>
+              <div>
+                <image-test style="width: 100px; height: 100px" src="https://storage-chr.s3.us-east-2.amazonaws.com/images/templates/5d61ba1fdd04072218006f68/ba296fa4-85c4-4198-9524-600785d28c39__thumbnail.webp?X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAQCZH45UORNS2NQ6Q%2F20190826%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20190826T210838Z&X-Amz-SignedHeaders=host&X-Amz-Expires=1800&X-Amz-Signature=c48a7de44bbd6e98b159f40b372f258a409c416ad077ee0330f2aea62e770713"/>
+              </div>
             </li>
           </ul>
         </div>
@@ -93,7 +96,6 @@
   import swal from 'sweetalert2';
 
   import Loading from '@/components/App/Loading'
-  import { Image } from 'element-ui';
 
   export default {
     name: 'show',

@@ -38,27 +38,10 @@
             </div>
             <div class="col-lg-4">
               <base-input label="Cor" :error="getError('color')" :valid="isValid('color')">
-                <select name="color" class="form-control" v-model="product.color" :class="[{'is-invalid': getError('color')}]" v-validate="'required'">
-                  <option value="" selected>Selecione a cor do produto.</option>
-                  <option value="Nude">Nude</option>
-                  <option value="Branco">Branco</option>
-                  <option value="Preto">Preto</option>
-                  <option value="Rose">Rose</option>
-                  <option value="Rosa">Rosa</option>
-                  <option value="Salmao">Salmao</option>
-                  <option value="Pink">Pink</option>
-                  <option value="Tifany">Tifany</option>
-                  <option value="Verde acqua">Verde acqua</option>
-                  <option value="Verde">Verde</option>
-                  <option value="Esmeralda">Esmeralda</option>
-                  <option value="Verde menta">Verde Menta</option>
-                  <option value="Serenity">Serenity</option>
-                  <option value="Azul claro">Azul claro</option>
-                  <option value="Azul bic">Azul bic</option>
-                  <option value="Azul marinho">Azul marinho</option>
-                  <option value="Vermelho">Vermelho</option>
-                  <option value="Marsala">Marsala</option>
-                </select>
+                <el-select v-model="product.color" filterable default-first-option allow-create placeholder="Selecione a cor do produto." name="color"
+                           v-validate="'required'" :class="[{'is-invalid': getError('color')}]">
+                  <el-option v-for="color in colors" :key="color.id" :label="color.name" :value="color.name"/>
+                </el-select>
               </base-input>
             </div>
             <div class="col-lg-4">
@@ -128,6 +111,7 @@
         gallery: [],
         loading: true,
         amount: 1,
+        colors: [],
         product: new Product()
       }
     },
@@ -138,6 +122,7 @@
     },
     async created() {
       await Template.$fetch();
+      await http.get(process.env.VUE_APP_API_URL + '/colors').then(res => {this.colors = res.data})
 
       this.changeLoading();
     },
@@ -156,9 +141,10 @@
                 await this.changeLoading();
                 this.product.amount = this.amount;
                 this.product.images = [];
-                if (isEmpty(this.product.template_images)) delete this.product.template_images
+                if (isEmpty(this.product.template_images)) delete this.product.template_images;
 
                 if (isEmpty(this.uppy.getFiles())) {
+                  delete this.product.images;
                   await Product.$create({data: this.product})
                     .then(response => {
                       notifyVue(this.$notify, 'Produto criado com sucesso', 'success');

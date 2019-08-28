@@ -25,6 +25,8 @@ export default {
       showProgressDetails: true,
       proudlyDisplayPoweredByUppy: false,
       hideUploadButton: true,
+      hideRetryButton: true,
+      hideCancelButton: true,
       note: 'Images and video only, 2–3 files, up to 1 MB',
       width: '100%',
       height: 250,

@@ -21,7 +21,7 @@
               <base-input name="name" label="Nome" v-model="employee.name" :error="getError('name')" :valid="isValid('name')" v-validate="'required'"/>
             </div>
             <div class="col-lg-3">
-              <base-input type="email" name="email" label="Email" v-model="employee.email" :error="getError('email')" :valid="isValid('email')" v-validate="'required|email'"/>
+              <base-input type="email" name="email" label="Email" v-model="employee.email" :error="getError('email')" :valid="isValid('email')" v-validate="'email'"/>
             </div>
             <div class="col-lg-2">
               <mask-input placeholder="000.000.000-00" name="document" label="CPF" v-model="employee.document" :mask="'###.###.###-##'"
@@ -48,11 +48,17 @@
               <phone-input :phone="employee.phone" name="phone" :validate="true"/>
             </div>
             <div class="col-lg-2">
-              <base-input label="Tipo">
-                <select class="form-control" v-model="employee.type">
+              <base-input label="Cargo" :error="getError('type')" :valid="isValid('type')">
+                <select class="form-control" v-model="employee.type" :class="[{'is-invalid': getError('type')}]" v-validate="'required'">
+                  <option value="" selected>Selecione o tipo do funcionário.</option>
                   <option value="admin">Administrador</option>
                   <option value="seller">Vendedor</option>
                   <option value="dressmaker">Costureira</option>
+                  <option value="dressmaker_assistant">Auxiliar de Costura</option>
+                  <option value="embroiderer">Bordadeira</option>
+                  <option value="embroiderer_assistant">Auxiliar de Bordadeira</option>
+                  <option value="modelist">Modelista</option>
+                  <option value="office_assistant">Auxiliar de Escritório</option>
                 </select>
               </base-input>
             </div>

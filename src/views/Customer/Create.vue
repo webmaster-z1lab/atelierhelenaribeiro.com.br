@@ -99,11 +99,11 @@
             </div>
             <div class="col-lg-2">
               <mask-input :name="`document_owners-${key}`" placeholder="000.000.000-00" label="CPF" v-model="owner.document" :mask="'###.###.###-##'"
-                          :error="getError(`document_owners-${key}`)" :valid="isValid(`document_owners-${key}`)" v-validate="'required|cpf'"/>
+                          :error="getError(`document_owners-${key}`)" :valid="isValid(`document_owners-${key}`)" v-validate="'cpf'"/>
             </div>
             <div class="col-lg-2">
               <mask-input :name="`birth_date-${key}`" placeholder="##/##/####" label="Data de Nascimento" v-model="owner.birth_date" :mask="'##/##/####'" :masked="true"
-                          :error="getError(`birth_date-${key}`)" :valid="isValid(`birth_date-${key}`)" v-validate="'required|date_format:dd/MM/yyyy|before_today'"/>
+                          :error="getError(`birth_date-${key}`)" :valid="isValid(`birth_date-${key}`)" v-validate="'date_format:dd/MM/yyyy|before_today'"/>
             </div>
             <div class="col-lg-2">
               <phone-input :phone="owner.phone" :name="`phone_owners-${key}`" :validate="true"/>

@@ -62,6 +62,7 @@
               <li class="checklist-entry list-group-item flex-column align-items-start py-4 px-4" v-for="(image, key) in product.images" :key="image.id">
                 <div class="checklist-item">
                   <div class="checklist-info">
+                    <img :src="image.thumbnail_url" alt="" class="img img-thumbnail" width="50%">
                     <h5 class="checklist-title mb-0">{{image.name}}</h5>
                     <small>{{Number((image.size_in_bytes / 1024).toFixed(1))}} kb</small>
                   </div>

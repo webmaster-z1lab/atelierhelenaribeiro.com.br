@@ -29,6 +29,12 @@ const CreateTemplateCatalog = () => import(/* webpackChunkName: "catalog" */ '@/
 const EditTemplateCatalog = () => import(/* webpackChunkName: "catalog" */ '@/views/Catalog/Template/Edit.vue');
 const ShowTemplateCatalog = () => import(/* webpackChunkName: "catalog" */ '@/views/Catalog/Template/Show.vue');
 
+// Sale
+const IndexSalePacking = () => import(/* webpackChunkName: "sale" */ '@/views/Sale/Packing/Index.vue');
+const CreateSalePacking = () => import(/* webpackChunkName: "sale" */ '@/views/Sale/Packing/Create.vue');
+const EditSalePacking = () => import(/* webpackChunkName: "sale" */ '@/views/Sale/Packing/Edit.vue');
+const ShowSalePacking = () => import(/* webpackChunkName: "sale" */ '@/views/Sale/Packing/Show.vue');
+
 // Starter
 const Home = () => import(/* webpackChunkName: "home" */ '@/views/Home.vue');
 const Welcome = () => import(/* webpackChunkName: "home" */ '@/views/Welcome.vue');
@@ -122,6 +128,21 @@ const routes = [
         {path: '/create', name: 'create', component: CreateProductStock, meta: {BreadCrumb: 'Criação'}},
         {path: '/edit/:id', name: 'edit', component: EditProductStock, props: true, meta: {BreadCrumb: 'Edição'}},
         {path: '/show/:id', name: 'show', component: ShowProductStock, props: true, meta: {BreadCrumb: 'Exibição'}},
+      ])
+    ]
+  },
+  {
+    path: '/sale',
+    component: DefaultLayout,
+    redirect: {name: 'sale.packing.index'},
+    name: 'sale',
+    meta: {BreadCrumb: 'Venda'},
+    children: [
+      ...withPrefix('/sale/packing', 'sale.packing.', true, 'Romaneio', [
+        {path: '/', name: 'index', component: IndexSalePacking, meta: {BreadCrumb: 'Listagem'}},
+        {path: '/create', name: 'create', component: CreateSalePacking, meta: {BreadCrumb: 'Criação'}},
+        {path: '/edit/:id', name: 'edit', component: EditSalePacking, props: true, meta: {BreadCrumb: 'Edição'}},
+        {path: '/show/:id', name: 'show', component: ShowSalePacking, props: true, meta: {BreadCrumb: 'Exibição'}}
       ])
     ]
   },

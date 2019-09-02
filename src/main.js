@@ -7,6 +7,18 @@ import {http} from "./services";
 import store from './store/store';
 import router from './routes/router';
 import './registerServiceWorker';
+import VueCurrencyFilter from 'vue-currency-filter'
+
+/* Money */
+Vue.use(VueCurrencyFilter,
+  {
+    symbol : 'R$',
+    thousandsSeparator: '.',
+    fractionCount: 2,
+    fractionSeparator: ',',
+    symbolPosition: 'front',
+    symbolSpacing: true
+  })
 
 // Vue.config.productionTip = false;
 // Vue.config.devtools = process.env.VUE_APP_DEBUG;

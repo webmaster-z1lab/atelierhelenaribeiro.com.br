@@ -33,7 +33,7 @@ export default {
       browserBackButtonClose: true
     }).use(AwsS3Multipart, {
       limit: 2,
-      companionUrl: process.env.VUE_APP_AWS_COMPNAION_URL
+      companionUrl: process.env.VUE_APP_AWS_COMPANION_URL
     }).run();
   }
 }

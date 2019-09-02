@@ -4,19 +4,19 @@
 
     <base-header-app/>
 
-    <div class="container-fluid mt--6">
+    <div class="container-fluid mt--6" v-if="!subIndex">
       <card class="no-border-card" body-classes="px-0 pb-1" footer-classes="pb-2">
         <div slot="header">
           <div class="row">
             <div class="col-6">
-              <h3 class="mb-0">Lista de Clientes</h3>
+              <h3 class="mb-0">Lista de Romaneios</h3>
               <p class="text-sm mb-0">
-                Lista de todos os clientes cadastrados no sistema.
+                Lista de todos os romaneios(produtos que estão em rota de vendas).
               </p>
             </div>
             <div class="col-6 text-right">
-              <el-tooltip content="Criar Novo Cliente" placement="top">
-                <router-link :to="{name: 'customer.create'}" class="btn btn-icon btn-fab btn-sm btn-primary">
+              <el-tooltip content="Criar Novo Romaneio" placement="top">
+                <router-link :to="{name: 'sale.packing.create'}" class="btn btn-icon btn-fab btn-sm btn-primary">
                   <span class="btn-inner&#45;&#45;icon"><i class="fas fa-user-plus"></i></span>
                   <span class="btn-inner--text">Add</span>
                 </router-link>
@@ -50,19 +50,8 @@
             <el-table-column min-width="60px" align="right" label="Ações">
               <div slot-scope="{$index, row}" class="d-flex">
                 <el-tooltip content="Visualizar" placement="top">
-                  <router-link :to="{name: 'customer.show', params: {id: row.id}}" class="table-action" data-toggle="tooltip" data-original-title="Show">
+                  <a href="javascript:;" class="table-action" data-toggle="tooltip" data-original-title="Show">
                     <i class="fas fa-eye"></i>
-                  </router-link>
-                </el-tooltip>
-                <el-tooltip content="Editar" placement="top">
-                  <router-link :to="{name: 'customer.edit', params: {id: row.id}}" class="table-action" data-toggle="tooltip" data-original-title="Edit">
-                    <i class="fas fa-user-edit"></i>
-                  </router-link>
-                </el-tooltip>
-                <el-tooltip content="Deletar" placement="top">
-                  <a href="#!" @click.prevent="destroy(row)" class="table-action table-action-delete" data-toggle="tooltip"
-                     data-original-title="Delete">
-                    <i class="fas fa-trash"></i>
                   </a>
                 </el-tooltip>
               </div>
@@ -84,11 +73,7 @@
 </template>
 
 <script>
-  import Customer from '@/models/Customer'
-
   import {http} from "@/services";
-  import {notifyVue, notifyError} from "@/utils";
-  import swal from 'sweetalert2';
 
   import clientPaginationMixin from '@/mixins/client-pagination'
 
@@ -109,17 +94,27 @@
     },
     data () {
       return {
+        loading: true,
+        products: [],
+        subIndex: false,
+        subProducts: [],
         tableColumns: [
           {
-            prop: 'company_name',
-            label: 'Nome',
+            prop: 'id',
+            label: 'Id',
             minWidth: 220,
             sortable: true
           },
           {
-            prop: 'document',
-            label: 'Documento',
-            minWidth: 220,
+            prop: 'color',
+            label: 'Vendedor',
+            minWidth: 150,
+            sortable: true
+          },
+          {
+            prop: 'status',
+            label: 'Status',
+            minWidth: 150,
             sortable: true
           },
           {
@@ -133,47 +128,25 @@
     },
     computed: {
       tableData() {
-        return Customer.all()
+        return this.packings
       }
     },
-    created() {
-      Customer.$fetch();
+    async created() {
+      await http.get(process.env.VUE_APP_API_URL + '/packings').then(res => this.packings = res.data);
+
+      this.changeLoading()
     },
     methods: {
       async searchApi(value) {
-        let result = [];
+        this.changeLoading();
+
+        await http.get(process.env.VUE_APP_API_URL + '/packings', {search: value})
+          .then(response => this.packings = response.data)
+          .catch(error => console.dir(error));
 
         this.changeLoading();
-        await http.get(process.env.VUE_APP_API_URL + '/customers', {search: value}).then(
-          async response => {
-            result = await Promise.resolve(Customer.insert({data: response.data}));
-          }
-        ).catch(error => console.dir(error)).finally(this.changeLoading());
 
-        return result.customers || []
-      },
-      destroy(row) {
-        swal({
-          title: 'Você tem Certeza?',
-          text: `Ao fazer isso os dados não poderão ser recuperados!`,
-          type: 'warning',
-          showCancelButton: true,
-          confirmButtonClass: 'btn btn-success btn-fill',
-          cancelButtonClass: 'btn btn-danger btn-fill',
-          confirmButtonText: 'Sim, apagar!',
-          cancelButtonText: 'Cancelar',
-          buttonsStyling: false
-        }).then(async result => {
-          if (result.value) {
-            await this.changeLoading();
-
-            await Customer.$delete({params: {id: row.id}})
-              .then(response => notifyVue(this.$notify, 'O cliente foi apagado!', 'success'))
-              .catch(error => notifyError(this.$notify, error));
-
-            this.changeLoading()
-          }
-        });
+        return this.packings || []
       }
     }
   };

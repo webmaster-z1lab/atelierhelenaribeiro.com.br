@@ -7,49 +7,44 @@
     <div class="container-fluid mt--6">
       <card>
         <div slot="header">
-          <h3 class="mb-0">Criando Produto</h3>
+          <h3 class="mb-0">Editando Produto</h3>
           <p class="text-sm mb-0">
-            Preencha os dados abaixo para adicionar um novo produto ao sistema.
+            Modifique os dados abaixo para atualizar informações do produto.
           </p>
         </div>
 
         <form class="needs-validation" @submit.prevent="submitForm">
           <div class="form-row">
             <div class="col-lg-4">
-              <base-input label="Referência" :error="getError('reference')" :valid="isValid('reference')">
-                <el-select v-model="product.template" filterable placeholder="Selecione o modelo do produto." name="reference" v-validate="'required'"
-                           :class="[{'is-invalid': getError('reference')}]" @change="setPriceBase">
-                  <el-option v-for="option in templates" :key="option.id" :label="option.reference" :value="option.id"/>
-                </el-select>
-              </base-input>
+              <base-input label="Modelo" :value="product.template.reference" name="reference" disabled="true"/>
             </div>
             <div class="col-lg-4">
               <base-input label="Tamanho" :error="getError('size')" :valid="isValid('size')">
                 <select name="size" class="form-control" v-model="product.size" :class="[{'is-invalid': getError('size')}]" v-validate="'required'">
                   <option value="" selected>Selecione o tamanho do produto.</option>
-                  <option value="P">P</option>
-                  <option value="M">M</option>
-                  <option value="G">G</option>
-                  <option value="Plus 1">PLUS 1</option>
-                  <option value="Plus 2">PLUS 2</option>
-                  <option value="Plus 3">PLUS 3</option>
+                  <option value="p">P</option>
+                  <option value="m">M</option>
+                  <option value="g">G</option>
+                  <option value="plus1">PLUS 1</option>
+                  <option value="plus2">PLUS 2</option>
+                  <option value="plus3">PLUS 3</option>
                 </select>
               </base-input>
             </div>
             <div class="col-lg-4">
               <base-input label="Cor" :error="getError('color')" :valid="isValid('color')">
-                <el-select v-model="product.color" filterable default-first-option allow-create placeholder="Selecione a cor do produto." name="color"
-                           v-validate="'required'" :class="[{'is-invalid': getError('color')}]">
-                  <el-option v-for="color in colors" :key="color.id" :label="color.name" :value="color.name"/>
-                </el-select>
+                <select name="color" class="form-control" v-model="product.color" :class="[{'is-invalid': getError('color')}]" v-validate="'required'">
+                  <option value="" selected>Selecione a cor do produto.</option>
+                  <option value="azul">Azul</option>
+                  <option value="branco">Branco</option>
+                  <option value="preto">Preto</option>
+                </select>
               </base-input>
             </div>
             <div class="col-lg-4">
-              <base-input type="number" name="amount" label="Quantidade" v-model="amount" :error="getError('amount')" :valid="isValid('amount')" v-validate="'required'"/>
+              <money-input label="Preço" v-model="product.price" name="price" :error="getError('price')" :valid="isValid('price')" v-validate="'required'"/>
             </div>
-            <div class="col-lg-4">
-              <money-input label="Preço" v-model="product.price" name="price" :error="getError('price')" :valid="isValid('price')" v-validate="'required|min_value:1'" :key="product.template"/>
-            </div>
+            <div class="col-lg-6"></div>
             <div class="col-lg-6">
               <div id="DashboardContainer"></div>
             </div>
@@ -85,71 +80,56 @@
 </template>
 
 <script>
-  import Product from '@/models/Stock/Product';
-  import Template from "@/models/Catalog/Template";
-
-  import MoneyInput from '@/components/App/Inputs/Money';
-  import crudSettingsMixin from '@/mixins/crud-settings';
+  import Product from '@/models/Stock/Product'
+  import MoneyInput from '@/components/App/Inputs/Money'
+  import crudSettingsMixin from '@/mixins/crud-settings'
   import clientUploadUppyMixin from '@/mixins/client-upload-uppy';
 
   import {notifyVue, notifyError} from "@/utils";
-  import {isEmpty} from 'lodash';
-  import { Select, Option } from 'element-ui'
 
   import {http} from "@/services";
+  import {isEmpty} from 'lodash'
 
   export default {
-    name: 'create',
+    name: 'edit',
     mixins: [crudSettingsMixin, clientUploadUppyMixin],
+    props:{
+      id: {
+        type: String,
+        required: true
+      }
+    },
     components: {
-      MoneyInput,
-      [Select.name]: Select,
-      [Option.name]: Option,
+      MoneyInput
     },
     data () {
       return {
         gallery: [],
         loading: true,
-        amount: 1,
-        colors: [],
-        product: new Product()
-      }
-    },
-    computed: {
-      templates() {
-        return Template.all()
+        product: Product.find(this.id) || {template: {}}
       }
     },
     async created() {
-      await Template.$fetch();
-      await http.get(process.env.VUE_APP_API_URL + '/colors').then(res => {this.colors = res.data})
+      if (isEmpty(this.product.template)) this.product = await Product.$get({params: {id: this.id}});
+      await http.get(process.env.VUE_APP_API_URL + `/templates/${this.product.template_id}/gallery`).then(res => {this.gallery = res.data});
 
       this.changeLoading();
     },
     methods: {
-      setPriceBase(id) {
-        this.$validator.pause();
-        this.product.price = Template.find(id).price;
-        http.get(process.env.VUE_APP_API_URL + `/templates/${id}/gallery`).then(res => {this.gallery = res.data})
-      },
-      async submitForm() {
-        this.$validator.resume();
+      submitForm() {
         try {
           this.$validator.validateAll().then(
             async res => {
               if (res) {
                 await this.changeLoading();
-                this.product.amount = this.amount;
                 this.product.images = [];
-                if (isEmpty(this.product.template_images)) delete this.product.template_images;
+                if (isEmpty(this.product.template_images)) delete this.product.template_images
 
                 if (isEmpty(this.uppy.getFiles())) {
                   delete this.product.images;
-                  await Product.$create({data: this.product})
-                    .then(response => {
-                      notifyVue(this.$notify, 'Produto criado com sucesso', 'success');
-                      this.$router.push({name: 'stock.product.index'})
-                    }).catch(error => notifyError(this.$notify, error));
+                  await Product.$update({params: {id: this.id}, data: this.product})
+                    .then(res => notifyVue(this.$notify, 'Produto atualizado com sucesso', 'success'))
+                    .catch(error => notifyError(this.$notify, error));
                 } else {
                   await this.uppy.setMeta({folder: `templates/${this.product.template}`});
                   await this.uppy.upload().then(async res => {
@@ -163,11 +143,9 @@
                       })
                     }
 
-                    await Product.$create({data: this.product})
-                      .then(response => {
-                        notifyVue(this.$notify, 'Produto criado com sucesso', 'success');
-                        this.$router.push({name: 'stock.product.index'})
-                      }).catch(error => notifyError(this.$notify, error));
+                    await Product.$update({params: {id: this.id}, data: this.product})
+                      .then(res => notifyVue(this.$notify, 'Produto atualizado com sucesso', 'success'))
+                      .catch(error => notifyError(this.$notify, error));
                   }).catch(err => {throw err});
                 }
 

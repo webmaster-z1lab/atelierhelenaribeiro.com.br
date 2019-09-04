@@ -40,13 +40,14 @@
   import {notifyError} from "@/utils";
 
   import Loading from '@/components/App/Loading'
-  import User from "@/models/User";
+
+  import {mapActions, mapState} from 'vuex';
+  import {LOGOUT} from "@/store/root-const";
 
   export default {
     name: 'user-menu',
     data() {
       return {
-        loading: false,
         isOpen: false
       };
     },
@@ -54,14 +55,13 @@
       Loading
     },
     computed: {
-      user() {
-        return User.find(ls.get('user_id'))
-      }
+      ...mapState({
+        user: state => state.user,
+        loading: state => state.loading
+      })
     },
     methods: {
-      changeLoading() {
-        this.loading = !this.loading
-      },
+      ...mapActions([LOGOUT]),
       toggleDropDown() {
         this.isOpen = !this.isOpen;
       },
@@ -69,16 +69,7 @@
         this.isOpen = false;
       },
       logout() {
-        http.post(`${process.env.VUE_APP_API_URL}/logout`, {})
-          .then(async response => {
-            await ls.clear();
-
-            this.$router.push({name: 'login'})
-          })
-          .catch(error => {
-            notifyError(this.$notify, error);
-            this.changeLoading()
-          })
+        this.LOGOUT().then(res => this.$router.push({name: 'login'})).catch(error => notifyError(this.$notify, error));
       }
     }
   };

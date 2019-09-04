@@ -4,7 +4,7 @@ import App from './App';
 
 import {http} from "./services";
 
-import store from './store/store';
+import store from './store';
 import router from './routes/router';
 import './registerServiceWorker';
 import VueCurrencyFilter from 'vue-currency-filter'
@@ -20,9 +20,9 @@ Vue.use(VueCurrencyFilter,
     symbolSpacing: true
   })
 
-// Vue.config.productionTip = false;
-// Vue.config.devtools = process.env.VUE_APP_DEBUG;
-// Vue.config.silent = process.env.VUE_APP_SILENT;
+Vue.config.productionTip = false;
+Vue.config.devtools = process.env.VUE_APP_DEBUG;
+Vue.config.silent = process.env.VUE_APP_SILENT;
 
 // plugins setup
 Vue.use(DashboardPlugin);

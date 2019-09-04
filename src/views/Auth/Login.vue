@@ -58,8 +58,9 @@
 </template>
 
 <script>
-  import User from '@/models/User'
+  import {mapActions, mapState} from 'vuex'
   import Loading from '@/components/App/Loading'
+  import {LOGIN} from '@/store/root-const'
 
   import {http, ls} from "@/services";
   import {notifyVue, notifyError} from "@/utils";
@@ -73,7 +74,6 @@
       Loading
     },
     data: () => ({
-      loading: false,
       validated: false,
       auth: {
         email: '',
@@ -81,52 +81,36 @@
         remember: false
       }
     }),
+    computed: {
+      ...mapState({
+        loading: state => state.loading
+      })
+    },
     methods: {
-      changeLoading() {
-        this.loading = !this.loading
-      },
+      ...mapActions(['LOGIN']),
       getError(name) {
         return this.errors.first(name)
       },
       isValid(name) {
         return this.validated && !this.errors.has(name);
       },
-      async singIn() {
+      singIn() {
         try {
-          await this.$validator.validateAll().then(
+          this.$validator.validateAll().then(
             res => {
               if (res) {
-                let time_storage = null;
+                this.LOGIN(this.auth).then(res => {
+                  notifyVue(this.$notify, `${res.name}, Bem Vindo!`);
 
-                if (!this.auth.remember) {
-                  time_storage = process.env.VUE_APP_SESSION_LIFETIME;
-                  delete this.auth.remember
-                }
-
-                this.changeLoading();
-
-                http.post(`${process.env.VUE_APP_API_URL}/login`, this.auth)
-                  .then(async response => {
-                    await User.create({data: response.data});
-
-                    await ls.set('api_token', response.data.api_token, time_storage);
-                    await ls.set('user_id', response.data.id, time_storage);
-
-                    notifyVue(this.$notify, `${response.data.name}, Bem Vindo!`);
-
-                    if(this.$route.params.nextUrl){
-                      this.$router.push(this.$route.params.nextUrl)
-                    } else {
-                      this.$router.push({name: 'home'});
-                    }
-                  })
-                  .catch(error => {
-                    notifyError(this.$notify, error);
-                    this.changeLoading()
-                  })
+                  if(this.$route.params.nextUrl) {
+                    this.$router.push(this.$route.params.nextUrl)
+                  } else {
+                    this.$router.push({name: 'dashboard'});
+                  }
+                });
               }
             }
-          )
+          ).catch(error => notifyError(this.$notify, error))
         } finally {
           this.validated = true;
         }
@@ -134,10 +118,3 @@
     }
   };
 </script>
-
-<style>
-  .ct-example .btn {
-    margin-top: .5rem;
-    margin-bottom: .5rem;
-  }
-</style>

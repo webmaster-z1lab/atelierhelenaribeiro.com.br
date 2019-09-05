@@ -18,26 +18,25 @@
 
           <div class="form-row">
             <div class="col-lg-4">
-              <base-input name="company_name" label="Nome da Empresa" v-model="customer.company_name" :error="getError('company_name')" :valid="isValid('company_name')" v-validate="'required'"/>
+              <base-input name="company_name" label="Nome da Empresa" v-model="company_name" :error="getError('company_name')" :valid="isValid('company_name')" v-validate="'required'"/>
             </div>
             <div class="col-lg-4">
-              <base-input name="trading_name" label="Nome Fantasia" v-model="customer.trading_name"/>
+              <base-input name="trading_name" label="Nome Fantasia" v-model="trading_name"/>
             </div>
             <div class="col-lg-4">
-              <mask-input placeholder="000.000.000-00 ou 00.000.000/0000-00" name="document" label="Documento" v-model="customer.document"
-                          :mask="['###.###.###-##', '##.###.###/####-##']" :error="getError('document')" :valid="isValid('document')" v-validate="'required|document'"/>
+              <mask-input placeholder="000.000.000-00 ou 00.000.000/0000-00" name="document" label="Documento" v-model="document" :mask="['###.###.###-##', '##.###.###/####-##']" validate="required|document"/>
             </div>
           </div>
           <div class="form-row">
             <div class="col-lg-3">
-              <base-input name="state_registration" label="Inscrição Estadual" v-model="customer.state_registration"/>
+              <base-input name="state_registration" label="Inscrição Estadual" v-model="state_registration"/>
             </div>
             <div class="col-lg-3">
-              <base-input name="municipal_registration" label="Inscrição Municipal" v-model="customer.municipal_registration"/>
+              <base-input name="municipal_registration" label="Inscrição Municipal" v-model="municipal_registration"/>
             </div>
             <div class="col-lg-3">
               <base-input label="Status" :error="getError('status')" :valid="isValid('status')">
-                <select name="status" class="form-control" v-model="customer.status" :class="[{'is-invalid': getError('status')}]" v-validate="'required'">
+                <select name="status" class="form-control" v-model="status" :class="[{'is-invalid': getError('status')}]" v-validate="'required'">
                   <option value="" selected>Selecione o status do cliente.</option>
                   <option value="active">Ativo</option>
                   <option value="stand_by">Pausado</option>
@@ -47,14 +46,14 @@
             </div>
             <div class="col-lg-3">
               <base-input label="Representante" :error="getError('seller')" :valid="isValid('seller')">
-                <el-select v-model="customer.seller" filterable placeholder="Selecione o representante do cliente." name="seller" v-validate="'required'" :class="[{'is-invalid': getError('seller')}]">
+                <el-select v-model="seller" filterable placeholder="Selecione o representante do cliente." name="seller" v-validate="'required'" :class="[{'is-invalid': getError('seller')}]">
                   <el-option v-for="seller in sellers" :key="seller.id" :label="seller.name" :value="seller.id"/>
                 </el-select>
               </base-input>
             </div>
             <div class="col-12">
               <label class="form-control-label">Anotações</label>
-              <html-editor v-model="customer.annotation"></html-editor>
+              <html-editor v-model="annotation"></html-editor>
             </div>
           </div>
 
@@ -63,12 +62,10 @@
 
           <div class="form-row">
             <div class="col-lg-4">
-              <base-input name="contact" label="Nome" v-model="customer.contact" placeholder="Nome para contato com a empresa."
-                          :error="getError('contact')" :valid="isValid('contact')" v-validate="'required'"/>
+              <base-input name="contact" label="Nome" v-model="contact" placeholder="Nome para contato com a empresa." :error="getError('contact')" :valid="isValid('contact')" v-validate="'required'"/>
             </div>
             <div class="col-lg-4">
-              <base-input name="email" label="Email" v-model="customer.email" :error="getError('email')" :valid="isValid('email')" v-validate="'required|email'"
-                          placeholder="contato@example.com.br"/>
+              <base-input name="email" label="Email" v-model="email" :error="getError('email')" :valid="isValid('email')" v-validate="'required|email'" placeholder="contato@example.com.br"/>
             </div>
             <div class="col-lg-2">
               <phone-input :phone="phone1" label=" 1" name="phone1" :validate="true"/>
@@ -122,7 +119,7 @@
             </a>
           </p>
 
-          <address-inputs :address="customer.address" @loading="changeLoading"/>
+          <address-inputs :address="address" @loading="changeLoading"/>
 
           <hr class="my-4">
           <base-button type="primary" native-type="submit">Enviar</base-button>
@@ -134,16 +131,17 @@
 </template>
 
 <script>
-  import Customer from '@/models/Customer'
-  import MaskInput from '@/components/App/Inputs/Mask'
-  import PhoneInput from '@/components/App/Inputs/Phone'
-  import HtmlEditor from '@/components/Inputs/HtmlEditor'
-  import AddressInputs from '@/components/App/Address'
-  import crudSettingsMixin from '@/mixins/crud-settings'
+  import MaskInput from '@/components/App/Inputs/Mask';
+  import PhoneInput from '@/components/App/Inputs/Phone';
+  import HtmlEditor from '@/components/Inputs/HtmlEditor';
+  import AddressInputs from '@/components/App/Address';
+  import crudSettingsMixin from '@/mixins/crud-settings';
 
-  import { Select, Option } from 'element-ui'
+  import {mapActions, mapState} from 'vuex';
+  import {CREATE} from "@/store/modules/employee/employee-const";
 
   import {notifyVue, notifyError} from "@/utils";
+  import { Select, Option } from 'element-ui';
   import {http} from "@/services";
 
   export default {
@@ -159,17 +157,15 @@
     },
     data () {
       return {
-        loading: true,
-        customer: new Customer(),
-        phone1: {
-          number: '',
-          is_whatsapp: false
-        },
-        phone2: {
-          number: '',
-          is_whatsapp: false
-        },
-        sellers: [],
+        company_name: '',
+        trading_name: '',
+        document: '',
+        state_registration: '',
+        municipal_registration: '',
+        email: '',
+        contact: '',
+        status: 'active',
+        annotation: '',
         owners: [
           {
             name: '',
@@ -181,17 +177,38 @@
               is_whatsapp: false
             }
           }
-        ]
+        ],
+        address: {
+          postal_code: '',
+          state: '',
+          district: '',
+          city: '',
+          street: '',
+          number: '',
+          complement: ''
+        },
+        phone1: {
+          number: '',
+          is_whatsapp: false
+        },
+        phone2: {
+          number: '',
+          is_whatsapp: false
+        },
+        sellers: [],
+        seller: '',
       }
     },
-    async created(){
-      await http.get(process.env.VUE_APP_API_URL + '/employees', {search: 'seller'})
-        .then(response => this.sellers = response.data)
-        .catch(error => console.dir(error));
-
-      this.changeLoading()
+    computed: {
+      ...mapState('customer', {
+        loading: state => state.loading
+      })
+    },
+    async created() {
+      await http.get('employees', {search: 'seller'}).then(response => this.sellers = response.data).catch(error => console.dir(error));
     },
     methods: {
+      ...mapActions('customer', [CREATE]),
       addOwner() {
         this.owners.push({
           name: '',
@@ -212,20 +229,41 @@
           this.$validator.validateAll().then(
             async res => {
               if (res) {
-                await this.changeLoading();
+                const {
+                  company_name,
+                  trading_name,
+                  document,
+                  state_registration,
+                  municipal_registration,
+                  email,
+                  contact,
+                  status,
+                  annotation,
+                  owners,
+                  address,
+                  seller,
+                  phone1,
+                  phone2
+                } = this;
 
-                this.customer.phones = [this.phone1];
-                this.customer.owners = this.owners;
-                if (this.phone2.number) this.customer.phones.push(this.phone2);
-
-                await Customer.$create({data: this.customer})
-                  .then(response => {
+                this.CREATE({
+                  company_name,
+                  trading_name,
+                  document,
+                  state_registration,
+                  municipal_registration,
+                  email,
+                  contact,
+                  status,
+                  annotation,
+                  owners,
+                  address,
+                  seller,
+                  phones: phone2.number ? [phone1, phone2] : [phone1]
+                }).then(response => {
                     notifyVue(this.$notify, 'Cliente criado com sucesso', 'success');
                     this.$router.push({name: 'customer.show', params: {id: response.id}})
-                  })
-                  .catch(error => notifyError(this.$notify, error));
-
-                this.changeLoading()
+                }).catch(error => notifyError(this.$notify, error));
               }
             }
           )

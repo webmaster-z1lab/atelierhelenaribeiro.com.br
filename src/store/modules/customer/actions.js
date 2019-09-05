@@ -1,4 +1,4 @@
-import * as constants from './employee-const'
+import * as constants from './customer-const'
 import {http} from "@/services";
 import swal from 'sweetalert2';
 
@@ -7,7 +7,7 @@ export default {
     return await new Promise(async (resolve, reject) => {
       await commit(constants.LOADING);
 
-      await http.get('employees').then(async response => {
+      await http.get('customers').then(async response => {
         await commit(constants.LIST, response.data);
         await commit(constants.LOADING);
         resolve(response.data);
@@ -21,7 +21,7 @@ export default {
     return await new Promise(async (resolve, reject) => {
       await commit(constants.LOADING);
 
-      await http.get(`employees/${id}`).then(async response => {
+      await http.get(`customers/${id}`).then(async response => {
           await commit(constants.SET, response.data);
           await commit(constants.LOADING);
           resolve(response.data);
@@ -35,7 +35,7 @@ export default {
     return await new Promise(async (resolve, reject) => {
       await commit(constants.LOADING);
 
-      await http.post('employees', data).then(async response => {
+      await http.post('customers', data).then(async response => {
           await commit(constants.CREATE, response.data);
           await commit(constants.LOADING);
 
@@ -50,7 +50,7 @@ export default {
     return await new Promise(async (resolve, reject) => {
       await commit(constants.LOADING);
 
-      await http.put(`employees/${data.id}`, data).then(async response => {
+      await http.put(`customers/${data.id}`, data).then(async response => {
           await commit(constants.EDIT, response.data);
           await commit(constants.LOADING);
 
@@ -78,7 +78,7 @@ export default {
         if (response.value) {
           await commit(constants.LOADING);
 
-          await http.delete(`employees/${data.id}`, {})
+          await http.delete(`customers/${data.id}`, {})
             .then(async response => {
               await commit(constants.DELETE, data);
               await commit(constants.LOADING);

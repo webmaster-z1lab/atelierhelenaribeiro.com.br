@@ -1,5 +1,3 @@
-import {ls} from "@/services";
-
 export default {
   loading: false,
   employees: [],

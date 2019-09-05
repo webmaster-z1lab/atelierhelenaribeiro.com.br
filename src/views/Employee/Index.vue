@@ -17,7 +17,7 @@
             <div class="col-6 text-right">
               <el-tooltip content="Criar Novo Funcionário" placement="top">
                 <router-link :to="{name: 'employee.create'}" class="btn btn-icon btn-fab btn-sm btn-primary">
-                  <span class="btn-inner&#45;&#45;icon"><i class="fas fa-user-plus"></i></span>
+                  <span class="btn-inner&#45;&#45;icon"><i class="fas fa-plus"></i></span>
                   <span class="btn-inner--text">Add</span>
                 </router-link>
               </el-tooltip>
@@ -54,7 +54,7 @@
             <el-table-column prop="email" label="Email" sortable/>
             <el-table-column label="Data de Criação" sortable>
               <template v-slot="{row}">
-                {{row.created_at}}
+                {{row.created_at | formatDate}}
               </template>
             </el-table-column>
 
@@ -105,13 +105,14 @@
   import { Table, TableColumn, Select, Option, Tooltip } from 'element-ui';
 
   import {http} from "@/services";
-  import {notifyVue, notifyError} from "@/utils";
+  import {notifyVue, notifyError, formatDate} from "@/utils";
   import {mapActions, mapState, mapMutations} from 'vuex'
   import {DELETE, GET_ALL, LOADING} from "@/store/modules/employee/employee-const";
 
   export default {
     name: 'index',
     mixins: [clientPaginationMixin],
+    filters: {formatDate},
     components: {
       BasePagination,
       [Select.name]: Select,

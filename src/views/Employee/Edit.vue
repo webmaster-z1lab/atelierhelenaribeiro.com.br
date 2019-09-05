@@ -83,7 +83,6 @@
 </template>
 
 <script>
-  import Employee from '@/models/Employee'
   import MaskInput from '@/components/App/Inputs/Mask'
   import MoneyInput from '@/components/App/Inputs/Money'
   import PhoneInput from '@/components/App/Inputs/Phone'

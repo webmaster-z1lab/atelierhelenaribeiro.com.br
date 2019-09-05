@@ -130,17 +130,11 @@
   </div>
 </template>
 
-<style>
-  .no-border-card .card-footer{
-    border-top: 0;
-  }
-</style>
-
 <script>
-  import Customer from '@/models/Customer'
+  import {mapActions, mapState} from 'vuex'
+  import {GET, DELETE} from "@/store/modules/employee/employee-const";
 
   import {notifyVue, notifyError} from "@/utils";
-  import swal from 'sweetalert2';
 
   import Loading from '@/components/App/Loading'
 
@@ -155,50 +149,23 @@
         required: true
       }
     },
-    data: () => ({
-      loading: true,
-    }),
     computed: {
-      customer() {
-        return Customer.find(this.id)
-      }
+      ...mapState('customer', {
+        loading: state => state.loading,
+        customer: state => state.customer
+      })
     },
     async created() {
-      if (!this.customer) {
-       await Customer.$get({params: {id: this.id}})
-      }
-
-      this.changeLoading()
+      this.GET(this.id);
     },
     methods: {
-      changeLoading() {
-        this.loading = !this.loading
-      },
+      ...mapActions('customer', [GET, DELETE]),
       destroy() {
-        swal({
-          title: 'Você tem Certeza?',
-          text: `Ao fazer isso os dados não poderão ser recuperados!`,
-          type: 'warning',
-          showCancelButton: true,
-          confirmButtonClass: 'btn btn-success btn-fill',
-          cancelButtonClass: 'btn btn-danger btn-fill',
-          confirmButtonText: 'Sim, apagar!',
-          cancelButtonText: 'Cancelar',
-          buttonsStyling: false
-        }).then(async result => {
-          if (result.value) {
-            await this.changeLoading();
-
-            await Customer.$delete({params: {id: this.id}})
-              .then(response => {
-                notifyVue(this.$notify, 'O Cliente foi apagado!', 'success');
-                this.$router.push({name: 'customer.index'})
-              })
-              .catch(error => notifyError(this.$notify, error));
-
-            this.changeLoading()
-          }
-        });
+        this.DELETE(this.customer)
+          .then(res => {
+            notifyVue(this.$notify, 'O cliente foi apagado!', 'success');
+            this.$router.push({name: 'customer.index'})
+          }).catch(error => notifyError(this.$notify, error));
       }
     }
   };

@@ -6,13 +6,16 @@ import actions from './actions'
 import state from './state'
 
 import employee from './modules/employee'
+import customer from './modules/customer'
+
 import createLogger from "vuex/dist/logger";
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
   modules: {
-    employee
+    employee,
+    customer,
   },
   state,
   actions,

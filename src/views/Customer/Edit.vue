@@ -4,7 +4,7 @@
 
     <base-header-app/>
 
-    <div class="container-fluid mt--6" v-if="customer">
+    <div class="container-fluid mt--6">
       <card>
         <div slot="header">
           <h3 class="mb-0">Editando Cliente</h3>
@@ -18,15 +18,14 @@
 
           <div class="form-row">
             <div class="col-lg-4">
-              <base-input name="company_name" label="Nome da Empresa" v-model="customer.company_name" :error="getError('company_name')" :valid="isValid('company_name')"
-                          v-validate="'required'"/>
+              <base-input name="company_name" label="Nome da Empresa" v-model="customer.company_name" :error="getError('company_name')" :valid="isValid('company_name')" v-validate="'required'"/>
             </div>
             <div class="col-lg-4">
               <base-input name="trading_name" label="Nome Fantasia" v-model="customer.trading_name"/>
             </div>
             <div class="col-lg-4">
-              <mask-input placeholder="000.000.000-00 ou 00.000.000/0000-00" name="document" label="Documento" v-model="customer.document"
-                          :mask="['###.###.###-##', '##.###.###/####-##']" :error="getError('document')" :valid="isValid('document')" v-validate="'required|document'"/>
+              <mask-input placeholder="000.000.000-00 ou 00.000.000/0000-00" name="document" label="Documento" v-model="customer.document" :mask="['###.###.###-##', '##.###.###/####-##']"
+                          validate="required|document" :key="customer.id"/>
             </div>
           </div>
           <div class="form-row">
@@ -124,7 +123,7 @@
             </a>
           </p>
 
-          <address-inputs :address="customer.address" @loading="changeLoading"/>
+          <address-inputs :address="customer.address" @loading="changeLoading" :key="customer.id"/>
 
           <hr class="my-4">
           <base-button type="primary" native-type="submit">Enviar</base-button>
@@ -135,13 +134,23 @@
   </div>
 </template>
 
+<style>
+  @media (min-width: 992px) {
+    .d-lg-block {
+      display: inline !important;
+    }
+  }
+</style>
+
 <script>
-  import Customer from '@/models/Customer'
   import MaskInput from '@/components/App/Inputs/Mask'
   import PhoneInput from '@/components/App/Inputs/Phone'
   import HtmlEditor from '@/components/Inputs/HtmlEditor'
   import AddressInputs from '@/components/App/Address'
   import crudSettingsMixin from '@/mixins/crud-settings'
+
+  import {mapActions, mapState} from 'vuex'
+  import {EDIT, GET} from "@/store/modules/employee/employee-const";
 
   import {notifyVue, notifyError} from "@/utils";
   import {http} from "@/services";
@@ -163,27 +172,26 @@
     },
     data () {
       return {
-        loading: true,
         sellers: [],
         phone: {
           number: '',
           is_whatsapp: false
-        },
-        customer: Customer.find(this.id)
+        }
       }
     },
+    computed: {
+      ...mapState('customer', {
+        loading: state => state.loading,
+        customer: state => state.customer
+      })
+    },
     async created() {
-      await http.get(process.env.VUE_APP_API_URL + '/employees', {search: 'seller'}).then(
-        async response => {
-          this.sellers = response.data
-        }
-      ).catch(error => console.dir(error));
+      await http.get('employees', {search: 'seller'}).then(async response => this.sellers = response.data).catch(error => console.dir(error));
 
-      if (!this.customer) this.customer = await Customer.$get({params: {id: this.id}});
-
-      this.changeLoading();
+      this.GET(this.id);
     },
     methods: {
+      ...mapActions('customer', [GET, EDIT]),
       addOwner() {
         this.customer.owners.push({
           name: '',
@@ -204,15 +212,12 @@
           this.$validator.validateAll().then(
             async res => {
               if (res) {
-                await this.changeLoading();
-
                 if (this.phone.number) this.customer.phones[1] = this.phone;
 
-                await Customer.$update({params: {id: this.id}, data: this.customer})
-                  .then(res => notifyVue(this.$notify, 'Cliente atualizado com sucesso', 'success'))
-                  .catch(error => notifyError(this.$notify, error));
-
-                this.changeLoading()
+                this.EDIT(this.customer).then(res => {
+                  notifyVue(this.$notify, 'Cliente atualizado com sucesso', 'success');
+                  this.$router.push({name: 'customer.index'})
+                }).catch(error => notifyError(this.$notify, error));
               }
             }
           )
@@ -223,11 +228,3 @@
     }
   };
 </script>
-
-<style>
-  @media (min-width: 992px) {
-    .d-lg-block {
-      display: inline !important;
-    }
-  }
-</style>

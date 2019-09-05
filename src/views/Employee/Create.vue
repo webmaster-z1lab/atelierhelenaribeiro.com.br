@@ -83,17 +83,17 @@
 </template>
 
 <script>
-  import MaskInput from '@/components/App/Inputs/Mask'
-  import PhoneInput from '@/components/App/Inputs/Phone'
-  import MoneyInput from '@/components/App/Inputs/Money'
-  import AddressInputs from '@/components/App/Address'
-  import crudSettingsMixin from '@/mixins/crud-settings'
+  import MaskInput from '@/components/App/Inputs/Mask';
+  import PhoneInput from '@/components/App/Inputs/Phone';
+  import MoneyInput from '@/components/App/Inputs/Money';
+  import AddressInputs from '@/components/App/Address';
+  import crudSettingsMixin from '@/mixins/crud-settings';
 
-  import {mapActions, mapState} from 'vuex'
+  import {mapActions, mapState} from 'vuex';
   import {CREATE} from "@/store/modules/employee/employee-const";
 
   import {notifyVue, notifyError} from "@/utils";
-  import { Select, Option } from 'element-ui'
+  import { Select, Option } from 'element-ui';
 
   export default {
     name: 'create',

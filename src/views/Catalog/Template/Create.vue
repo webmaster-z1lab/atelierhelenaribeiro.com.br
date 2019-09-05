@@ -16,15 +16,15 @@
         <form class="needs-validation" @submit.prevent="submitForm">
           <div class="form-row">
             <div class="col-lg-4">
-              <base-input label="Modelo" v-model="template.reference" name="reference" :error="getError('reference')" :valid="isValid('reference')" v-validate="'required'"/>
+              <base-input label="Modelo" v-model="reference" name="reference" :error="getError('reference')" :valid="isValid('reference')" v-validate="'required'"/>
             </div>
             <div class="col-lg-4">
-              <money-input label="Preço Base" v-model="template.price" name="price" :error="getError('price')" :valid="isValid('price')" v-validate="'required|min_value:1'"/>
+              <money-input label="Preço Base" v-model="price" name="price" :error="getError('price')" :valid="isValid('price')" v-validate="'required|min_value:1'"/>
             </div>
             <div class="col-lg-3 ml-3">
               <label class="form-control-label">Modelo Ativo?</label>
               <div class="align-self-end mt-2">
-                <base-switch v-model="template.is_active" onText="Sim" offText="Não"/>
+                <base-switch v-model="is_active" onText="Sim" offText="Não"/>
               </div>
             </div>
             <div class="col-lg-12">
@@ -42,10 +42,12 @@
 </template>
 
 <script>
-  import Template from '@/models/Catalog/Template'
-  import MoneyInput from '@/components/App/Inputs/Money'
-  import crudSettingsMixin from '@/mixins/crud-settings'
+  import MoneyInput from '@/components/App/Inputs/Money';
+  import crudSettingsMixin from '@/mixins/crud-settings';
   import clientUploadUppyMixin from '@/mixins/client-upload-uppy';
+
+  import {mapActions, mapState} from 'vuex';
+  import {CREATE} from "@/store/modules/template/template-const";
 
   import {notifyVue, notifyError} from "@/utils";
   import {isEmpty} from 'lodash'
@@ -59,32 +61,35 @@
     },
     data () {
       return {
-        loading: true,
-        template: new Template()
+        price: 0,
+        reference: '',
+        is_active: true,
+        images: []
       }
     },
+    computed: {
+      ...mapState('template', {
+        loading: state => state.loading
+      })
+    },
     async created() {
-      await http.get(process.env.VUE_APP_API_URL + '/templates/reference')
-        .then(response => this.template.reference = response.data.reference)
-        .catch(error => console.dir(error));
-
-      this.changeLoading()
+      await http.get('templates/reference').then(response => this.reference = response.data.reference).catch(error => console.dir(error));
     },
     methods: {
+      ...mapActions('template', [CREATE]),
       submitForm() {
         try {
           this.$validator.validateAll().then(
             async res => {
               if (res) {
                 if (isEmpty(this.uppy.getFiles())) throw 'Adicione uma Imagem!';
-                await this.changeLoading();
 
+                const {price, reference, is_active, images} = this;
                 await this.uppy.setMeta({folder: 'templates'});
-                await this.uppy.upload().then(async res => {
-                  this.template.images = [];
 
+                await this.uppy.upload().then(async res => {
                   for (let image of res.successful) {
-                    this.template.images.push({
+                    images.push({
                       path: image.s3Multipart.key,
                       name: image.data.name,
                       extension: image.extension,
@@ -93,14 +98,12 @@
                     })
                   }
 
-                  await Template.$create({data: this.template})
+                  this.CREATE({price, reference, is_active, images})
                     .then(response => {
                       notifyVue(this.$notify, 'Modelo criado com sucesso', 'success');
-
                       this.$router.push({name: 'catalog.template.show', params: {id: response.id}})
-                    }).catch(error => notifyError(this.$notify, error));
-
-                  this.changeLoading()
+                    })
+                    .catch(error => notifyError(this.$notify, error));
                 }).catch(err => {throw err});
               }
             }
@@ -112,11 +115,3 @@
     }
   };
 </script>
-
-<style>
-  @media (min-width: 992px) {
-    .d-lg-block {
-      display: inline !important;
-    }
-  }
-</style>

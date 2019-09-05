@@ -7,6 +7,7 @@ import state from './state'
 
 import employee from './modules/employee'
 import customer from './modules/customer'
+import template from './modules/template'
 
 import createLogger from "vuex/dist/logger";
 
@@ -16,6 +17,7 @@ export default new Vuex.Store({
   modules: {
     employee,
     customer,
+    template,
   },
   state,
   actions,

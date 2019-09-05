@@ -46,7 +46,22 @@
             </div>
           </div>
           <el-table :data="queriedData" row-key="id" header-row-class-name="thead-light" @sort-change="sortChange">
-            <el-table-column v-for="column in tableColumns" :key="column.label" v-bind="column"/>
+            <el-table-column label="Referência" sortable>
+              <template v-slot="{row}">
+                <router-link :to="{name: 'catalog.template.show', params: {id: row.id}}" class="table-action">{{row.reference}}</router-link>
+              </template>
+            </el-table-column>
+            <el-table-column label="Status" sortable>
+              <template v-slot="{row}">
+                {{row.is_active ? 'Ativo' : 'Arquivado'}}
+              </template>
+            </el-table-column>
+            <el-table-column label="Data de Criação" sortable>
+              <template v-slot="{row}">
+                {{row.created_at | formatDate}}
+              </template>
+            </el-table-column>
+
             <el-table-column min-width="60px" align="right" label="Ações">
               <div slot-scope="{$index, row}" class="d-flex">
                 <el-tooltip content="Visualizar" placement="top">
@@ -90,21 +105,20 @@
 </style>
 
 <script>
-  import Template from '@/models/Catalog/Template'
-
-  import {http} from "@/services";
-  import {notifyVue, notifyError} from "@/utils";
-  import swal from 'sweetalert2';
-
-  import clientPaginationMixin from '@/mixins/client-pagination'
+  import clientPaginationMixin from '@/mixins/client-pagination';
 
   import { BasePagination } from '@/components';
   import { Table, TableColumn, Select, Option, Tooltip } from 'element-ui';
-  import {isEmpty} from 'lodash'
+
+  import {http} from "@/services";
+  import {notifyVue, notifyError, formatDate} from "@/utils";
+  import {mapActions, mapState, mapMutations} from 'vuex'
+  import {DELETE, GET_ALL, LOADING} from "@/store/modules/template/template-const";
 
   export default {
     name: 'index',
     mixins: [clientPaginationMixin],
+    filters: {formatDate},
     components: {
       BasePagination,
       [Select.name]: Select,
@@ -113,73 +127,33 @@
       [TableColumn.name]: TableColumn,
       [Tooltip.name]: Tooltip
     },
-    data () {
-      return {
-        tableColumns: [
-          {
-            prop: 'reference',
-            label: 'Referência',
-            minWidth: 220,
-            sortable: true
-          },
-          {
-            prop: 'is_active',
-            label: 'Status',
-            minWidth: 220,
-            sortable: true
-          },
-          {
-            prop: 'created_at',
-            label: 'Data de Criação',
-            minWidth: 150,
-            sortable: true
-          }
-        ]
-      }
-    },
     computed: {
-      tableData() {
-        return Template.all()
-      }
+      ...mapState('template', {
+        tableData: state => state.templates,
+        loading: state => state.loading
+      })
     },
     created() {
-      Template.$fetch();
+      this.GET_ALL()
     },
     methods: {
+      ...mapActions('template', [GET_ALL, DELETE]),
+      ...mapMutations('template', [LOADING]),
       async searchApi(value) {
         let result = [];
+        this.LOADING();
 
-        this.changeLoading();
-        await http.get(process.env.VUE_APP_API_URL + '/templates', {search: value}).then(
-          async response => {
-            result = await Promise.resolve(Template.insert({data: response.data}));
-          }
-        ).catch(error => console.dir(error)).finally(this.changeLoading());
+        await http.get('templates', {search: value})
+          .then(async response => result =response.data)
+          .catch(error => console.dir(error));
 
-        return result.templates || []
+        this.LOADING();
+        return result || []
       },
       destroy(row) {
-        swal({
-          title: 'Você tem Certeza?',
-          text: `Ao fazer isso os dados não poderão ser recuperados!`,
-          type: 'warning',
-          showCancelButton: true,
-          confirmButtonClass: 'btn btn-success btn-fill',
-          cancelButtonClass: 'btn btn-danger btn-fill',
-          confirmButtonText: 'Sim, apagar!',
-          cancelButtonText: 'Cancelar',
-          buttonsStyling: false
-        }).then(async result => {
-          if (result.value) {
-            await this.changeLoading();
-
-            await Template.$delete({params: {id: row.id}})
-              .then(response => notifyVue(this.$notify, 'O cliente foi apagado!', 'success'))
-              .catch(error => notifyError(this.$notify, error))
-
-            this.changeLoading()
-          }
-        });
+        this.DELETE(row)
+          .then(res => notifyVue(this.$notify, 'O modelo foi apagado!', 'success'))
+          .catch(error => notifyError(this.$notify, error))
       }
     }
   };

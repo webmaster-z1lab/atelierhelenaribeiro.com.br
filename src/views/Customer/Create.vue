@@ -138,7 +138,7 @@
   import crudSettingsMixin from '@/mixins/crud-settings';
 
   import {mapActions, mapState} from 'vuex';
-  import {CREATE} from "@/store/modules/employee/employee-const";
+  import {CREATE} from "@/store/modules/customer/customer-const";
 
   import {notifyVue, notifyError} from "@/utils";
   import { Select, Option } from 'element-ui';

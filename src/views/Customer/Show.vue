@@ -132,7 +132,7 @@
 
 <script>
   import {mapActions, mapState} from 'vuex'
-  import {GET, DELETE} from "@/store/modules/employee/employee-const";
+  import {GET, DELETE} from "@/store/modules/customer/customer-const";
 
   import {notifyVue, notifyError} from "@/utils";
 

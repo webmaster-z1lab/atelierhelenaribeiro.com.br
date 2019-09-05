@@ -109,9 +109,7 @@
   import {http} from "@/services";
   import {notifyVue, notifyError, formatDate} from "@/utils";
   import {mapActions, mapState, mapMutations} from 'vuex'
-  import {DELETE, GET_ALL, LOADING} from "@/store/modules/employee/employee-const";
-
-  import {isEmpty} from 'lodash'
+  import {DELETE, GET_ALL, LOADING} from "@/store/modules/customer/customer-const";
 
   export default {
     name: 'index',

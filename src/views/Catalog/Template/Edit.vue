@@ -19,7 +19,7 @@
               <base-input label="Referência" :value="template.reference" name="reference" disabled="true"/>
             </div>
             <div class="col-lg-4">
-              <money-input label="Preço Base" v-model="template.price" name="price" :error="getError('price')" :valid="isValid('price')" v-validate="'required'"/>
+              <money-input label="Preço Base" v-model="template.price" name="price" :error="getError('price')" :valid="isValid('price')" v-validate="'required'" :key="template.id"/>
             </div>
             <div class="col-lg-3 ml-3">
               <label class="form-control-label">Modelo Ativo?</label>
@@ -42,15 +42,16 @@
 </template>
 
 <script>
-  import Template from '@/models/Catalog/Template'
-  import MoneyInput from '@/components/App/Inputs/Money'
-  import crudSettingsMixin from '@/mixins/crud-settings'
+  import MoneyInput from '@/components/App/Inputs/Money';
+  import crudSettingsMixin from '@/mixins/crud-settings';
   import clientUploadUppyMixin from '@/mixins/client-upload-uppy';
 
-  import {notifyVue, notifyError} from "@/utils";
+  import {mapActions, mapState} from 'vuex';
+  import {EDIT, GET} from "@/store/modules/template/template-const";
 
+  import {notifyVue, notifyError} from "@/utils";
+  import {isEmpty} from 'lodash';
   import {http} from "@/services";
-  import {isEmpty} from 'lodash'
 
   export default {
     name: 'edit',
@@ -61,41 +62,44 @@
         required: true
       }
     },
+    data () {
+      return {
+        images: []
+      }
+    },
     components: {
       MoneyInput
     },
-    data () {
-      return {
-        loading: true,
-        template: Template.find(this.id) || []
-      }
+    computed: {
+      ...mapState('template', {
+        loading: state => state.loading,
+        template: state => state.template
+      })
     },
     async created() {
-      if (!this.template) this.template = await Template.$get({params: {id: this.id}});
-
-      this.changeLoading();
+      this.GET(this.id);
     },
     methods: {
+      ...mapActions('template', [GET, EDIT]),
       submitForm() {
         try {
           this.$validator.validateAll().then(
             async res => {
               if (res) {
-                await this.changeLoading();
-
-                this.template.images = [];
                 delete this.template.reference;
 
                 if (isEmpty(this.uppy.getFiles())) {
                   delete this.template.images;
-                  await Template.$update({params: {id: this.id}, data: this.template})
-                    .then(res => notifyVue(this.$notify, 'Modelo atualizado com sucesso', 'success'))
-                    .catch(error => notifyError(this.$notify, error))
+
+                  this.EDIT(this.template).then(res => {
+                    notifyVue(this.$notify, 'Modelo atualizado com sucesso', 'success');
+                    this.$router.push({name: 'catalog.template.index'})
+                  }).catch(error => notifyError(this.$notify, error));
                 } else {
                   await this.uppy.setMeta({folder: 'templates'});
                   await this.uppy.upload().then(async res => {
                     for (let image of res.successful) {
-                      this.template.images.push({
+                      this.images.push({
                         path: image.s3Multipart.key,
                         name: image.data.name,
                         extension: image.extension,
@@ -104,13 +108,14 @@
                       })
                     }
 
-                    await Template.$update({params: {id: this.id}, data: this.template})
-                      .then(res => notifyVue(this.$notify, 'Modelo atualizado com sucesso', 'success'))
-                      .catch(error => notifyError(this.$notify, error));
+                    this.template.images = this.images;
+
+                    this.EDIT(this.template).then(res => {
+                      notifyVue(this.$notify, 'Modelo atualizado com sucesso', 'success');
+                      this.$router.push({name: 'catalog.template.index'})
+                    }).catch(error => notifyError(this.$notify, error));
                   }).catch(err => {throw err});
                 }
-
-                this.changeLoading()
               }
             }
           ).catch(e => notifyVue(this.$notify, e, 'danger', 'ni ni-fat-remove'))

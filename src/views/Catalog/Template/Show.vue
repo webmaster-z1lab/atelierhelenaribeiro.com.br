@@ -4,7 +4,7 @@
 
     <base-header-app/>
 
-    <div class="container-fluid mt--6" v-if="template">
+    <div class="container-fluid mt--6">
       <card class="no-border-card" body-classes="px-0 pb-1" footer-classes="pb-2">
         <div slot="header">
           <div class="row">
@@ -79,19 +79,11 @@
   </div>
 </template>
 
-<style>
-  .no-border-card .card-footer{
-    border-top: 0;
-  }
-</style>
-
 <script>
-  import Template from '@/models/Catalog/Template'
+  import {mapActions, mapState} from 'vuex'
+  import {GET, DELETE, DELETE_IMAGE} from "@/store/modules/template/template-const";
 
   import {notifyVue, notifyError} from "@/utils";
-  import {http} from "@/services";
-  import swal from 'sweetalert2';
-
   import Loading from '@/components/App/Loading'
 
   export default {
@@ -105,79 +97,29 @@
         required: true
       }
     },
-    data () {
-      return {
-        loading: true
-      }
-    },
     computed: {
-      template() {
-        return Template.find(this.id)
-      }
+      ...mapState('template', {
+        loading: state => state.loading,
+        template: state => state.template
+      })
     },
     async created() {
-      if (!this.template) await Template.$get({params: {id: this.id}})
-
-      this.changeLoading()
+      this.GET(this.id);
     },
     methods: {
-      changeLoading() {
-        this.loading = !this.loading
-      },
+      ...mapActions('template', [GET, DELETE, DELETE_IMAGE]),
       deleteImage(id, key) {
-        swal({
-          title: 'Você tem Certeza?',
-          text: `Ao fazer isso os dados não poderão ser recuperados!`,
-          type: 'warning',
-          showCancelButton: true,
-          confirmButtonClass: 'btn btn-success btn-fill',
-          cancelButtonClass: 'btn btn-danger btn-fill',
-          confirmButtonText: 'Sim, apagar!',
-          cancelButtonText: 'Cancelar',
-          buttonsStyling: false
-        }).then(async result => {
-          if (result.value) {
-            this.changeLoading();
-            await http.delete(process.env.VUE_APP_API_URL + `/images/${id}/templates/${this.id}`)
-              .then(res => {
-                let template = this.template;
-                template.images.splice(key, 1);
-
-                Template.update({where: id, data: {template}})
-                  .then(response => notifyVue(this.$notify, 'O Arquivo foi apagado!', 'success'))
-                  .catch(error => notifyError(this.$notify, error))
-              })
-              .catch(error => notifyError(this.$notify, error));
-
-            this.changeLoading();
-          }
-        });
+        this.DELETE_IMAGE({id: id, key: key})
+          .then(res => {
+            notifyVue(this.$notify, 'O arquivo foi apagado!', 'success')
+          }).catch(error => notifyError(this.$notify, error));
       },
       destroy() {
-        swal({
-          title: 'Você tem Certeza?',
-          text: `Ao fazer isso os dados não poderão ser recuperados!`,
-          type: 'warning',
-          showCancelButton: true,
-          confirmButtonClass: 'btn btn-success btn-fill',
-          cancelButtonClass: 'btn btn-danger btn-fill',
-          confirmButtonText: 'Sim, apagar!',
-          cancelButtonText: 'Cancelar',
-          buttonsStyling: false
-        }).then(async result => {
-          if (result.value) {
-            await this.changeLoading();
-
-            await Template.$delete({params: {id: this.id}})
-              .then(response => {
-                notifyVue(this.$notify, 'O Modelo foi apagado!', 'success');
-                this.$router.push({name: 'catalog.template.index'})
-              })
-              .catch(error => notifyError(this.$notify, error))
-
-            this.changeLoading()
-          }
-        });
+        this.DELETE(this.template)
+          .then(res => {
+            notifyVue(this.$notify, 'O modelo foi apagado!', 'success')
+            this.$router.push({name: 'catalog.template.index'})
+          }).catch(error => notifyError(this.$notify, error));
       }
     }
   };

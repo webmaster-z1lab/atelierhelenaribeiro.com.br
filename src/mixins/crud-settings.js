@@ -9,14 +9,10 @@ export default {
   },
   data() {
     return {
-      loading: false,
       validated: false,
     }
   },
   methods: {
-    changeLoading() {
-      this.loading = !this.loading
-    },
     getError(name) {
       return this.errors.first(name)
     },

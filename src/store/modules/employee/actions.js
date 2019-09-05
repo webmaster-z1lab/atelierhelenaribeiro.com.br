@@ -1,48 +1,97 @@
-import * as types from './root-const'
-import {http, ls} from "@/services";
+import * as constants from './employee-const'
+import {http} from "@/services";
+import swal from 'sweetalert2';
 
 export default {
-  [types.LOGIN]: async ({ commit }, data) => {
+  [constants.GET_ALL]: async ({ commit }) => {
     return await new Promise(async (resolve, reject) => {
-      let time_storage = null;
+      await commit(constants.LOADING);
 
-      if (!data.remember) {
-        time_storage = process.env.VUE_APP_SESSION_LIFETIME;
-        delete data.remember
-      }
+      await http.get('employees').then(async response => {
+        await commit(constants.LIST, response.data);
+        await commit(constants.LOADING);
+        resolve(response.data);
+      }).catch(error => {
+        reject(error);
+        commit(constants.LOADING);
+      })
+    })
+  },
+  [constants.GET]: async ({ commit }, id) => {
+    return await new Promise(async (resolve, reject) => {
+      await commit(constants.LOADING);
 
-      await commit(types.LOADING);
-
-      await http.post(`${process.env.VUE_APP_API_URL}/login`, data)
-        .then(async response => {
-          await commit(types.SET_USER, response.data);
-
-          await ls.set('user', response.data, time_storage);
-          await commit(types.LOADING);
-
+      await http.get(`employees/${id}`).then(async response => {
+          await commit(constants.SET, response.data);
+          await commit(constants.LOADING);
           resolve(response.data);
         }).catch(error => {
           reject(error);
-          commit(types.LOADING);
+          commit(constants.LOADING);
         })
     })
   },
-  [types.LOGOUT]: async ({ commit }, data) => {
+  [constants.CREATE]: async ({ commit }, data) => {
     return await new Promise(async (resolve, reject) => {
-      await commit(types.LOADING);
+      await commit(constants.LOADING);
 
-      await http.post(`${process.env.VUE_APP_API_URL}/logout`, {})
-        .then(async response => {
-          await ls.clear();
-          await commit(types.SET_USER, {});
-          await commit(types.LOADING);
+      await http.post('employees', data).then(async response => {
+          await commit(constants.CREATE, response.data);
+          await commit(constants.LOADING);
+
+          resolve(response);
+        }).catch(error => {
+          reject(error);
+          commit(constants.LOADING);
+        })
+    })
+  },
+  [constants.EDIT]: async ({ commit }, data) => {
+    return await new Promise(async (resolve, reject) => {
+      await commit(constants.LOADING);
+
+      await http.put(`employees/${data.id}`, data).then(async response => {
+          await commit(constants.EDIT, response.data);
+          await commit(constants.LOADING);
 
           resolve(response);
         })
         .catch(error => {
           reject(error);
-          commit(types.LOADING);
+          commit(constants.LOADING);
         })
+    })
+  },
+  [constants.DELETE]: async ({ commit }, employee) => {
+    return await new Promise(async (resolve, reject) => {
+      swal({
+        title: 'Você tem Certeza?',
+        text: `Ao fazer isso os dados não poderão ser recuperados!`,
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonClass: 'btn btn-success btn-fill',
+        cancelButtonClass: 'btn btn-danger btn-fill',
+        confirmButtonText: 'Sim, apagar!',
+        cancelButtonText: 'Cancelar',
+        buttonsStyling: false
+      }).then(async response => {
+        if (response.value) {
+          await commit(constants.LOADING);
+
+          await http.delete(`employees/${employee.id}`, {})
+            .then(async response => {
+              await commit(constants.DELETE, employee);
+              await commit(constants.LOADING);
+
+              resolve(response);
+            }).catch(error => {
+              reject(error);
+              commit(constants.LOADING);
+            });
+
+          resolve(response);
+        }
+      });
     })
   }
 }

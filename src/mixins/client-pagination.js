@@ -6,7 +6,6 @@ export default {
   },
   data() {
     return {
-      loading: false,
       pagination: {
         perPage: 10,
         currentPage: 1,
@@ -49,9 +48,6 @@ export default {
     }
   },
   methods: {
-    changeLoading() {
-      this.loading = !this.loading
-    },
     sortChange({ prop, order }) {
       if (prop) {
         this.tableData.sort((a, b) => {

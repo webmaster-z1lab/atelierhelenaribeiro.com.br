@@ -27,13 +27,13 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {
-    if (ls.get('user').api_token) {
+    if (ls.get('api-token')) {
       next()
     } else {
       next({name: 'login', params: {nextUrl: to.fullPath}})
     }
   } else if(to.matched.some(record => record.meta.guest)) {
-    if(ls.get('user').api_token) {
+    if(ls.get('api-token')) {
       next({ name: 'dashboard'})
     } else {
       next()

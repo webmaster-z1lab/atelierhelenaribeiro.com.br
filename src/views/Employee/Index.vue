@@ -46,7 +46,18 @@
             </div>
           </div>
           <el-table :data="queriedData" row-key="id" header-row-class-name="thead-light" @sort-change="sortChange">
-            <el-table-column v-for="column in tableColumns" :key="column.label" v-bind="column"/>
+            <el-table-column label="Nome" sortable>
+              <template v-slot="{row}">
+                <router-link :to="{name: 'employee.show', params: {id: row.id}}" class="table-action">{{row.name}}</router-link>
+              </template>
+            </el-table-column>
+            <el-table-column prop="email" label="Email" sortable/>
+            <el-table-column label="Data de Criação" sortable>
+              <template v-slot="{row}">
+                {{row.created_at}}
+              </template>
+            </el-table-column>
+
             <el-table-column min-width="60px" align="right" label="Ações">
               <div slot-scope="{$index, row}" class="d-flex">
                 <el-tooltip content="Visualizar" placement="top">
@@ -73,7 +84,6 @@
             <p class="card-category">
               Mostrando registros de {{ from + 1 }} a {{ to }} de {{ total }} entradas
             </p>
-
           </div>
           <base-pagination class="pagination-no-border" v-model="pagination.currentPage" :per-page="pagination.perPage" :total="total"/>
         </div>
@@ -89,17 +99,15 @@
 </style>
 
 <script>
-  import Employee from '@/models/Employee'
-
-  import {http} from "@/services";
-  import {notifyVue, notifyError} from "@/utils";
-  import swal from 'sweetalert2';
-
   import clientPaginationMixin from '@/mixins/client-pagination'
 
   import { BasePagination } from '@/components';
   import { Table, TableColumn, Select, Option, Tooltip } from 'element-ui';
-  import {isEmpty} from 'lodash'
+
+  import {http} from "@/services";
+  import {notifyVue, notifyError} from "@/utils";
+  import {mapActions, mapState, mapMutations} from 'vuex'
+  import {DELETE, GET_ALL, LOADING} from "@/store/modules/employee/employee-const";
 
   export default {
     name: 'index',
@@ -112,73 +120,33 @@
       [TableColumn.name]: TableColumn,
       [Tooltip.name]: Tooltip
     },
-    data () {
-      return {
-        tableColumns: [
-          {
-            prop: 'name',
-            label: 'Nome',
-            minWidth: 220,
-            sortable: true
-          },
-          {
-            prop: 'email',
-            label: 'Email',
-            minWidth: 220,
-            sortable: true
-          },
-          {
-            prop: 'created_at',
-            label: 'Data de Criação',
-            minWidth: 150,
-            sortable: true
-          }
-        ]
-      }
-    },
     computed: {
-      tableData() {
-        return Employee.all()
-      }
+      ...mapState('employee', {
+        tableData: state => state.employees,
+        loading: state => state.loading
+      })
     },
     created() {
-      Employee.$fetch();
+      this.GET_ALL()
     },
     methods: {
+      ...mapActions('employee', [GET_ALL, DELETE]),
+      ...mapMutations('employee', [LOADING]),
       async searchApi(value) {
         let result = [];
-        this.changeLoading();
+        this.LOADING();
 
-        await http.get(process.env.VUE_APP_API_URL + '/employees', {search: value}).then(
-          async response => {
-            result = await Promise.resolve(Employee.insert({data: response.data}));
-          }
-        ).catch(error => console.dir(error)).finally(this.changeLoading());
+        await http.get('employees', {search: value})
+          .then(async response => result = response.data)
+          .catch(error => console.dir(error));
 
-        return result.employees || []
+        this.LOADING();
+        return result || []
       },
       destroy(row) {
-        swal({
-          title: 'Você tem Certeza?',
-          text: `Ao fazer isso os dados não poderão ser recuperados!`,
-          type: 'warning',
-          showCancelButton: true,
-          confirmButtonClass: 'btn btn-success btn-fill',
-          cancelButtonClass: 'btn btn-danger btn-fill',
-          confirmButtonText: 'Sim, apagar!',
-          cancelButtonText: 'Cancelar',
-          buttonsStyling: false
-        }).then(async result => {
-          if (result.value) {
-            await this.changeLoading();
-
-            await Employee.$delete({params: {id: row.id}})
-              .then(response => notifyVue(this.$notify, 'O funcionário foi apagado!', 'success'))
-              .catch(error => notifyError(this.$notify, error))
-
-            this.changeLoading()
-          }
-        });
+        this.DELETE(row)
+          .then(res => notifyVue(this.$notify, 'O funcionário foi apagado!', 'success'))
+          .catch(error => notifyError(this.$notify, error))
       }
     }
   };

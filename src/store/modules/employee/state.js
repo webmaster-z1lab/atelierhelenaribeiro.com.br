@@ -2,7 +2,7 @@ import {ls} from "@/services";
 
 export default {
   loading: false,
-  data: [],
+  employees: [],
   employee: {
     id: null,
     email: '',
@@ -14,7 +14,15 @@ export default {
     work_card: '',
     remuneration: 0,
     type: '',
-    address: {},
+    address: {
+      postal_code: '',
+      state: '',
+      district: '',
+      city: '',
+      street: '',
+      number: '',
+      complement: ''
+    },
     phone: {is_whatsapp: false, number: ''},
     created_at: ''
   }

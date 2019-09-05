@@ -1,5 +1,7 @@
 <template>
   <div>
+    <loading :loading="loading"/>
+
     <div class="form-row">
       <div class="col-lg-3">
         <mask-input placeholder="00000-000" name="postal_code" label="CEP" v-model="code" mask="#####-###"
@@ -35,6 +37,7 @@
 
 <script>
   import MaskInput from './Inputs/Mask';
+  import Loading from '@/components/App/Loading'
 
   import {ibge} from "@/services";
   import {notifyError} from "@/utils";
@@ -45,6 +48,7 @@
     inject: ['$validator'],
     components: {
       MaskInput,
+      Loading
     },
     props: {
       address: {
@@ -53,16 +57,16 @@
     },
     data() {
       return {
-        code: this.address.postal_code
+        code: this.address.postal_code,
+        loading: false
       }
     },
     watch: {
       async code(value) {
         if (value.length === 8) {
-          this.$emit('loading');
+          this.loading = !this.loading;
 
-          await ibge.getCEP(value)
-            .then(response => {
+          await ibge.getCEP(value).then(response => {
               if (isUndefined(response.data.erro)) {
 
                 this.address.postal_code = value;
@@ -74,11 +78,9 @@
                 this.address.complement = '';
 
               } else {
-                notifyError({error: {response: {data: {message: 'O Código Postal não foi encontrado ou não existe!'}}}});
+                notifyError(this.$notify, {response: {data: {message: 'O Código Postal não foi encontrado ou não existe!'}}});
               }
-            })
-            .catch(error => notifyError(error))
-            .finally(() => this.$emit('loading'));
+            }).catch(error => notifyError(this.$notify, error)).finally(f => this.loading = !this.loading)
         }
       }
     },

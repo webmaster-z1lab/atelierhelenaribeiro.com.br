@@ -18,8 +18,8 @@
         </span>
       </div>
       <slot>
-        <the-mask class="form-control" v-model="code" :type="type" :valid="!error" :mask="mask" :masked="masked" v-bind="$attrs"
-                  :class="[{'is-valid': valid === true}, {'is-invalid': error}, inputClasses]"/>
+        <the-mask class="form-control" v-model="code" :type="type" :valid="!errors.first(name)" :mask="mask" :masked="masked" v-bind="$attrs" :name="name"
+                  :class="[{'is-valid': this.errors.has(name) === true}, {'is-invalid': errors.first(name)}, inputClasses]" v-validate="validate"/>
       </slot>
       <div v-if="appendIcon || $slots.append" class="input-group-append">
           <span class="input-group-text">
@@ -29,8 +29,8 @@
           </span>
       </div>
       <slot name="error">
-        <div v-if="error" class="invalid-feedback" style="display: block;">
-          {{ error }}
+        <div v-if="errors.first(name)" class="invalid-feedback" style="display: block;">
+          {{ errors.first(name) }}
         </div>
       </slot>
     </div>
@@ -41,11 +41,20 @@
 
   export default {
     name: "mask-input",
+    inject: ['$validator'],
     inheritAttrs: false,
     components: {
       TheMask,
     },
     props: {
+      name: {
+        type: String,
+        default: ''
+      },
+      validate: {
+        type: String,
+        default: ''
+      },
       mask: {
         type: [String, Array],
         description: 'Type of mask to use, following the package vue-the-mask doc',
@@ -56,18 +65,9 @@
         description: 'Emit value with mask chars, default is raw',
         default: false
       },
-      valid: {
-        type: Boolean,
-        description: "Whether is valid",
-        default: undefined
-      },
       label: {
         type: String,
         description: "Input label (text before input)"
-      },
-      error: {
-        type: String,
-        description: "Input error (below input)"
       },
       successMessage: {
         type: String,

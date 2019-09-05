@@ -41,11 +41,11 @@
             </div>
           </div>
           <el-table :data="packing.products" header-row-class-name="thead-light">
-            <el-table-column props="name" label="Código de Barra" sortable/>
-            <el-table-column props="name" label="Referência" sortable/>
-            <el-table-column props="name" label="Cor" sortable/>
-            <el-table-column props="name" label="Tamanho" sortable/>
-            <el-table-column props="name" label="Preço" sortable/>
+            <el-table-column prop="name" label="Código de Barra" sortable/>
+            <el-table-column prop="name" label="Referência" sortable/>
+            <el-table-column prop="name" label="Cor" sortable/>
+            <el-table-column prop="name" label="Tamanho" sortable/>
+            <el-table-column prop="name" label="Preço" sortable/>
 
             <el-table-column min-width="60px" align="right" label="Ações">
               <div slot-scope="{$index, row}" class="d-flex">

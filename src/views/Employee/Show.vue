@@ -101,10 +101,10 @@
 </style>
 
 <script>
-  import Employee from '@/models/Employee'
+  import {mapActions, mapState} from 'vuex'
+  import {GET, DELETE} from "@/store/modules/employee/employee-const";
 
   import {notifyVue, notifyError} from "@/utils";
-  import swal from 'sweetalert2';
 
   import Loading from '@/components/App/Loading'
 
@@ -119,50 +119,23 @@
         required: true
       }
     },
-    data: () => ({
-      loading: true,
-    }),
     computed: {
-      employee() {
-        return Employee.find(this.id)
-      }
+      ...mapState('employee', {
+        loading: state => state.loading,
+        employee: state => state.employee
+      })
     },
     async created() {
-      if (!this.employee) {
-       await Employee.$get({params: {id: this.id}})
-      }
-
-      this.changeLoading()
+      this.GET(this.id);
     },
     methods: {
-      changeLoading() {
-        this.loading = !this.loading
-      },
+      ...mapActions('employee', [GET, DELETE]),
       destroy() {
-        swal({
-          title: 'Você tem Certeza?',
-          text: `Ao fazer isso os dados não poderão ser recuperados!`,
-          type: 'warning',
-          showCancelButton: true,
-          confirmButtonClass: 'btn btn-success btn-fill',
-          cancelButtonClass: 'btn btn-danger btn-fill',
-          confirmButtonText: 'Sim, apagar!',
-          cancelButtonText: 'Cancelar',
-          buttonsStyling: false
-        }).then(async result => {
-          if (result.value) {
-            await this.changeLoading();
-
-            await Employee.$delete({params: {id: this.id}})
-              .then(response => {
-                notifyVue(this.$notify, 'O funcionário foi apagado!', 'success');
-                this.$router.push({name: 'employee.index'})
-              })
-              .catch(error => notifyError(this.$notify, error))
-
-            this.changeLoading()
-          }
-        });
+        this.DELETE(this.employee)
+          .then(res => {
+            notifyVue(this.$notify, 'O funcionário foi apagado!', 'success')
+            this.$router.push({name: 'employee.index'})
+          }).catch(error => notifyError(this.$notify, error));
       }
     }
   };

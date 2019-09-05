@@ -1,8 +1,8 @@
-import * as types from './root-const'
+import * as constants from './root-const'
 import {http, ls} from "@/services";
 
 export default {
-  [types.LOGIN]: async ({ commit }, data) => {
+  [constants.LOGIN]: async ({ commit }, data) => {
     return await new Promise(async (resolve, reject) => {
       let time_storage = null;
 
@@ -11,37 +11,38 @@ export default {
         delete data.remember
       }
 
-      await commit(types.LOADING);
+      await commit(constants.LOADING);
 
-      await http.post(`${process.env.VUE_APP_API_URL}/login`, data)
+      await http.post('login', data)
         .then(async response => {
-          await commit(types.SET_USER, response.data);
+          await commit(constants.SET_USER, response.data);
 
           await ls.set('user', response.data, time_storage);
-          await commit(types.LOADING);
+          await ls.set('api-token', response.data.api_token, time_storage);
+          await commit(constants.LOADING);
 
           resolve(response.data);
         }).catch(error => {
           reject(error);
-          commit(types.LOADING);
+          commit(constants.LOADING);
         })
     })
   },
-  [types.LOGOUT]: async ({ commit }, data) => {
+  [constants.LOGOUT]: async ({ commit }, data) => {
     return await new Promise(async (resolve, reject) => {
-      await commit(types.LOADING);
+      await commit(constants.LOADING);
 
-      await http.post(`${process.env.VUE_APP_API_URL}/logout`, {})
+      await http.post('logout', {})
         .then(async response => {
           await ls.clear();
-          await commit(types.SET_USER, {});
-          await commit(types.LOADING);
+          await commit(constants.SET_USER, {});
+          await commit(constants.LOADING);
 
           resolve(response);
         })
         .catch(error => {
           reject(error);
-          commit(types.LOADING);
+          commit(constants.LOADING);
         })
     })
   }

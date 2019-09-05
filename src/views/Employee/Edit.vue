@@ -4,7 +4,7 @@
 
     <base-header-app/>
 
-    <div class="container-fluid mt--6" v-if="employee">
+    <div class="container-fluid mt--6">
       <card>
         <div slot="header">
           <h3 class="mb-0">Editando Funcionário</h3>
@@ -23,9 +23,8 @@
             <div class="col-lg-3">
               <base-input type="email" name="email" label="Email" v-model="employee.email" :error="getError('email')" :valid="isValid('email')" v-validate="'email'"/>
             </div>
-            <div class="col-lg-2">
-              <mask-input placeholder="000.000.000-00" name="document" label="CPF" v-model="employee.document" :mask="'###.###.###-##'"
-                          :error="getError('document')" :valid="isValid('document')" v-validate="'required|cpf'"/>
+            <div class="col-lg-3">
+              <mask-input placeholder="000.000.000-00" name="document" label="CPF" v-model="employee.document" :mask="'###.###.###-##'" validate="required|cpf" :key="employee.id"/>
             </div>
             <div class="col-lg-3">
               <base-input name="identity" label="Identidade" v-model="employee.identity" :error="getError('identity')" :valid="isValid('identity')" v-validate="'required'"/>
@@ -34,22 +33,22 @@
               <base-input name="work_card" label="Carteira de Trabalho" v-model="employee.work_card" :error="getError('work_card')" :valid="isValid('work_card')" v-validate="'required'"/>
             </div>
             <div class="col-lg-3">
-              <mask-input name="birth_date" placeholder="##/##/####" label="Data de Nascimento" v-model="employee.birth_date" :mask="'##/##/####'" :masked="true"
-                          :error="getError('birth_date')" :valid="isValid('birth_date')" v-validate="'required|date_format:dd/MM/yyyy|before_today'"/>
+              <mask-input name="birth_date" placeholder="##/##/####" label="Data de Nascimento" v-model="employee.birth_date" :mask="'##/##/####'" :masked="true" :key="employee.id"
+                          validate="required|date_format:dd/MM/yyyy|before_today"/>
             </div>
             <div class="col-lg-3">
-              <mask-input name="admission_date" placeholder="##/##/####" label="Data de Admissão" v-model="employee.admission_date" :mask="'##/##/####'" :masked="true"
-                          :error="getError('admission_date')" :valid="isValid('admission_date')" v-validate="'required|date_format:dd/MM/yyyy|before_today'"/>
+              <mask-input name="admission_date" placeholder="##/##/####" label="Data de Admissão" v-model="employee.admission_date" :mask="'##/##/####'" :masked="true" :key="employee.id"
+                          validate="required|date_format:dd/MM/yyyy|before_today"/>
             </div>
             <div class="col-lg-3">
-              <money-input label="Remuneração" v-model="employee.remuneration" name="remuneration"/>
+              <money-input label="Remuneração" v-model="employee.remuneration" name="remuneration" :key="employee.id"/>
             </div>
-            <div class="col-lg-2">
+            <div class="col-lg-4">
               <phone-input :phone="employee.phone" name="phone" :validate="true"/>
             </div>
-            <div class="col-lg-2">
+            <div class="col-lg-4">
               <base-input label="Cargo" :error="getError('type')" :valid="isValid('type')">
-                <select class="form-control" v-model="employee.type" :class="[{'is-invalid': getError('type')}]" v-validate="'required'">
+                <select class="form-control" name="type" v-model="employee.type" :class="[{'is-invalid': getError('type')}]" v-validate="'required'">
                   <option value="" selected>Selecione o tipo do funcionário.</option>
                   <option value="admin">Administrador</option>
                   <option value="seller">Vendedor</option>
@@ -72,7 +71,7 @@
             </a>
           </p>
 
-          <address-inputs :address="employee.address" @loading="changeLoading"/>
+          <address-inputs :address="employee.address" @loading="changeLoading" :key="employee.id"/>
 
           <hr class="my-4">
           <base-button type="primary" native-type="submit">Enviar</base-button>
@@ -91,6 +90,9 @@
   import AddressInputs from '@/components/App/Address'
   import crudSettingsMixin from '@/mixins/crud-settings'
 
+  import {mapActions, mapState} from 'vuex'
+  import {EDIT, GET} from "@/store/modules/employee/employee-const";
+
   import {notifyVue, notifyError} from "@/utils";
 
   export default {
@@ -108,30 +110,26 @@
       PhoneInput,
       AddressInputs
     },
-    data () {
-      return {
-        loading: true,
-        employee: Employee.find(this.id)
-      }
+    computed: {
+      ...mapState('employee', {
+        loading: state => state.loading,
+        employee: state => state.employee
+      })
     },
-    async created() {
-      if (!this.employee) this.employee = await Employee.$get({params: {id: this.id}});
-
-      this.changeLoading();
+    created() {
+      this.GET(this.id);
     },
     methods: {
+      ...mapActions('employee', [GET, EDIT]),
       async submitForm() {
         try {
           this.$validator.validateAll().then(
             async res => {
               if (res) {
-                await this.changeLoading();
-
-                await Employee.$update({params: {id: this.id}, data: this.employee})
-                  .then(res => notifyVue(this.$notify, 'Funcionário atualizado com sucesso', 'success'))
-                  .catch(error => notifyError(this.$notify, error));
-
-                this.changeLoading()
+                this.EDIT(this.employee).then(res => {
+                  notifyVue(this.$notify, 'Funcionário atualizado com sucesso', 'success');
+                  this.$router.push({name: 'employee.index'})
+                }).catch(error => notifyError(this.$notify, error));
               }
             }
           )

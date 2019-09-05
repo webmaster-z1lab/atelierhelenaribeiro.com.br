@@ -80,7 +80,6 @@
 </template>
 
 <script>
-  import Product from '@/models/Stock/Product'
   import MoneyInput from '@/components/App/Inputs/Money'
   import crudSettingsMixin from '@/mixins/crud-settings'
   import clientUploadUppyMixin from '@/mixins/client-upload-uppy';

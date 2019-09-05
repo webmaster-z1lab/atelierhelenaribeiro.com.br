@@ -88,8 +88,6 @@
 </style>
 
 <script>
-  import Product from '@/models/Stock/Product'
-
   import {notifyVue, notifyError} from "@/utils";
   import swal from 'sweetalert2';
 

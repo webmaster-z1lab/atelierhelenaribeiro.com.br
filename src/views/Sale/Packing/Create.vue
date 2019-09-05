@@ -67,8 +67,6 @@
 </template>
 
 <script>
-  import Packing from '@/models/Sale/Packing';
-
   import MoneyInput from '@/components/App/Inputs/Money';
   import crudSettingsMixin from '@/mixins/crud-settings';
 

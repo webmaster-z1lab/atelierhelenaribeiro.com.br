@@ -17,7 +17,7 @@
           <div class="form-row">
             <div class="col-lg-4">
               <base-input label="Referência" :error="getError('reference')" :valid="isValid('reference')">
-                <el-select v-model="product.template" filterable placeholder="Selecione o modelo do produto." name="reference" v-validate="'required'"
+                <el-select v-model="template" filterable placeholder="Selecione o modelo do produto." name="reference" v-validate="'required'"
                            :class="[{'is-invalid': getError('reference')}]" @change="setPriceBase">
                   <el-option v-for="option in templates" :key="option.id" :label="option.reference" :value="option.id"/>
                 </el-select>
@@ -25,7 +25,7 @@
             </div>
             <div class="col-lg-4">
               <base-input label="Tamanho" :error="getError('size')" :valid="isValid('size')">
-                <select name="size" class="form-control" v-model="product.size" :class="[{'is-invalid': getError('size')}]" v-validate="'required'">
+                <select name="size" class="form-control" v-model="size" :class="[{'is-invalid': getError('size')}]" v-validate="'required'">
                   <option value="" selected>Selecione o tamanho do produto.</option>
                   <option value="P">P</option>
                   <option value="M">M</option>
@@ -38,7 +38,7 @@
             </div>
             <div class="col-lg-4">
               <base-input label="Cor" :error="getError('color')" :valid="isValid('color')">
-                <el-select v-model="product.color" filterable default-first-option allow-create placeholder="Selecione a cor do produto." name="color"
+                <el-select v-model="color" filterable default-first-option allow-create placeholder="Selecione a cor do produto." name="color"
                            v-validate="'required'" :class="[{'is-invalid': getError('color')}]">
                   <el-option v-for="color in colors" :key="color.id" :label="color.name" :value="color.name"/>
                 </el-select>
@@ -48,13 +48,13 @@
               <base-input type="number" name="amount" label="Quantidade" v-model="amount" :error="getError('amount')" :valid="isValid('amount')" v-validate="'required'"/>
             </div>
             <div class="col-lg-4">
-              <money-input label="Preço" v-model="product.price" name="price" :error="getError('price')" :valid="isValid('price')" v-validate="'required|min_value:1'" :key="product.template"/>
+              <money-input label="Preço" v-model="price" name="price" :error="getError('price')" :valid="isValid('price')" v-validate="'required|min_value:1'" :key="template"/>
             </div>
             <div class="col-lg-6">
               <div id="DashboardContainer"></div>
             </div>
             <div class="col-lg-6">
-              <card body-classes="p-0" v-if="product.template">
+              <card body-classes="p-0" v-if="template">
                 <h5 slot="header" class="h3 mb-0">Selecione as Imagens</h5>
                 <ul class="list-group list-group-flush" data-toggle="checklist">
                   <li class="checklist-entry list-group-item flex-column align-items-start py-4 px-4" v-for="image in gallery" :key="image.id">
@@ -66,7 +66,7 @@
                         <small>{{image.size_in_bytes}} Kbs</small>
                       </div>
                       <div>
-                        <base-checkbox :value="image.id" v-model="product.template_images"/>
+                        <base-checkbox :value="image.id" v-model="template_images"/>
                       </div>
                     </div>
                   </li>
@@ -85,17 +85,16 @@
 </template>
 
 <script>
-  import Product from '@/models/Stock/Product';
-  import Template from "@/models/Catalog/Template";
-
   import MoneyInput from '@/components/App/Inputs/Money';
   import crudSettingsMixin from '@/mixins/crud-settings';
   import clientUploadUppyMixin from '@/mixins/client-upload-uppy';
 
-  import {notifyVue, notifyError} from "@/utils";
-  import {isEmpty} from 'lodash';
-  import { Select, Option } from 'element-ui'
+  import {mapActions, mapState} from 'vuex';
+  import {CREATE} from "@/store/modules/product/product-const";
 
+  import {notifyVue, notifyError} from "@/utils";
+  import { Select, Option } from 'element-ui'
+  import {isEmpty, find} from 'lodash';
   import {http} from "@/services";
 
   export default {
@@ -108,29 +107,33 @@
     },
     data () {
       return {
-        gallery: [],
-        loading: true,
+        template: '',
+        size: '',
+        color: '',
         amount: 1,
-        colors: [],
-        product: new Product()
+        images: [],
+        template_images: [],
+        price: 0,
+        gallery: [],
+        templates: [],
+        colors: []
       }
     },
     computed: {
-      templates() {
-        return Template.all()
-      }
+      ...mapState('product', {
+        loading: state => state.loading
+      })
     },
     async created() {
-      await Template.$fetch();
-      await http.get(process.env.VUE_APP_API_URL + '/colors').then(res => {this.colors = res.data})
-
-      this.changeLoading();
+      await http.get('templates').then(res => {this.templates = res.data});
+      await http.get('colors').then(res => {this.colors = res.data});
     },
     methods: {
+      ...mapActions('product', [CREATE]),
       setPriceBase(id) {
         this.$validator.pause();
-        this.product.price = Template.find(id).price;
-        http.get(process.env.VUE_APP_API_URL + `/templates/${id}/gallery`).then(res => {this.gallery = res.data})
+        this.price = find(this.templates, ['id', id]).price;
+        http.get(`templates/${id}/gallery`).then(res => {this.gallery = res.data})
       },
       async submitForm() {
         this.$validator.resume();
@@ -138,23 +141,25 @@
           this.$validator.validateAll().then(
             async res => {
               if (res) {
-                await this.changeLoading();
-                this.product.amount = this.amount;
-                this.product.images = [];
-                if (isEmpty(this.product.template_images)) delete this.product.template_images;
+                const {template, size, color, amount, images, template_images, price} = this,
+                  data = {template, size, color, amount, images, template_images, price};
+
+                if (isEmpty(template_images)) delete data.template_images;
 
                 if (isEmpty(this.uppy.getFiles())) {
-                  delete this.product.images;
-                  await Product.$create({data: this.product})
+                  delete data.images;
+
+                  this.CREATE(data)
                     .then(response => {
                       notifyVue(this.$notify, 'Produto criado com sucesso', 'success');
                       this.$router.push({name: 'stock.product.index'})
-                    }).catch(error => notifyError(this.$notify, error));
+                    })
+                    .catch(error => notifyError(this.$notify, error));
                 } else {
-                  await this.uppy.setMeta({folder: `templates/${this.product.template}`});
+                  await this.uppy.setMeta({folder: `templates/${template}`});
                   await this.uppy.upload().then(async res => {
                     for (let image of res.successful) {
-                      this.product.images.push({
+                      data.images.push({
                         path: image.s3Multipart.key,
                         name: image.data.name,
                         extension: image.extension,
@@ -163,15 +168,13 @@
                       })
                     }
 
-                    await Product.$create({data: this.product})
-                      .then(response => {
+                    this.CREATE(data).then(response => {
                         notifyVue(this.$notify, 'Produto criado com sucesso', 'success');
                         this.$router.push({name: 'stock.product.index'})
-                      }).catch(error => notifyError(this.$notify, error));
+                      })
+                      .catch(error => notifyError(this.$notify, error));
                   }).catch(err => {throw err});
                 }
-
-                this.changeLoading();
               }
             }
           )

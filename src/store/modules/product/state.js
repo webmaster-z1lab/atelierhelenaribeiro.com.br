@@ -1,12 +1,14 @@
 export default {
   loading: false,
-  templates: [],
-  template: {
+  products: [],
+  product: {
     id: null,
-    price: 0,
-    reference: '',
-    is_active: true,
+    size: '',
+    color: '',
+    amount: 0,
     images: [],
+    template_images: [],
+    price: 0,
     created_at: ''
   }
 }

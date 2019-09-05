@@ -39,13 +39,18 @@
           </div>
         </div>
         <el-table :data="queriedData" row-key="id" header-row-class-name="thead-light" @sort-change="sortChange">
-          <el-table-column v-for="column in tableColumns" :key="column.label" v-bind="column">
-            <template v-slot="{row, cellValue}" v-if="column.prop === 'id'">
-              <router-link :to="{name: 'stock.product.show', params: {id: row.id}}" class="table-action" data-toggle="tooltip" data-original-title="Show" >
-                {{row.id}}
-              </router-link>
+          <el-table-column label="Nome" sortable>
+            <template v-slot="{row}">
+              <router-link :to="{name: 'stock.product.show', params: {id: row.id}}" class="table-action">{{row.id}}</router-link>
             </template>
           </el-table-column>
+          <el-table-column label="Preço" sortable>
+            <template v-slot="{row}">
+              {{row.price | currency}}
+            </template>
+          </el-table-column>
+          <el-table-column prop="barcode" label="Código de Barra" sortable/>
+
           <el-table-column min-width="60px" align="right" label="Ações">
             <div slot-scope="{$index, row}" class="d-flex">
               <el-tooltip content="Visualizar" placement="top">
@@ -111,30 +116,7 @@
     data () {
       return {
         products: this.data.products,
-        fuseSearch: null,
-        tableColumns: [
-          {
-            prop: 'id',
-            label: 'id',
-            minWidth: 220,
-            sortable: true
-          },
-          {
-            prop: 'price',
-            label: 'Preço',
-            minWidth: 150,
-            sortable: true,
-            formatter: function (row, column, cellValue, index) {
-              return 'R$ ' + cellValue
-            }
-          },
-          {
-            prop: 'barcode',
-            label: 'Código de Barra',
-            minWidth: 220,
-            sortable: true
-          }
-        ]
+        fuseSearch: null
       }
     },
     mounted() {

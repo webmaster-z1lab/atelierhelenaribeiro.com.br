@@ -17,7 +17,7 @@
             <div class="col-6 text-right">
               <el-tooltip content="Criar Novo Funcionário" placement="top">
                 <router-link :to="{name: 'stock.product.create'}" class="btn btn-icon btn-fab btn-sm btn-primary">
-                  <span class="btn-inner&#45;&#45;icon"><i class="fas fa-user-plus"></i></span>
+                  <span class="btn-inner&#45;&#45;icon"><i class="fas fa-plus"></i></span>
                   <span class="btn-inner--text">Add</span>
                 </router-link>
               </el-tooltip>
@@ -46,7 +46,15 @@
             </div>
           </div>
           <el-table :data="queriedData" row-key="id" header-row-class-name="thead-light" @sort-change="sortChange">
-            <el-table-column v-for="column in tableColumns" :key="column.label" v-bind="column"/>
+            <el-table-column label="Modelo" sortable>
+              <template v-slot="{row}">
+                <router-link :to="{name: 'catalog.template.show', params: {id: row.id}}" class="table-action">{{row.template}}</router-link>
+              </template>
+            </el-table-column>
+            <el-table-column prop="color" label="Cor" sortable/>
+            <el-table-column prop="size" label="Tamanho" sortable/>
+            <el-table-column prop="amount" label="Quant. Produtos" sortable/>
+
             <el-table-column min-width="60px" align="right" label="Ações">
               <div slot-scope="{$index, row}" class="d-flex">
                 <el-tooltip content="Visualizar" placement="top">
@@ -81,14 +89,15 @@
 </style>
 
 <script>
-  import {http} from "@/services";
+  import clientPaginationMixin from '@/mixins/client-pagination';
 
-  import clientPaginationMixin from '@/mixins/client-pagination'
-
-  import SubIndex from './Index/SubIndex'
   import { BasePagination } from '@/components';
   import { Table, TableColumn, Select, Option, Tooltip } from 'element-ui';
-  import {isEmpty} from 'lodash'
+
+  import {http} from "@/services";
+  import SubIndex from './Index/SubIndex'
+  import {mapActions, mapState, mapMutations} from 'vuex'
+  import {GET_ALL, LOADING} from "@/store/modules/product/product-const";
 
   export default {
     name: 'index',
@@ -104,49 +113,23 @@
     },
     data () {
       return {
-        loading: true,
-        products: [],
         subIndex: false,
-        subProducts: [],
-        tableColumns: [
-          {
-            prop: 'template',
-            label: 'Modelo',
-            minWidth: 220,
-            sortable: true
-          },
-          {
-            prop: 'color',
-            label: 'Cor',
-            minWidth: 150,
-            sortable: true
-          },
-          {
-            prop: 'size',
-            label: 'Tamanho',
-            minWidth: 150,
-            sortable: true
-          },
-          {
-            prop: 'amount',
-            label: 'Quant. Produtos',
-            minWidth: 220,
-            sortable: true
-          }
-        ]
+        subProducts: []
       }
     },
     computed: {
-      tableData() {
-        return this.products
-      }
+      ...mapState('product', {
+        tableData: state => state.products,
+        products: state => state.products,
+        loading: state => state.loading
+      })
     },
     async created() {
-      await http.get(process.env.VUE_APP_API_URL + '/products').then(res => this.products = res.data);
-
-      this.changeLoading()
+      this.GET_ALL()
     },
     methods: {
+      ...mapActions('product', [GET_ALL]),
+      ...mapMutations('product', [LOADING]),
       showSubIndex(row) {
         this.subProducts = row;
         this.subIndex = !this.subIndex
@@ -155,14 +138,13 @@
         this.subIndex = !this.subIndex
       },
       async searchApi(value) {
-        this.changeLoading();
+        this.LOADING();
 
-        await http.get(process.env.VUE_APP_API_URL + '/products', {search: value})
+        await http.get('products', {search: value})
           .then(response => this.products = response.data)
           .catch(error => console.dir(error));
 
-        this.changeLoading();
-
+        this.LOADING();
         return this.products || []
       }
     }

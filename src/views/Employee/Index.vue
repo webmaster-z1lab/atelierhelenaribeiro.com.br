@@ -99,14 +99,14 @@
 </style>
 
 <script>
-  import clientPaginationMixin from '@/mixins/client-pagination'
+  import clientPaginationMixin from '@/mixins/client-pagination';
 
   import { BasePagination } from '@/components';
   import { Table, TableColumn, Select, Option, Tooltip } from 'element-ui';
 
   import {http} from "@/services";
   import {notifyVue, notifyError, formatDate} from "@/utils";
-  import {mapActions, mapState, mapMutations} from 'vuex'
+  import {mapActions, mapState, mapMutations} from 'vuex';
   import {DELETE, GET_ALL, LOADING} from "@/store/modules/employee/employee-const";
 
   export default {

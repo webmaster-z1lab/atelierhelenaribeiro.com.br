@@ -95,12 +95,12 @@
 </template>
 
 <script>
-  import {mapActions, mapState} from 'vuex'
+  import {mapActions, mapState} from 'vuex';
   import {GET, DELETE} from "@/store/modules/employee/employee-const";
 
   import {notifyVue, notifyError} from "@/utils";
 
-  import Loading from '@/components/App/Loading'
+  import Loading from '@/components/App/Loading';
 
   export default {
     name: 'show',

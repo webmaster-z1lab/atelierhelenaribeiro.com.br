@@ -7,69 +7,84 @@
     <div class="container-fluid mt--6">
       <card>
         <div slot="header">
-          <h3 class="mb-0">Editando Produto</h3>
+          <h3 class="mb-0">Editando Romaneio</h3>
           <p class="text-sm mb-0">
-            Modifique os dados abaixo para atualizar informações do produto.
+            Modifique os dados para atualizar as informações do romaneio.
           </p>
         </div>
 
-        <form class="needs-validation" @submit.prevent="submitForm">
-          <div class="form-row">
-            <div class="col-lg-4">
-              <base-input label="Modelo" :value="product.template.reference" name="reference" disabled="true"/>
-            </div>
-            <div class="col-lg-4">
-              <base-input label="Tamanho" :error="getError('size')" :valid="isValid('size')">
-                <select name="size" class="form-control" v-model="product.size" :class="[{'is-invalid': getError('size')}]" v-validate="'required'">
-                  <option value="" selected>Selecione o tamanho do produto.</option>
-                  <option value="p">P</option>
-                  <option value="m">M</option>
-                  <option value="g">G</option>
-                  <option value="plus1">PLUS 1</option>
-                  <option value="plus2">PLUS 2</option>
-                  <option value="plus3">PLUS 3</option>
-                </select>
-              </base-input>
-            </div>
-            <div class="col-lg-4">
-              <base-input label="Cor" :error="getError('color')" :valid="isValid('color')">
-                <select name="color" class="form-control" v-model="product.color" :class="[{'is-invalid': getError('color')}]" v-validate="'required'">
-                  <option value="" selected>Selecione a cor do produto.</option>
-                  <option value="azul">Azul</option>
-                  <option value="branco">Branco</option>
-                  <option value="preto">Preto</option>
-                </select>
-              </base-input>
-            </div>
-            <div class="col-lg-4">
-              <money-input label="Preço" v-model="product.price" name="price" :error="getError('price')" :valid="isValid('price')" v-validate="'required'"/>
-            </div>
-            <div class="col-lg-6"></div>
-            <div class="col-lg-6">
-              <div id="DashboardContainer"></div>
-            </div>
-            <div class="col-lg-6">
-              <card body-classes="p-0" v-if="product.template">
-                <h5 slot="header" class="h3 mb-0">Selecione as Imagens</h5>
-                <ul class="list-group list-group-flush" data-toggle="checklist">
-                  <li class="checklist-entry list-group-item flex-column align-items-start py-4 px-4" v-for="image in gallery" :key="image.id">
-                    <div class="checklist-item">
-
-                      <div class="checklist-info">
-                        <img :src="image.url" alt="" width="15%">
-                        <h5 class="checklist-title mb-0">{{image.name}}</h5>
-                        <small>{{image.size_in_bytes}} Kbs</small>
-                      </div>
-                      <div>
-                        <base-checkbox :value="image.id" v-model="product.template_images"/>
-                      </div>
-                    </div>
-                  </li>
-                </ul>
-              </card>
+        <h5 class="heading mb-4">Busca de Produtos</h5>
+        <div class="col-4 justify-content-center justify-content-sm-between flex-wrap">
+          <div class="form-group">
+            <div class="input-group has-label">
+              <input type="text" class="form-control" placeholder="Buscar..." v-model="query" @keyup.enter="searchQuery">
+              <div class="input-group-append">
+                <span class="input-group-text">
+                  <slot name="prepend">
+                    <i class="fas fa-search"></i>
+                  </slot>
+                </span>
+              </div>
             </div>
           </div>
+        </div>
 
+        <el-table :data="products" header-row-class-name="thead-light" v-if="products.length">
+          <el-table-column prop="reference" label="Referência" sortable/>
+          <el-table-column prop="color" label="Cor" sortable/>
+          <el-table-column prop="size" label="Tamanho" sortable/>
+          <el-table-column label="Quant. em estoque" sortable>
+            <template v-slot="{row}" v-if="">
+              <span v-if="row.amount">{{row.amount}}</span>
+              <badge rounded type='danger' v-else>Esgotado</badge>
+            </template>
+          </el-table-column>
+
+          <el-table-column min-width="60px" align="right" label="Ações">
+            <div slot-scope="{$index, row}" class="d-flex">
+              <el-tooltip content="Deletar" placement="top">
+                <a href="#!" @click.prevent="addProduct(row)" class="table-action" data-toggle="tooltip" data-original-title="Add">
+                  <i class="fas fa-plus"></i>
+                </a>
+              </el-tooltip>
+            </div>
+          </el-table-column>
+        </el-table>
+
+        <form class="needs-validation" @submit.prevent="submitForm">
+          <hr class="mb-4 mt-0">
+          <h5 class="heading mb-4">Lista de Produtos</h5>
+          <el-table :data="packing.products" header-row-class-name="thead-light">
+            <el-table-column prop="reference" label="Referência" sortable/>
+            <el-table-column prop="color" label="Cor" sortable/>
+            <el-table-column prop="size" label="Tamanho" sortable/>
+            <el-table-column prop="amount" label="Quantidade" sortable/>
+
+            <el-table-column min-width="60px" align="right" label="Ações">
+              <div slot-scope="{$index, row}" class="d-flex">
+                <el-tooltip content="Remover Um" placement="top">
+                  <a href="#!" @click.prevent="removeOne(row)" class="table-action table-action-delete" data-toggle="tooltip" data-original-title="Delete">
+                    <i class="fas fa-trash"></i>
+                  </a>
+                </el-tooltip>
+                <el-tooltip content="Deletar Tudo" placement="top">
+                  <a href="#!" @click.prevent="removeAll(row)" class="table-action table-action-delete" data-toggle="tooltip" data-original-title="Delete">
+                    <i class="fas fa-dumpster"></i>
+                  </a>
+                </el-tooltip>
+              </div>
+            </el-table-column>
+          </el-table>
+
+          <div class="form-row mt-4">
+            <div class="col-lg-3">
+              <base-input label="Vendedor" :error="getError('seller')" :valid="isValid('seller')">
+                <el-select v-model="packing.seller" filterable placeholder="Selecione o representante do cliente." name="seller" v-validate="'required'" :class="[{'is-invalid': getError('seller')}]">
+                  <el-option v-for="seller in sellers" :key="seller.id" :label="seller.name" :value="seller.id"/>
+                </el-select>
+              </base-input>
+            </div>
+          </div>
           <hr class="my-4">
           <base-button type="primary" native-type="submit">Enviar</base-button>
           <base-button type="secondary" @click="$router.back()">Voltar</base-button>
@@ -80,18 +95,19 @@
 </template>
 
 <script>
-  import MoneyInput from '@/components/App/Inputs/Money'
-  import crudSettingsMixin from '@/mixins/crud-settings'
-  import clientUploadUppyMixin from '@/mixins/client-upload-uppy';
+  import crudSettingsMixin from '@/mixins/crud-settings';
+
+  import {mapActions, mapState, mapMutations} from 'vuex';
+  import {EDIT, GET, LOADING} from "@/store/modules/packing/packing-const";
 
   import {notifyVue, notifyError} from "@/utils";
-
+  import { Select, Option, Table, TableColumn, Tooltip} from 'element-ui'
   import {http} from "@/services";
   import {isEmpty} from 'lodash'
 
   export default {
     name: 'edit',
-    mixins: [crudSettingsMixin, clientUploadUppyMixin],
+    mixins: [crudSettingsMixin],
     props:{
       id: {
         type: String,
@@ -99,56 +115,94 @@
       }
     },
     components: {
-      MoneyInput
+      [Select.name]: Select,
+      [Option.name]: Option,
+      [Table.name]: Table,
+      [TableColumn.name]: TableColumn,
+      [Tooltip.name]: Tooltip
     },
     data () {
       return {
-        gallery: [],
-        loading: true,
-        product: Product.find(this.id) || {template: {}}
+        sellers: [],
+        query: '',
+        products: []
       }
     },
+    computed: {
+      ...mapState('packing', {
+        loading: state => state.loading,
+        packing: state => state.packing
+      })
+    },
     async created() {
-      if (isEmpty(this.product.template)) this.product = await Product.$get({params: {id: this.id}});
-      await http.get(process.env.VUE_APP_API_URL + `/templates/${this.product.template_id}/gallery`).then(res => {this.gallery = res.data});
-
-      this.changeLoading();
+      await this.GET(this.id);
+      await http.get('employees', {search: 'seller'}).then(response => this.sellers = response.data).catch(error => console.dir(error));
     },
     methods: {
-      submitForm() {
+      ...mapActions('packing', [EDIT, GET]),
+      ...mapMutations('packing', [LOADING]),
+      async searchQuery() {
+        if (this.query !== '') {
+          this.products = [];
+          this.LOADING();
+
+          await http.get('products', {search: this.query}).then(res => {
+            this.products = res.data
+          }).catch(error => console.dir(error));
+
+          this.LOADING();
+        }
+      },
+      addProduct(data) {
+        if (data.amount) {
+          const productItem = this.packing.products.find(item => item.reference === data.reference);
+
+          if (productItem) {
+            productItem.amount++
+          } else {
+            let productNew = {
+              reference: data.reference,
+              amount: 1,
+              color: data.products[0].color,
+              size: data.products[0].size,
+              price: data.products[0].price,
+            };
+
+            this.packing.products.push(productNew);
+          }
+
+          data.amount--;
+        } else {
+          notifyVue(this.$notify, 'Item esgotado!', 'danger', 'ni ni-fat-remove');
+        }
+      },
+      removeOne(data) {
+        const productItem = this.products.find(item => item.reference === data.reference);
+
+        if (data.amount > 1) {
+          data.amount--
+        } else {
+          this.packing.products.splice(this.packing.products.indexOf(data), 1);
+        }
+
+        if (productItem) productItem.amount++
+      },
+      removeAll(data) {
+        const productItem = this.products.find(item => item.reference === data.reference);
+        if (productItem) productItem.amount = data.amount;
+
+        this.packing.products.splice(this.packing.products.indexOf(data), 1);
+      },
+      async submitForm() {
+        this.$validator.resume();
         try {
           this.$validator.validateAll().then(
             async res => {
               if (res) {
-                await this.changeLoading();
-                this.product.images = [];
-                if (isEmpty(this.product.template_images)) delete this.product.template_images
-
-                if (isEmpty(this.uppy.getFiles())) {
-                  delete this.product.images;
-                  await Product.$update({params: {id: this.id}, data: this.product})
-                    .then(res => notifyVue(this.$notify, 'Produto atualizado com sucesso', 'success'))
-                    .catch(error => notifyError(this.$notify, error));
-                } else {
-                  await this.uppy.setMeta({folder: `templates/${this.product.template}`});
-                  await this.uppy.upload().then(async res => {
-                    for (let image of res.successful) {
-                      this.product.images.push({
-                        path: image.s3Multipart.key,
-                        name: image.data.name,
-                        extension: image.extension,
-                        mime_type:  image.type,
-                        size_in_bytes:  image.size
-                      })
-                    }
-
-                    await Product.$update({params: {id: this.id}, data: this.product})
-                      .then(res => notifyVue(this.$notify, 'Produto atualizado com sucesso', 'success'))
-                      .catch(error => notifyError(this.$notify, error));
-                  }).catch(err => {throw err});
-                }
-
-                this.changeLoading();
+                this.EDIT(this.packing).then(res => {
+                  notifyVue(this.$notify, 'Romaneio editado com sucesso', 'success');
+                  this.$router.push({name: 'sale.packing.index'})
+                }).catch(error => notifyError(this.$notify, error));
               }
             }
           )

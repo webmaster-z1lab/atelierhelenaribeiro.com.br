@@ -4,7 +4,7 @@
 
     <base-header-app/>
 
-    <div class="container-fluid mt--6" v-if="product">
+    <div class="container-fluid mt--6">
       <card class="no-border-card" body-classes="px-0 pb-1" footer-classes="pb-2">
         <div slot="header">
           <div class="row">

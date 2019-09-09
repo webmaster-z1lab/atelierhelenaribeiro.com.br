@@ -62,13 +62,13 @@
         required: true
       }
     },
+    components: {
+      MoneyInput
+    },
     data () {
       return {
         images: []
       }
-    },
-    components: {
-      MoneyInput
     },
     computed: {
       ...mapState('template', {

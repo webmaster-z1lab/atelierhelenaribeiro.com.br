@@ -9,6 +9,7 @@ export default {
     images: [],
     template_images: [],
     price: 0,
-    created_at: ''
+    created_at: '',
+    template: {}
   }
 }

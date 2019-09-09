@@ -80,14 +80,16 @@
 </template>
 
 <script>
-  import MoneyInput from '@/components/App/Inputs/Money'
-  import crudSettingsMixin from '@/mixins/crud-settings'
+  import MoneyInput from '@/components/App/Inputs/Money';
+  import crudSettingsMixin from '@/mixins/crud-settings';
   import clientUploadUppyMixin from '@/mixins/client-upload-uppy';
 
-  import {notifyVue, notifyError} from "@/utils";
+  import {mapActions, mapState} from 'vuex';
+  import {EDIT, GET} from "@/store/modules/product/product-const";
 
+  import {notifyVue, notifyError} from "@/utils";
+  import {isEmpty} from 'lodash';
   import {http} from "@/services";
-  import {isEmpty} from 'lodash'
 
   export default {
     name: 'edit',
@@ -104,36 +106,40 @@
     data () {
       return {
         gallery: [],
-        loading: true,
-        product: Product.find(this.id) || {template: {}}
+        images: []
       }
     },
+    computed: {
+      ...mapState('product', {
+        loading: state => state.loading,
+        product: state => state.product
+      })
+    },
     async created() {
-      if (isEmpty(this.product.template)) this.product = await Product.$get({params: {id: this.id}});
-      await http.get(process.env.VUE_APP_API_URL + `/templates/${this.product.template_id}/gallery`).then(res => {this.gallery = res.data});
-
-      this.changeLoading();
+      await this.GET(this.id);
+      await http.get(`templates/${this.product.template_id}/gallery`).then(res => {this.gallery = res.data});
     },
     methods: {
+      ...mapActions('product', [GET, EDIT]),
       submitForm() {
         try {
           this.$validator.validateAll().then(
             async res => {
               if (res) {
-                await this.changeLoading();
-                this.product.images = [];
                 if (isEmpty(this.product.template_images)) delete this.product.template_images
 
                 if (isEmpty(this.uppy.getFiles())) {
                   delete this.product.images;
-                  await Product.$update({params: {id: this.id}, data: this.product})
-                    .then(res => notifyVue(this.$notify, 'Produto atualizado com sucesso', 'success'))
-                    .catch(error => notifyError(this.$notify, error));
+
+                  this.EDIT(this.product).then(res => {
+                    notifyVue(this.$notify, 'Produto atualizado com sucesso', 'success');
+                    this.$router.push({name: 'stock.product.index'})
+                  }).catch(error => notifyError(this.$notify, error));
                 } else {
                   await this.uppy.setMeta({folder: `templates/${this.product.template}`});
                   await this.uppy.upload().then(async res => {
                     for (let image of res.successful) {
-                      this.product.images.push({
+                      this.images.push({
                         path: image.s3Multipart.key,
                         name: image.data.name,
                         extension: image.extension,
@@ -142,9 +148,12 @@
                       })
                     }
 
-                    await Product.$update({params: {id: this.id}, data: this.product})
-                      .then(res => notifyVue(this.$notify, 'Produto atualizado com sucesso', 'success'))
-                      .catch(error => notifyError(this.$notify, error));
+                    this.product.images = this.images;
+
+                    this.EDIT(this.product).then(res => {
+                      notifyVue(this.$notify, 'Produto atualizado com sucesso', 'success');
+                      this.$router.push({name: 'stock.product.index'})
+                    }).catch(error => notifyError(this.$notify, error));
                   }).catch(err => {throw err});
                 }
 

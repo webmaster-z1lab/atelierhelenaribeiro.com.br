@@ -46,9 +46,9 @@
             </div>
           </div>
           <el-table :data="queriedData" row-key="id" header-row-class-name="thead-light" @sort-change="sortChange">
-            <el-table-column label="Modelo" sortable>
+            <el-table-column label="Referência" sortable>
               <template v-slot="{row}">
-                <router-link :to="{name: 'catalog.template.show', params: {id: row.id}}" class="table-action">{{row.template}}</router-link>
+                {{row.reference}}
               </template>
             </el-table-column>
             <el-table-column prop="color" label="Cor" sortable/>

@@ -117,7 +117,7 @@
       destroy() {
         this.DELETE(this.template)
           .then(res => {
-            notifyVue(this.$notify, 'O modelo foi apagado!', 'success')
+            notifyVue(this.$notify, 'O modelo foi apagado!', 'success');
             this.$router.push({name: 'catalog.template.index'})
           }).catch(error => notifyError(this.$notify, error));
       }

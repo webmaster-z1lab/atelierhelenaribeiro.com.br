@@ -16,7 +16,7 @@
             </div>
             <div class="col-6 text-right">
               <router-link :to="{name: 'stock.product.index'}" class="btn btn-icon btn-fab btn-sm btn-secondary">
-                <span class="btn-inner--icon"><i class="fas fa-user-edit"></i></span>
+                <span class="btn-inner--icon"><i class="fas fa-arrow-left"></i></span>
                 <span class="btn-inner--text">Voltar</span>
               </router-link>
               <el-tooltip content="Editar Produto" placement="top">
@@ -81,18 +81,13 @@
   </div>
 </template>
 
-<style>
-  .no-border-card .card-footer{
-    border-top: 0;
-  }
-</style>
-
 <script>
+  import {mapActions, mapState} from 'vuex'
+  import {GET, DELETE, DELETE_IMAGE} from "@/store/modules/product/product-const";
+
   import {notifyVue, notifyError} from "@/utils";
-  import swal from 'sweetalert2';
 
   import Loading from '@/components/App/Loading'
-  import {http} from "@/services";
 
   export default {
     name: 'show',
@@ -105,76 +100,29 @@
         required: true
       }
     },
-    data: () => ({
-      loading: true,
-    }),
     computed: {
-      product() {
-        return Product.find(this.id)
-      }
+      ...mapState('product', {
+        loading: state => state.loading,
+        product: state => state.product
+      })
     },
     async created() {
-      if (!this.product) await Product.$get({params: {id: this.id}});
-
-      this.changeLoading()
+      this.GET(this.id);
     },
     methods: {
-      changeLoading() {
-        this.loading = !this.loading
-      },
+      ...mapActions('product', [GET, DELETE, DELETE_IMAGE]),
       deleteImage(id, key) {
-        swal({
-          title: 'Você tem Certeza?',
-          text: `Ao fazer isso os dados não poderão ser recuperados!`,
-          type: 'warning',
-          showCancelButton: true,
-          confirmButtonClass: 'btn btn-success btn-fill',
-          cancelButtonClass: 'btn btn-danger btn-fill',
-          confirmButtonText: 'Sim, apagar!',
-          cancelButtonText: 'Cancelar',
-          buttonsStyling: false
-        }).then(async result => {
-          if (result.value) {
-            this.changeLoading();
-            await http.delete(process.env.VUE_APP_API_URL + `/images/${id}/products/${this.id}`)
-              .then(res => {
-                let product = this.product;
-                product.images.splice(key, 1);
-
-                Product.update({where: id, data: {product}})
-                  .then(response => notifyVue(this.$notify, 'O Arquivo foi apagado!', 'success'))
-                  .catch(error => notifyError(this.$notify, error))
-              })
-              .catch(error => notifyError(this.$notify, error));
-
-            this.changeLoading();
-          }
-        });
+        this.DELETE_IMAGE({id: id, key: key})
+          .then(res => {
+            notifyVue(this.$notify, 'O arquivo foi apagado!', 'success')
+          }).catch(error => notifyError(this.$notify, error));
       },
       destroy() {
-        swal({
-          title: 'Você tem Certeza?',
-          text: `Ao fazer isso os dados não poderão ser recuperados!`,
-          type: 'warning',
-          showCancelButton: true,
-          confirmButtonClass: 'btn btn-success btn-fill',
-          cancelButtonClass: 'btn btn-danger btn-fill',
-          confirmButtonText: 'Sim, apagar!',
-          cancelButtonText: 'Cancelar',
-          buttonsStyling: false
-        }).then(async result => {
-          if (result.value) {
-            await this.changeLoading();
-
-            await Product.$delete({params: {id: this.id}})
-              .then(response => {
-                notifyVue(this.$notify, 'O Produto foi apagado!', 'success');
-                this.$router.push({name: 'stock.product.index'})
-              }).catch(error => notifyError(this.$notify, error))
-
-            this.changeLoading()
-          }
-        });
+        this.DELETE(this.template)
+          .then(res => {
+            notifyVue(this.$notify, 'O produto foi apagado!', 'success');
+            this.$router.push({name: 'stock.product.index'})
+          }).catch(error => notifyError(this.$notify, error));
       }
     }
   };

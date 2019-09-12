@@ -9,14 +9,14 @@
         <div slot="header">
           <div class="row">
             <div class="col-6">
-              <h3 class="mb-0">Lista de Romaneios</h3>
+              <h3 class="mb-0">Lista de Visitas</h3>
               <p class="text-sm mb-0">
-                Lista de todos os romaneios(produtos que estão em rota de vendas).
+                Lista de todas as visitas realizadas.
               </p>
             </div>
             <div class="col-6 text-right">
-              <el-tooltip content="Criar Novo Romaneio" placement="top">
-                <router-link :to="{name: 'sale.packing.create'}" class="btn btn-icon btn-fab btn-sm btn-primary">
+              <el-tooltip content="Criar Nova Visita" placement="top">
+                <router-link :to="{name: 'sale.visit.create'}" class="btn btn-icon btn-fab btn-sm btn-primary">
                   <span class="btn-inner&#45;&#45;icon"><i class="fas fa-plus"></i></span>
                   <span class="btn-inner--text">Add</span>
                 </router-link>
@@ -61,12 +61,12 @@
             <el-table-column min-width="60px" align="right" label="Ações">
               <div slot-scope="{$index, row}" class="d-flex">
                 <el-tooltip content="Visualizar" placement="top">
-                  <router-link :to="{name: 'sale.packing.show', params: {id: row.id}}" class="table-action" data-toggle="tooltip" data-original-title="Show">
+                  <router-link :to="{name: 'sale.visit.show', params: {id: row.id}}" class="table-action" data-toggle="tooltip" data-original-title="Show">
                     <i class="fas fa-eye"></i>
                   </router-link>
                 </el-tooltip>
                 <el-tooltip content="Editar" placement="top">
-                  <router-link :to="{name: 'sale.packing.edit', params: {id: row.id}}" class="table-action" data-toggle="tooltip" data-original-title="Edit">
+                  <router-link :to="{name: 'sale.visit.edit', params: {id: row.id}}" class="table-action" data-toggle="tooltip" data-original-title="Edit">
                     <i class="fas fa-user-edit"></i>
                   </router-link>
                 </el-tooltip>
@@ -107,7 +107,7 @@
   import {http} from "@/services";
   import {notifyVue, notifyError, formatDate} from "@/utils";
   import {mapActions, mapState, mapMutations} from 'vuex';
-  import {DELETE, GET_ALL, LOADING} from "@/store/modules/packing/packing-const";
+  import {DELETE, GET_ALL, LOADING} from "@/store/modules/visit/visit-const";
 
   export default {
     name: 'index',
@@ -122,8 +122,8 @@
       [Tooltip.name]: Tooltip
     },
     computed: {
-      ...mapState('packing', {
-        tableData: state => state.packings,
+      ...mapState('visit', {
+        tableData: state => state.visits,
         loading: state => state.loading
       })
     },
@@ -131,13 +131,13 @@
       this.GET_ALL()
     },
     methods: {
-      ...mapActions('packing', [GET_ALL, DELETE]),
-      ...mapMutations('packing', [LOADING]),
+      ...mapActions('visit', [GET_ALL, DELETE]),
+      ...mapMutations('visit', [LOADING]),
       async searchApi(value) {
         let result = [];
         this.LOADING();
 
-        await http.get('packings', {search: value})
+        await http.get('visits', {search: value})
           .then(response => result = response.data)
           .catch(error => console.dir(error));
 
@@ -146,7 +146,7 @@
       },
       destroy(row) {
         this.DELETE(row)
-          .then(res => notifyVue(this.$notify, 'O romaneio foi apagado!', 'success'))
+          .then(res => notifyVue(this.$notify, 'A visita foi removida!', 'success'))
           .catch(error => notifyError(this.$notify, error))
       }
     }

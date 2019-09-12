@@ -7,9 +7,9 @@
           <route-breadcrumb/>
         </nav>
       </div>
-    </div>
 
-    <slot></slot>
+      <slot></slot>
+    </div>
   </base-header>
 </template>
 

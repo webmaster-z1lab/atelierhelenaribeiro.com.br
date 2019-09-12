@@ -39,7 +39,7 @@ export default {
           await commit(constants.CREATE, response.data);
           await commit(constants.LOADING);
 
-          resolve(response);
+          resolve(response.data);
         }).catch(error => {
           reject(error);
           commit(constants.LOADING);
@@ -54,7 +54,7 @@ export default {
           await commit(constants.EDIT, response.data);
           await commit(constants.LOADING);
 
-          resolve(response);
+          resolve(response.data);
         })
         .catch(error => {
           reject(error);
@@ -83,13 +83,11 @@ export default {
               await commit(constants.DELETE, data);
               await commit(constants.LOADING);
 
-              resolve(response);
+              resolve(response.data);
             }).catch(error => {
               reject(error);
               commit(constants.LOADING);
             });
-
-          resolve(response);
         }
       });
     })
@@ -115,13 +113,11 @@ export default {
               await commit(constants.DELETE_IMAGE, key);
               await commit(constants.LOADING);
 
-              resolve(response);
+              resolve(response.data);
             }).catch(error => {
               reject(error);
               commit(constants.LOADING);
             });
-
-          resolve(response);
         }
       });
     })

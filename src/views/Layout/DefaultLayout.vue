@@ -14,6 +14,7 @@
         </sidebar-item>
         <sidebar-item :link="{name: 'Venda',icon: 'fas fa-cart-arrow-down text-success'}">
           <sidebar-item :link="{ name: 'Romaneiro', path: '/sale/packing' }"/>
+          <sidebar-item :link="{ name: 'Visita', path: '/sale/visit' }"/>
         </sidebar-item>
       </template>
     </side-bar>

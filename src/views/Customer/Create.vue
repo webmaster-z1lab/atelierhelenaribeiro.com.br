@@ -153,7 +153,7 @@
       HtmlEditor,
       AddressInputs,
       [Select.name]: Select,
-      [Option.name]: Option,
+      [Option.name]: Option
     },
     data () {
       return {

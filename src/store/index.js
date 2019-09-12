@@ -10,6 +10,7 @@ import customer from './modules/customer'
 import template from './modules/template'
 import product from './modules/product'
 import packing from './modules/packing'
+import visit from './modules/visit'
 
 import createLogger from "vuex/dist/logger";
 
@@ -21,7 +22,8 @@ export default new Vuex.Store({
     customer,
     template,
     product,
-    packing
+    packing,
+    visit
   },
   state,
   actions,

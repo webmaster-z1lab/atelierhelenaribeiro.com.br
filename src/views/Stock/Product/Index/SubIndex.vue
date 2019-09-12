@@ -87,14 +87,13 @@
 </style>
 
 <script>
-  import {http} from "@/services";
   import Fuse from 'fuse.js';
-
-  import clientPaginationMixin from '@/mixins/client-pagination'
+  import clientPaginationMixin from '@/mixins/client-pagination';
 
   import { BasePagination } from '@/components';
   import { Table, TableColumn, Select, Option, Tooltip } from 'element-ui';
-  import {isEmpty} from 'lodash'
+  import {isEmpty} from 'lodash';
+  import {http} from "@/services";
 
   export default {
     name: 'sub-index',
@@ -120,7 +119,7 @@
       }
     },
     mounted() {
-      this.fuseSearch = new Fuse(this.products, {keys: ['id', 'price', 'barcode'], threshold: 0.3})
+      this.fuseSearch = new Fuse(this.tableData, {keys: ['id', 'price', 'barcode'], threshold: 0.3})
     },
     computed: {
       tableData() {

@@ -7,9 +7,9 @@
     <div class="container-fluid mt--6">
       <card>
         <div slot="header">
-          <h3 class="mb-0">Criando Romaneio</h3>
+          <h3 class="mb-0">Editando Romaneio</h3>
           <p class="text-sm mb-0">
-            Preencha os dados abaixo.
+            Modifique os dados para atualizar as informações do romaneio.
           </p>
         </div>
 
@@ -42,7 +42,7 @@
 
           <el-table-column min-width="60px" align="right" label="Ações">
             <div slot-scope="{$index, row}" class="d-flex">
-              <el-tooltip content="Adicionar" placement="top">
+              <el-tooltip content="Deletar" placement="top">
                 <a href="#!" @click.prevent="addProduct(row)" class="table-action" data-toggle="tooltip" data-original-title="Add">
                   <i class="fas fa-plus"></i>
                 </a>
@@ -98,7 +98,7 @@
   import crudSettingsMixin from '@/mixins/crud-settings';
 
   import {mapActions, mapState, mapMutations} from 'vuex';
-  import {CREATE, LOADING} from "@/store/modules/packing/packing-const";
+  import {EDIT, GET, LOADING} from "@/store/modules/packing/packing-const";
 
   import {notifyVue, notifyError} from "@/utils";
   import { Select, Option, Table, TableColumn, Tooltip} from 'element-ui'
@@ -106,8 +106,14 @@
   import {isEmpty} from 'lodash'
 
   export default {
-    name: 'create',
+    name: 'edit',
     mixins: [crudSettingsMixin],
+    props:{
+      id: {
+        type: String,
+        required: true
+      }
+    },
     components: {
       [Select.name]: Select,
       [Option.name]: Option,
@@ -119,23 +125,21 @@
       return {
         sellers: [],
         query: '',
-        products: [],
-        packing: {
-          seller: '',
-          products: []
-        }
+        products: []
       }
     },
     computed: {
       ...mapState('packing', {
-        loading: state => state.loading
+        loading: state => state.loading,
+        packing: state => state.packing
       })
     },
     async created() {
+      await this.GET(this.id);
       await http.get('employees', {search: 'seller'}).then(response => this.sellers = response.data).catch(error => console.dir(error));
     },
     methods: {
-      ...mapActions('packing', [CREATE]),
+      ...mapActions('packing', [EDIT, GET]),
       ...mapMutations('packing', [LOADING]),
       async searchQuery() {
         if (this.query !== '') {
@@ -185,7 +189,7 @@
       },
       removeAll(data) {
         const productItem = this.products.find(item => item.reference === data.reference);
-        if (productItem) productItem.amount += data.amount;
+        if (productItem) productItem.amount = data.amount;
 
         this.packing.products.splice(this.packing.products.indexOf(data), 1);
       },
@@ -195,12 +199,10 @@
           this.$validator.validateAll().then(
             async res => {
               if (res) {
-                this.CREATE(this.packing)
-                  .then(response => {
-                    notifyVue(this.$notify, 'Romaneio criado com sucesso', 'success');
-                    this.$router.push({name: 'sale.packing.show', params: {id: response.id}})
-                  })
-                  .catch(error => notifyError(this.$notify, error));
+                this.EDIT(this.packing).then(res => {
+                  notifyVue(this.$notify, 'Romaneio editado com sucesso', 'success');
+                  this.$router.push({name: 'sale.packing.index'})
+                }).catch(error => notifyError(this.$notify, error));
               }
             }
           )

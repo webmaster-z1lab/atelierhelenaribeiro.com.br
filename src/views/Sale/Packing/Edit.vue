@@ -34,7 +34,7 @@
           <el-table-column prop="color" label="Cor" sortable/>
           <el-table-column prop="size" label="Tamanho" sortable/>
           <el-table-column label="Quant. em estoque" sortable>
-            <template v-slot="{row}" v-if="">
+            <template v-slot="{row}">
               <span v-if="row.amount">{{row.amount}}</span>
               <badge rounded type='danger' v-else>Esgotado</badge>
             </template>
@@ -42,7 +42,7 @@
 
           <el-table-column min-width="60px" align="right" label="Ações">
             <div slot-scope="{$index, row}" class="d-flex">
-              <el-tooltip content="Deletar" placement="top">
+              <el-tooltip content="Adicionar" placement="top">
                 <a href="#!" @click.prevent="addProduct(row)" class="table-action" data-toggle="tooltip" data-original-title="Add">
                   <i class="fas fa-plus"></i>
                 </a>
@@ -189,7 +189,7 @@
       },
       removeAll(data) {
         const productItem = this.products.find(item => item.reference === data.reference);
-        if (productItem) productItem.amount = data.amount;
+        if (productItem) productItem.amount += data.amount;
 
         this.packing.products.splice(this.packing.products.indexOf(data), 1);
       },

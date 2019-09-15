@@ -1,208 +1,147 @@
 <template>
-  <div class="content">
-    <loading :loading="loading"/>
-
-    <base-header-app/>
-
-    <div class="container-fluid mt--6">
-      <card>
-        <div slot="header">
-          <h3 class="mb-0">Editando Romaneio</h3>
-          <p class="text-sm mb-0">
-            Modifique os dados para atualizar as informações do romaneio.
-          </p>
-        </div>
-
-        <h5 class="heading mb-4">Busca de Produtos</h5>
-        <div class="col-4 justify-content-center justify-content-sm-between flex-wrap">
-          <div class="form-group">
-            <div class="input-group has-label">
-              <input type="text" class="form-control" placeholder="Buscar..." v-model="query" @keyup.enter="searchQuery">
-              <div class="input-group-append">
-                <span class="input-group-text">
-                  <slot name="prepend">
-                    <i class="fas fa-search"></i>
-                  </slot>
-                </span>
+  <card>
+    <div class="container">
+      <div class="row">
+        <div class="col-6">
+          <stats-card :class="component === 'cart' ? 'card-tab-cart-check' : 'card-tab-cart'">
+            <div class="row">
+              <div class="col">
+                <span class="h2 font-weight-bold mb-0 text-white">Carrinho</span>
               </div>
             </div>
-          </div>
+          </stats-card>
         </div>
-
-        <el-table :data="products" header-row-class-name="thead-light" v-if="products.length">
-          <el-table-column prop="reference" label="Referência" sortable/>
-          <el-table-column prop="color" label="Cor" sortable/>
-          <el-table-column prop="size" label="Tamanho" sortable/>
-          <el-table-column label="Quant. em estoque" sortable>
-            <template v-slot="{row}">
-              <span v-if="row.amount">{{row.amount}}</span>
-              <badge rounded type='danger' v-else>Esgotado</badge>
-            </template>
-          </el-table-column>
-
-          <el-table-column min-width="60px" align="right" label="Ações">
-            <div slot-scope="{$index, row}" class="d-flex">
-              <el-tooltip content="Deletar" placement="top">
-                <a href="#!" @click.prevent="addProduct(row)" class="table-action" data-toggle="tooltip" data-original-title="Add">
-                  <i class="fas fa-plus"></i>
-                </a>
-              </el-tooltip>
-            </div>
-          </el-table-column>
-        </el-table>
-
-        <form class="needs-validation" @submit.prevent="submitForm">
-          <hr class="mb-4 mt-0">
-          <h5 class="heading mb-4">Lista de Produtos</h5>
-          <el-table :data="packing.products" header-row-class-name="thead-light">
-            <el-table-column prop="reference" label="Referência" sortable/>
-            <el-table-column prop="color" label="Cor" sortable/>
-            <el-table-column prop="size" label="Tamanho" sortable/>
-            <el-table-column prop="amount" label="Quantidade" sortable/>
-
-            <el-table-column min-width="60px" align="right" label="Ações">
-              <div slot-scope="{$index, row}" class="d-flex">
-                <el-tooltip content="Remover Um" placement="top">
-                  <a href="#!" @click.prevent="removeOne(row)" class="table-action table-action-delete" data-toggle="tooltip" data-original-title="Delete">
-                    <i class="fas fa-trash"></i>
-                  </a>
-                </el-tooltip>
-                <el-tooltip content="Deletar Tudo" placement="top">
-                  <a href="#!" @click.prevent="removeAll(row)" class="table-action table-action-delete" data-toggle="tooltip" data-original-title="Delete">
-                    <i class="fas fa-dumpster"></i>
-                  </a>
-                </el-tooltip>
+        <div class="col-6">
+          <stats-card :class="component === 'payment-method' ? 'card-tab-payment-check' : 'card-tab-payment'">
+            <div class="row">
+              <div class="col">
+                <span class="h2 font-weight-bold mb-0 text-white">Pagamento</span>
               </div>
-            </el-table-column>
-          </el-table>
-
-          <div class="form-row mt-4">
-            <div class="col-lg-3">
-              <base-input label="Vendedor" :error="getError('seller')" :valid="isValid('seller')">
-                <el-select v-model="packing.seller" filterable placeholder="Selecione o representante do cliente." name="seller" v-validate="'required'" :class="[{'is-invalid': getError('seller')}]">
-                  <el-option v-for="seller in sellers" :key="seller.id" :label="seller.name" :value="seller.id"/>
-                </el-select>
-              </base-input>
             </div>
-          </div>
-          <hr class="my-4">
-          <base-button type="primary" native-type="submit">Enviar</base-button>
-          <base-button type="secondary" @click="$router.back()">Voltar</base-button>
-        </form>
-      </card>
+          </stats-card>
+        </div>
+      </div>
     </div>
-  </div>
+
+    <div class="row">
+      <div class="col-8">
+        <component :is="component" :sale="sale" :packing="packing" :validated="validated"/>
+      </div>
+      <div class="col-4">
+        <div class="card">
+          <div class="card-body text-right">
+            <div class="row justify-content-between align-items-center">
+              <div class="col-auto">
+                <span class="d-block h3">Resumo do Pedido</span>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <span class="h5 text-muted">Quant. Produtos</span>
+                <span class="d-block h3">{{sumProducts}}</span>
+              </div>
+              <div class="col">
+                <span class="h5 text-muted">Valor Total</span>
+                <span class="d-block h3">{{sumProductsValue | currency}}</span>
+              </div>
+              <div class="col">
+                <span class="h5 text-muted">Desconto Total</span>
+                <span class="d-block h3">{{sale.discount | currency}}</span>
+              </div>
+            </div>
+            <div class="my-4">
+            <span class="h4">
+              Valor Final
+            </span>
+              <div class="h2">{{(sumProductsValue - sale.discount) | currency}}</div>
+            </div>
+
+            <div class="row" v-if="component !== 'cart'">
+              <div class="col-6">
+                <base-button type="secondary" size="sm" class="btn-block" @click="component = 'cart'">Voltar</base-button>
+              </div>
+              <div class="col-6">
+                <base-button type="primary" size="sm" class="btn-block" @click="submitForm">Finalizar Pedido</base-button>
+              </div>
+            </div>
+            <base-button type="primary" size="sm" class="btn-block" @click="sendPayment" v-else>Pagamento</base-button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </card>
 </template>
 
 <script>
-  import crudSettingsMixin from '@/mixins/crud-settings';
+  import Cart from './Partials/Cart'
+  import PaymentMethod from './Partials/PaymentMethod'
 
-  import {mapActions, mapState, mapMutations} from 'vuex';
-  import {EDIT, GET, LOADING} from "@/store/modules/packing/packing-const";
+  import {mapActions, mapState} from 'vuex';
+  import {EDIT_SALE} from "@/store/modules/visit/visit-const";
 
   import {notifyVue, notifyError} from "@/utils";
-  import { Select, Option, Table, TableColumn, Tooltip} from 'element-ui'
   import {http} from "@/services";
-  import {isEmpty} from 'lodash'
+  import {isEmpty, sumBy} from 'lodash'
 
   export default {
     name: 'edit',
-    mixins: [crudSettingsMixin],
-    props:{
-      id: {
-        type: String,
-        required: true
-      }
+    $_veeValidate: {
+      validator: 'new'
     },
     components: {
-      [Select.name]: Select,
-      [Option.name]: Option,
-      [Table.name]: Table,
-      [TableColumn.name]: TableColumn,
-      [Tooltip.name]: Tooltip
+      Cart,
+      PaymentMethod
     },
     data () {
       return {
-        sellers: [],
-        query: '',
-        products: []
+        component: 'cart',
+        packing: {},
+        validated: false
       }
     },
     computed: {
-      ...mapState('packing', {
-        loading: state => state.loading,
-        packing: state => state.packing
-      })
-    },
-    async created() {
-      await this.GET(this.id);
-      await http.get('employees', {search: 'seller'}).then(response => this.sellers = response.data).catch(error => console.dir(error));
+      ...mapState('visit', {
+        sale: state => state.sale,
+        visit: state => state.visit
+      }),
+      sumProductsValue(){
+        return sumBy(this.sale.products, function (o) {
+          return (o.price * o.amount)
+        })
+      },
+      sumProducts() {
+        return sumBy(this.sale.products, 'amount')
+      }
     },
     methods: {
-      ...mapActions('packing', [EDIT, GET]),
-      ...mapMutations('packing', [LOADING]),
-      async searchQuery() {
-        if (this.query !== '') {
-          this.products = [];
-          this.LOADING();
+      ...mapActions('visit', [EDIT_SALE]),
+      sendPayment() {
+        if (isEmpty(this.sale.products)) {
+          notifyVue(this.$notify, 'Adicione produtos antes de ir para área de pagamento!', 'warning');
 
-          await http.get('products', {search: this.query}).then(res => {
-            this.products = res.data
-          }).catch(error => console.dir(error));
-
-          this.LOADING();
-        }
-      },
-      addProduct(data) {
-        if (data.amount) {
-          const productItem = this.packing.products.find(item => item.reference === data.reference);
-
-          if (productItem) {
-            productItem.amount++
-          } else {
-            let productNew = {
-              reference: data.reference,
-              amount: 1,
-              color: data.products[0].color,
-              size: data.products[0].size,
-              price: data.products[0].price,
-            };
-
-            this.packing.products.push(productNew);
-          }
-
-          data.amount--;
-        } else {
-          notifyVue(this.$notify, 'Item esgotado!', 'danger', 'ni ni-fat-remove');
-        }
-      },
-      removeOne(data) {
-        const productItem = this.products.find(item => item.reference === data.reference);
-
-        if (data.amount > 1) {
-          data.amount--
-        } else {
-          this.packing.products.splice(this.packing.products.indexOf(data), 1);
+          return;
         }
 
-        if (productItem) productItem.amount++
-      },
-      removeAll(data) {
-        const productItem = this.products.find(item => item.reference === data.reference);
-        if (productItem) productItem.amount = data.amount;
-
-        this.packing.products.splice(this.packing.products.indexOf(data), 1);
+        this.component = 'payment-method'
       },
       async submitForm() {
-        this.$validator.resume();
         try {
           this.$validator.validateAll().then(
             async res => {
               if (res) {
-                this.EDIT(this.packing).then(res => {
-                  notifyVue(this.$notify, 'Romaneio editado com sucesso', 'success');
-                  this.$router.push({name: 'sale.packing.index'})
-                }).catch(error => notifyError(this.$notify, error));
+                if (this.sale.payment_methods.length === 1) this.sale.payment_methods[0].value = (this.sumProductsValue - this.sale.discount);
+
+                if (sumBy(this.sale.payment_methods, 'value') !== (this.sumProductsValue - this.sale.discount)) {
+                  notifyVue(this.$notify, 'Os valores passados nas formas de pagamento não batem com o valor final!', 'danger', 'ni ni-fat-remove');
+                  return;
+                }
+
+                this.EDIT_SALE(this.sale)
+                  .then(response => {
+                    notifyVue(this.$notify, 'Pedido editado com sucesso', 'success');
+                    this.$router.push({name: 'sale.visit.edit', params: {id: this.visit}})
+                  })
+                  .catch(error => notifyError(this.$notify, error));
               }
             }
           )
@@ -210,6 +149,9 @@
           this.validated = true;
         }
       }
-    }
+    },
+    async created() {
+      await http.get('packings/current', {seller: this.visit.seller.id}).then(response => {this.packing = response.data;}).catch(error => console.dir(error));
+    },
   };
 </script>

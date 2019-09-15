@@ -23,7 +23,9 @@ export default {
 
       await http.get(`visits/${id}`).then(async response => {
           await commit(constants.SET, response.data);
-          await commit(constants.LOADING);
+        if (response.data.sale) await commit(constants.SET_SALE, response.data.sale);
+        if (response.data.payroll) await commit(constants.SET_PAYROLL, response.data.payroll);
+        await commit(constants.LOADING);
           resolve(response.data);
         }).catch(error => {
           reject(error);
@@ -92,20 +94,6 @@ export default {
       });
     })
   },
-  [constants.GET_SALE]: async ({ commit }, id) => {
-    return await new Promise(async (resolve, reject) => {
-      await commit(constants.LOADING);
-
-      await http.get(`sales/${id}`).then(async response => {
-        await commit(constants.SET_SALE, response.data);
-        await commit(constants.LOADING);
-        resolve(response.data);
-      }).catch(error => {
-        reject(error);
-        commit(constants.LOADING);
-      })
-    })
-  },
   [constants.CREATE_SALE]: async ({ commit }, data) => {
     return await new Promise(async (resolve, reject) => {
       await commit(constants.LOADING);
@@ -121,18 +109,20 @@ export default {
       })
     })
   },
-  [constants.GET_PAYROLL]: async ({ commit }, id) => {
+  [constants.EDIT_SALE]: async ({ commit }, data) => {
     return await new Promise(async (resolve, reject) => {
       await commit(constants.LOADING);
 
-      await http.get(`payrolls/${id}`).then(async response => {
-        await commit(constants.SET_PAYROLL, response.data);
+      await http.put(`sales/${data.id}`, data).then(async response => {
+        await commit(constants.EDIT, response.data);
         await commit(constants.LOADING);
+
         resolve(response.data);
-      }).catch(error => {
-        reject(error);
-        commit(constants.LOADING);
       })
+        .catch(error => {
+          reject(error);
+          commit(constants.LOADING);
+        })
     })
   },
   [constants.CREATE_PAYROLL]: async ({ commit }, data) => {
@@ -148,6 +138,22 @@ export default {
         reject(error);
         commit(constants.LOADING);
       })
+    })
+  },
+  [constants.EDIT_PAYROLL]: async ({ commit }, data) => {
+    return await new Promise(async (resolve, reject) => {
+      await commit(constants.LOADING);
+
+      await http.put(`sales/${data.id}`, data).then(async response => {
+        await commit(constants.EDIT, response.data);
+        await commit(constants.LOADING);
+
+        resolve(response.data);
+      })
+        .catch(error => {
+          reject(error);
+          commit(constants.LOADING);
+        })
     })
   },
 }

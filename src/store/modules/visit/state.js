@@ -3,10 +3,10 @@ export default {
   visits: [],
   visit: {
     id: null,
-    price: 0,
-    reference: '',
-    is_active: true,
-    images: [],
+    annotations: '',
+    date: '',
+    customer: '',
+    seller: '',
     created_at: ''
   },
   sale: {

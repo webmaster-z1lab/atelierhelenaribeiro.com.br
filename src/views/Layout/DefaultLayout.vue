@@ -6,15 +6,15 @@
         <sidebar-item :link="{name: 'Home', path: '/home', icon: 'fas fa-home text-primary'}"/>
         <sidebar-item :link="{name: 'Funcionários', icon: 'fas fa-users-cog text-dark', path: '/employees'}"/>
         <sidebar-item :link="{name: 'Clientes', icon: 'fas fa-users text-info', path: '/customers'}"/>
-        <sidebar-item :link="{name: 'Catálogo',icon: 'fas fa-book-open text-danger'}">
-          <sidebar-item :link="{ name: 'Modelos', path: '/catalog/templates' }"/>
+        <sidebar-item :link="{name: 'Catálogo', icon: 'fas fa-book-open text-danger'}">
+          <sidebar-item :link="{ name: 'Modelos', path: '/catalog/templates'}"/>
         </sidebar-item>
         <sidebar-item :link="{name: 'Estoque',icon: 'fas fa-boxes text-warning'}">
-          <sidebar-item :link="{ name: 'Produtos', path: '/stock/products' }"/>
+          <sidebar-item :link="{ name: 'Produtos', path: '/stock/products'}"/>
         </sidebar-item>
         <sidebar-item :link="{name: 'Venda',icon: 'fas fa-cart-arrow-down text-success'}">
-          <sidebar-item :link="{ name: 'Romaneiro', path: '/sale/packing' }"/>
-          <sidebar-item :link="{ name: 'Visita', path: '/sale/visit' }"/>
+          <sidebar-item :link="{ name: 'Romaneio', path: '/sale/packing'}"/>
+          <sidebar-item :link="{ name: 'Visita', path: '/sale/visit'}"/>
         </sidebar-item>
       </template>
     </side-bar>

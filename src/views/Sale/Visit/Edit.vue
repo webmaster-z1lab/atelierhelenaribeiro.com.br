@@ -8,37 +8,12 @@
           <span class="btn-inner--icon"><i class="fas fa-arrow-left"></i></span>
           <span class="btn-inner--text">Voltar</span>
         </router-link>
-        <base-button size="sm" type="primary" @click="edit_info = !edit_info">Editar Inf.</base-button>
+        <base-button size="sm" type="primary" @click="edit_info = true">Editar Inf.</base-button>
       </div>
     </base-header-app>
 
     <div class="container-fluid mt--6">
-      <div class="row">
-        <div class="col-12" v-if="edit_info">
-          <card>
-            <form class="needs-validation" @submit.prevent="submitForm">
-              <div class="row">
-                <div class="col-6">
-                  <base-input label="Cliente" :error="getError('customer')" :valid="isValid('customer')">
-                    <el-select v-model="visit.customer" filterable placeholder="Selecione o cliente." name="customer" v-validate="'required'" :class="[{'is-invalid': getError('customer')}]">
-                      <el-option v-for="item in customers" :key="item.id" :label="item.company_name" :value="item.id"/>
-                    </el-select>
-                  </base-input>
-                </div>
-                <div class="col-6">
-                  <mask-input name="date" placeholder="##/##/####" label="Data da Visita" v-model="visit.date" :mask="'##/##/####'" :masked="true" validate="required|date_format:dd/MM/yyyy|before_today"/>
-                </div>
-                <div class="col-12">
-                  <label class="form-control-label">Anotações</label>
-                  <html-editor v-model="visit.annotation" name="annotation"></html-editor>
-                </div>
-              </div>
-
-              <base-button type="primary" native-type="submit" size="sm">Salvar</base-button>
-            </form>
-          </card>
-        </div>
-
+      <div class="row" v-if="component">
         <div class="col-lg-4">
           <stats-card class="card-sale">
             <div class="row">
@@ -80,10 +55,174 @@
         </div>
 
         <div class="col-12">
-          <component :is="component" :key="component" :visit="id" v-if="component"/>
+          <component :is="component" :key="component" v-if="component"/>
+        </div>
+      </div>
+      <div class="row" v-else>
+        <div class="col-lg-4">
+          <card gradient="success" header-classes="bg-transparent" footer-classes="bg-transparent" body-classes="px-lg-7" class="card-pricing border-0 text-center mb-4">
+
+            <div slot="header">
+              <div class="row">
+                <div class="col-auto">
+                  <h3 class="text-uppercase ls-1 text-white py-3 mb-0">Pedido</h3>
+                </div>
+                <div class="col text-right">
+                  <el-tooltip content="Ver Detalhes" placement="top">
+                    <base-button class="icon icon-shape bg-white text-dark rounded-circle shadow">
+                      <i class="fas fa-search-plus fa-lg"></i>
+                    </base-button>
+                  </el-tooltip>
+                </div>
+              </div>
+            </div>
+
+            <img src="/img/svg/undraw_empty_cart_co35.svg" alt="" width="50%">
+            <div class="mt-3" v-if="!visit.sale">
+              <span class="pl-2 text-sm text-white">Nenhum pedido foi feito!</span>
+            </div>
+
+            <div class="mt-3" v-else>
+              <div class="display-2 text-white mt-3">{{visit.sale.final_price | currency}}</div>
+              <span class=" text-white">Valor do Pedido</span>
+
+              <ul class="list-unstyled my-4">
+                <li>
+                  <div class="d-flex align-items-center">
+                    <div>
+                      <div class="icon icon-xs icon-shape bg-white shadow rounded-circle">
+                        <i class="fas fa-hand-holding-usd fa-lg"></i>
+                      </div>
+                    </div>
+                    <div>
+                      <span class="pl-2 text-sm text-white">Total de Desconto: {{visit.sale.discount | currency}}</span>
+                    </div>
+                  </div>
+                </li>
+                <li>
+                  <div class="d-flex align-items-center">
+                    <div>
+                      <div class="icon icon-xs icon-shape bg-white shadow rounded-circle">
+                        <i class="fas fa-boxes fa-lg"></i>
+                      </div>
+                    </div>
+                    <div>
+                      <span class="pl-2 text-sm text-white">Total de Produtos: {{visit.sale.total_amount}}</span>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+
+            <base-button slot="footer" type="primary" v-if="!visit.sale" @click="component = 'create-sale'">Criar Pedido</base-button>
+            <base-button slot="footer" type="warning" v-else @click="component = 'edit-sale'">Editar Pedido</base-button>
+          </card>
+        </div>
+        <div class="col-lg-4">
+          <card gradient="primary" header-classes="bg-transparent" footer-classes="bg-transparent" body-classes="px-lg-7" class="card-pricing border-0 text-center mb-4">
+
+            <h3 slot="header" class="text-uppercase ls-1 text-white py-3 mb-0">Pedido</h3>
+
+            <img src="/img/svg/undraw_empty_cart_co35.svg" alt="" width="50%">
+            <div class="display-2 text-white">49</div>
+            <span class=" text-white">Produtos</span>
+            <ul class="list-unstyled my-4">
+              <li>
+                <div class="d-flex align-items-center">
+                  <div>
+                    <div class="icon icon-xs icon-shape bg-white shadow rounded-circle">
+                      <i class="fas fa-hand-holding-usd"></i>
+                    </div>
+                  </div>
+                  <div>
+                    <span class="pl-2 text-sm text-white">Valor Total: </span>
+                  </div>
+                </div>
+              </li>
+            </ul>
+
+            <!--Footer-->
+            <base-button slot="footer" type="primary">Start free trial</base-button>
+          </card>
+        </div>
+        <div class="col-lg-4">
+          <card gradient="warning" header-classes="bg-transparent" footer-classes="bg-transparent" body-classes="px-lg-7" class="card-pricing border-0 text-center mb-4">
+
+            <h3 slot="header" class="text-uppercase ls-1 text-white py-3 mb-0">Pedido</h3>
+
+            <div class="display-2 text-white">$49</div>
+            <ul class="list-unstyled my-4">
+              <li>
+                <div class="d-flex align-items-center">
+                  <div>
+                    <div class="icon icon-xs icon-shape bg-white shadow rounded-circle">
+                      <i class="fas fa-hand-holding-usd"></i>
+                    </div>
+                  </div>
+                  <div>
+                    <span class="pl-2 text-sm text-white">Desconto: </span>
+                  </div>
+                </div>
+              </li>
+              <li>
+                <div class="d-flex align-items-center">
+                  <div>
+                    <div class="icon icon-xs icon-shape bg-white shadow rounded-circle">
+                      <i class="fas fa-pen-fancy"></i>
+                    </div>
+                  </div>
+                  <div>
+                    <span class="pl-2 text-sm text-white">Quant. Produtos: </span>
+                  </div>
+                </div>
+              </li>
+            </ul>
+
+            <!--Footer-->
+            <base-button slot="footer" type="primary">Start free trial</base-button>
+          </card>
         </div>
       </div>
     </div>
+
+    <modal :show.sync="edit_info" size="lg">
+      <template slot="header">
+        <h6 slot="header" class="modal-title" id="modal-title-default">Editar Visita</h6>
+      </template>
+
+
+      <div class="row">
+        <div class="col-4">
+          <base-input label="Cliente" :error="getError('customer')" :valid="isValid('customer')">
+            <el-select v-model="visit.customer" filterable placeholder="Selecione o cliente." name="customer"
+                       v-validate="'required'" :class="[{'is-invalid': getError('customer')}]">
+              <el-option v-for="item in customers" :key="item.id" :label="item.company_name" :value="item.id"/>
+            </el-select>
+          </base-input>
+        </div>
+        <div class="col-4">
+          <base-input label="Vendedor" :error="getError('seller')" :valid="isValid('seller')">
+            <el-select v-model="visit.seller" filterable placeholder="Selecione o vendedor." name="seller" v-validate="'required'" :class="[{'is-invalid': getError('seller')}]">
+              <el-option v-for="item in sellers" :key="item.id" :label="item.name" :value="item.id"/>
+            </el-select>
+          </base-input>
+        </div>
+        <div class="col-4">
+          <mask-input name="date" placeholder="##/##/####" label="Data da Visita" v-model="visit.date" :key="visit.id"
+                      :mask="'##/##/####'" :masked="true" validate="required|date_format:dd/MM/yyyy|before_today"/>
+        </div>
+        <div class="col-12">
+          <label class="form-control-label">Anotações</label>
+          <html-editor v-model="visit.annotations" name="annotations"></html-editor>
+        </div>
+      </div>
+
+      <template slot="footer">
+        <base-button type="primary" @click="submitForm">Salvar</base-button>
+        <base-button type="link" class="ml-auto" @click="edit_info = false">Fechar
+        </base-button>
+      </template>
+    </modal>
   </div>
 </template>
 
@@ -116,7 +255,7 @@
   import {EDIT, GET} from "@/store/modules/visit/visit-const";
 
   import {notifyVue, notifyError} from "@/utils";
-  import { Select, Option } from 'element-ui';
+  import { Select, Option, Tooltip} from 'element-ui';
   import {http} from "@/services";
 
   export default {
@@ -133,6 +272,7 @@
       MaskInput,
       [Select.name]: Select,
       [Option.name]: Option,
+      [Tooltip.name]: Tooltip,
       CreateSale,
       EditSale,
       CreatePayroll,
@@ -142,7 +282,8 @@
       return {
         edit_info: false,
         component: '',
-        customers: []
+        customers: [],
+        sellers: []
       }
     },
     computed: {
@@ -154,6 +295,7 @@
     async created() {
       await this.GET(this.id);
       await http.get('customers').then(response => this.customers = response.data).catch(error => console.dir(error));
+      await http.get('employees', {search: 'seller'}).then(response => this.sellers = response.data).catch(error => console.dir(error));
     },
     methods: {
       ...mapActions('visit', [GET, EDIT]),

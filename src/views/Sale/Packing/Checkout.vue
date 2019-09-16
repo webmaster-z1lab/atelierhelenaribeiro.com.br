@@ -15,48 +15,68 @@
 
         <div class="row">
           <div class="col-8">
-            <card>
-              <div slot="header">
-                <h3 class="mb-0">Lista de Produtos</h3>
-              </div>
+            <div class="row">
+              <div class="col-12">
+                <card>
+                  <div slot="header">
+                    <h3 class="mb-0">Lista de Produtos</h3>
+                  </div>
 
-              <div class="card-body">
-                <div>
-                  <ul class="list-group list-group-flush list my--3" >
-                    <li class="list-group-item px-0" v-for="(product, key) in packing.products" :key="product.reference">
-                      <div class="row align-items-center">
-                        <div class="col-auto">
-                          <div class="avatar rounded-circle">
-                            <img :src="product.thumbnail" alt="Image product" width="35%">
-                          </div>
-                        </div>
-                        <div class="col">
-                          <small>Referência:</small>
-                          <h5 class="mb-0">{{product.reference}}</h5>
-                        </div>
-                        <div class="col">
-                          <small>Cor:</small>
-                          <h5 class="mb-0">{{product.color}}</h5>
-                        </div>
-                        <div class="col">
-                          <small>Tamanho:</small>
-                          <h5 class="mb-0">{{product.size}}</h5>
-                        </div>
-                        <div class="col">
-                          <div class="form-group mb-0">
-                            <input type="number" :name="`amount-${key}`" class="form-control input-list-checkout" :class="[{'is-valid': isValid(`amount-${key}`) === true}, {'is-invalid': getError(`amount-${key}`)}]"
-                                   placeholder="Quant. de produtos" v-validate="`required|equal:${product.amount}`" @change="setQuantProduct($event.target.value, product)">
-                            <div v-if="getError(`amount-${key}`)" class="invalid-feedback" style="display: block;">
-                              {{ getError(`amount-${key}`) }}
+                  <div class="card-body">
+                    <div>
+                      <ul class="list-group list-group-flush list my--3" >
+                        <li class="list-group-item px-0" v-for="(product, key) in packing.products" :key="product.reference" v-if="product.amount > 0">
+                          <div class="row align-items-center">
+                            <div class="col-auto">
+                              <div class="avatar rounded-circle">
+                                <img :src="product.thumbnail" alt="Image product" width="35%">
+                              </div>
+                            </div>
+                            <div class="col">
+                              <small>Referência:</small>
+                              <h5 class="mb-0">{{product.reference}}</h5>
+                            </div>
+                            <div class="col">
+                              <small>Cor:</small>
+                              <h5 class="mb-0">{{product.color}}</h5>
+                            </div>
+                            <div class="col">
+                              <small>Tamanho:</small>
+                              <h5 class="mb-0">{{product.size}}</h5>
+                            </div>
+                            <div class="col">
+                              <div class="form-group mb-0">
+                                <input type="number" :name="`amount-${key}`" class="form-control input-list-checkout" :class="[{'is-valid': isValid(`amount-${key}`) === true}, {'is-invalid': getError(`amount-${key}`)}]"
+                                       placeholder="Quant. de produtos" v-validate="`required|equal:${product.amount}`" @change="setQuantProduct($event.target.value, product)">
+                                <div v-if="getError(`amount-${key}`)" class="invalid-feedback" style="display: block;">
+                                  {{ getError(`amount-${key}`) }}
+                                </div>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </div>
-                    </li>
-                  </ul>
+                        </li>
+                      </ul>
+                    </div>
                   </div>
+                </card>
               </div>
-            </card>
+              <div class="col-12">
+                <card>
+                  <div slot="header">
+                    <h3 class="mb-0">Lista de Produtos</h3>
+                  </div>
+
+                  <div class="form-row">
+                    <div class="col-lg-6">
+                      <money-input label="Valor em Cheque" v-model="check" name="check" :error="getError('check')" :valid="isValid('check')" v-validate="'required|min_value:1'"/>
+                    </div>
+                    <div class="col-lg-6">
+                      <money-input label="Valor em Dinheiro" v-model="money" name="money" :error="getError('money')" :valid="isValid('money')" v-validate="'required|min_value:1'"/>
+                    </div>
+                  </div>
+                </card>
+              </div>
+            </div>
           </div>
           <div class="col-4">
             <div class="card">
@@ -111,6 +131,7 @@
 </style>
 
 <script>
+  import MoneyInput from '@/components/App/Inputs/Money';
   import crudSettingsMixin from '@/mixins/crud-settings';
 
   import {mapActions, mapState, mapMutations} from 'vuex';
@@ -126,6 +147,9 @@
       validator: 'new'
     },
     mixins: [crudSettingsMixin],
+    components:{
+      MoneyInput
+    },
     props:{
       id: {
         type: String,
@@ -134,6 +158,8 @@
     },
     data () {
       return {
+        check: 0,
+        money: 0,
         check_products: [],
         check_values: {}
       }
@@ -171,9 +197,14 @@
               if (res) {
                 this.LOADING();
 
-                await http.post(`packings/${this.packing.id}`, this.check_products).then(async response => {
+                await http.post(`packings/${this.packing.id}`, {
+                  checked: this.check_products,
+                  money: this.money,
+                  check: this.check
+                }).then(async response => {
                   notifyVue(this.$notify, 'Baixa de romaneio realizada com sucesso', 'success');
                   this.LOADING();
+                  await this.$router.push({name: 'sale.packing.index'});
                 }).catch(error => {
                   notifyError(this.$notify, error);
                   this.LOADING();

@@ -51,6 +51,11 @@
                 <router-link :to="{name: 'sale.packing.show', params: {id: row.id}}" class="table-action">{{row.id}}</router-link>
               </template>
             </el-table-column>
+            <el-table-column label="Status" sortable>
+              <template v-slot="{row}">
+                <badge rounded type="primary">{{row.status}}</badge>
+              </template>
+            </el-table-column>
             <el-table-column prop="seller.name" label="Vendedor" sortable/>
             <el-table-column label="Data de Criação" sortable>
               <template v-slot="{row}">
@@ -70,7 +75,7 @@
                     <i class="fas fa-pencil-alt"></i>
                   </router-link>
                 </el-tooltip>
-                <el-tooltip content="Dar Baixa" placement="top">
+                <el-tooltip content="Dar Baixa" placement="top" v-if="row.status === 'opened'">
                   <router-link :to="{name: 'sale.packing.checkout', params: {id: row.seller_id}}" class="table-action">
                     <i class="fas fa-cart-arrow-down"></i>
                   </router-link>

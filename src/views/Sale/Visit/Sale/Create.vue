@@ -168,7 +168,7 @@
                 this.CREATE_SALE(this.sale)
                   .then(response => {
                     notifyVue(this.$notify, 'Pedido criado com sucesso', 'success');
-                    this.$router.push({name: 'sale.visit.edit', params: {id: this.visit}})
+                    this.$router.push({name: 'sale.visit.edit', params: {id: this.visit.id}})
                   })
                   .catch(error => notifyError(this.$notify, error));
               }
@@ -180,7 +180,7 @@
       }
     },
     async created() {
-      await http.get('packings/current', {seller: this.visit.seller.id}).then(response => {this.packing = response.data;}).catch(error => console.dir(error));
+      await http.get('packings/current', {seller: this.visit.seller.id}).then(response => {this.packing = response.data}).catch(error => console.dir(error));
     }
   };
 </script>

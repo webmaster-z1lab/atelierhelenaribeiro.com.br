@@ -61,7 +61,7 @@
                 <base-button type="secondary" size="sm" class="btn-block" @click="component = 'cart'">Voltar</base-button>
               </div>
               <div class="col-6">
-                <base-button type="primary" size="sm" class="btn-block" @click="submitForm">Finalizar Pedido</base-button>
+                <base-button type="primary" size="sm" class="btn-block" @click="submitForm">Atualizar Pedido</base-button>
               </div>
             </div>
             <base-button type="primary" size="sm" class="btn-block" @click="sendPayment" v-else>Pagamento</base-button>
@@ -139,7 +139,7 @@
                 this.EDIT_SALE(this.sale)
                   .then(response => {
                     notifyVue(this.$notify, 'Pedido editado com sucesso', 'success');
-                    this.$router.push({name: 'sale.visit.edit', params: {id: this.visit}})
+                    this.$router.push({name: 'sale.visit.edit', params: {id: this.visit.id}})
                   })
                   .catch(error => notifyError(this.$notify, error));
               }

@@ -121,9 +121,22 @@
         <div class="col-lg-4">
           <card gradient="primary" header-classes="bg-transparent" footer-classes="bg-transparent" body-classes="px-lg-7" class="card-pricing border-0 text-center mb-4">
 
-            <h3 slot="header" class="text-uppercase ls-1 text-white py-3 mb-0">Pedido</h3>
+            <div slot="header">
+              <div class="row">
+                <div class="col-auto">
+                  <h3 class="text-uppercase ls-1 text-white py-3 mb-0">Consignado</h3>
+                </div>
+                <div class="col text-right">
+                  <el-tooltip content="Ver Detalhes" placement="top">
+                    <base-button class="icon icon-shape bg-white text-dark rounded-circle shadow">
+                      <i class="fas fa-search-plus fa-lg"></i>
+                    </base-button>
+                  </el-tooltip>
+                </div>
+              </div>
+            </div>
 
-            <img src="/img/svg/undraw_empty_cart_co35.svg" alt="" width="50%">
+            <img src="/img/svg/undraw_shopping_eii3.svg" alt="" width="60%">
             <div class="display-2 text-white">49</div>
             <span class=" text-white">Produtos</span>
             <ul class="list-unstyled my-4">
@@ -139,18 +152,46 @@
                   </div>
                 </div>
               </li>
+              <li>
+                <div class="d-flex align-items-center">
+                  <div>
+                    <div class="icon icon-xs icon-shape bg-white shadow rounded-circle">
+                      <i class="fas fa-hand-holding-usd"></i>
+                    </div>
+                  </div>
+                  <div>
+                    <span class="pl-2 text-sm text-white">Valor Total: </span>
+                  </div>
+                </div>
+              </li>
             </ul>
 
             <!--Footer-->
-            <base-button slot="footer" type="primary">Start free trial</base-button>
+            <base-button slot="footer" type="primary" v-if="!visit.payroll" @click="component = 'create-payroll'">Criar Consignado</base-button>
+            <base-button slot="footer" type="warning" v-else @click="component = 'edit-payroll'">Editar Consignado</base-button>
           </card>
         </div>
         <div class="col-lg-4">
           <card gradient="warning" header-classes="bg-transparent" footer-classes="bg-transparent" body-classes="px-lg-7" class="card-pricing border-0 text-center mb-4">
 
-            <h3 slot="header" class="text-uppercase ls-1 text-white py-3 mb-0">Pedido</h3>
+            <div slot="header">
+              <div class="row">
+                <div class="col-auto">
+                  <h3 class="text-uppercase ls-1 text-white py-3 mb-0">Devolução</h3>
+                </div>
+                <div class="col text-right">
+                  <el-tooltip content="Ver Detalhes" placement="top">
+                    <base-button class="icon icon-shape bg-white text-dark rounded-circle shadow">
+                      <i class="fas fa-search-plus fa-lg"></i>
+                    </base-button>
+                  </el-tooltip>
+                </div>
+              </div>
+            </div>
 
-            <div class="display-2 text-white">$49</div>
+            <img src="/img/svg/undraw_empty_xct9.svg" alt="" width="60%">
+            <div class="display-2 text-white">49</div>
+            <span class=" text-white">Produtos</span>
             <ul class="list-unstyled my-4">
               <li>
                 <div class="d-flex align-items-center">
@@ -160,7 +201,7 @@
                     </div>
                   </div>
                   <div>
-                    <span class="pl-2 text-sm text-white">Desconto: </span>
+                    <span class="pl-2 text-sm text-white">Valor Total: </span>
                   </div>
                 </div>
               </li>
@@ -168,18 +209,18 @@
                 <div class="d-flex align-items-center">
                   <div>
                     <div class="icon icon-xs icon-shape bg-white shadow rounded-circle">
-                      <i class="fas fa-pen-fancy"></i>
+                      <i class="fas fa-hand-holding-usd"></i>
                     </div>
                   </div>
                   <div>
-                    <span class="pl-2 text-sm text-white">Quant. Produtos: </span>
+                    <span class="pl-2 text-sm text-white">Valor Total: </span>
                   </div>
                 </div>
               </li>
             </ul>
 
             <!--Footer-->
-            <base-button slot="footer" type="primary">Start free trial</base-button>
+            <base-button slot="footer" type="primary" disabled>Criar Devolução</base-button>
           </card>
         </div>
       </div>

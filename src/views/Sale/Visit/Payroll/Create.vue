@@ -147,7 +147,6 @@
 
 <script>
   import Fuse from 'fuse.js';
-  import MoneyInput from '@/components/App/Inputs/Money';
   import clientPaginationMixin from '@/mixins/client-pagination';
 
   import {mapActions, mapState, mapMutations} from 'vuex';
@@ -161,14 +160,7 @@
   export default {
     name: 'create',
     mixins: [clientPaginationMixin],
-    props: {
-      visit: {
-        type: String,
-        required: true
-      }
-    },
     components: {
-      MoneyInput,
       [Select.name]: Select,
       [Option.name]: Option,
       [Table.name]: Table,
@@ -186,6 +178,9 @@
       }
     },
     computed: {
+      ...mapState('visit', {
+        visit: state => state.visit
+      }),
       sumProductsValue(){
         return sumBy(this.payroll.products, function (o) {
           return (o.price * o.amount)
@@ -252,7 +247,7 @@
           this.CREATE_PAYROLL(this.payroll)
             .then(response => {
               notifyVue(this.$notify, 'Consginado criado com sucesso', 'success');
-              this.$router.push({name: 'sale.visit.edit', params: {id: this.visit}})
+              this.$router.push({name: 'sale.visit.edit', params: {id: this.visit.id}})
             })
             .catch(error => notifyError(this.$notify, error));
         } else {
@@ -261,7 +256,7 @@
       }
     },
     async created() {
-      await http.get('packings/current').then(response => {
+      await http.get('packings/current',  {seller: this.visit.seller.id}).then(response => {
         this.packing = response.data;
         this.fuseSearch = new Fuse(response.data.products, {keys: ['reference', 'color', 'size'], threshold: 0.3})
       }).catch(error => console.dir(error));

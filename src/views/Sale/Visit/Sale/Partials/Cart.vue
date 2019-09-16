@@ -176,7 +176,7 @@
       return {
         fuseSearch: null,
         type_discount_money: true,
-        discount: '',
+        discount: this.sale.discount,
         money: {
           decimal: ',',
           thousands: '.',

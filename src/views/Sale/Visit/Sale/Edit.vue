@@ -139,7 +139,7 @@
                 this.EDIT_SALE(this.sale)
                   .then(response => {
                     notifyVue(this.$notify, 'Pedido editado com sucesso', 'success');
-                    this.$router.push({name: 'sale.visit.edit', params: {id: this.visit.id}})
+                    location.reload();
                   })
                   .catch(error => notifyError(this.$notify, error));
               }

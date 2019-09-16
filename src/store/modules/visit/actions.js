@@ -114,7 +114,7 @@ export default {
       await commit(constants.LOADING);
 
       await http.put(`sales/${data.id}`, data).then(async response => {
-        await commit(constants.EDIT, response.data);
+        await commit(constants.EDIT_SALE, response.data);
         await commit(constants.LOADING);
 
         resolve(response.data);
@@ -144,8 +144,8 @@ export default {
     return await new Promise(async (resolve, reject) => {
       await commit(constants.LOADING);
 
-      await http.put(`sales/${data.id}`, data).then(async response => {
-        await commit(constants.EDIT, response.data);
+      await http.put(`payrolls/${data.id}`, data).then(async response => {
+        await commit(constants.EDIT_PAYROLL, response.data);
         await commit(constants.LOADING);
 
         resolve(response.data);

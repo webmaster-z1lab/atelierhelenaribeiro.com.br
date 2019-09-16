@@ -247,7 +247,7 @@
           this.EDIT_PAYROLL(this.payroll)
             .then(response => {
               notifyVue(this.$notify, 'Consginado editado com sucesso', 'success');
-              this.$router.push({name: 'sale.visit.edit', params: {id: this.visit.id}})
+              location.reload();
             })
             .catch(error => notifyError(this.$notify, error));
         } else {

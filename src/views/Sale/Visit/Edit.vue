@@ -22,8 +22,8 @@
               </div>
             </div>
             <p class="mt-3 mb-0 text-sm">
-              <base-button :type="component === 'create-sale' ? 'danger' : 'default'" size="sm" @click="component = 'create-sale'">
-                {{component === 'create-sale' ? 'Você está aqui!' : visit.sale ? 'Editar Pedido' : 'Criar Pedido'}}
+              <base-button :type="(component === 'create-sale' || component === 'edit-sale') ? 'danger' : 'default'" size="sm" @click="component = visit.sale ? 'edit-sale' : 'create-sale'">
+                {{(component === 'create-sale' || component === 'edit-sale') ? 'Você está aqui!' : visit.sale ? 'Editar Pedido' : 'Criar Pedido'}}
               </base-button>
             </p>
           </stats-card>
@@ -36,8 +36,8 @@
               </div>
             </div>
             <p class="mt-3 mb-0 text-sm">
-              <base-button :type="component === 'create-payroll' ? 'danger' : 'default'" size="sm" @click="component = 'create-payroll'">
-                {{component === 'create-payroll' ? 'Você está aqui!' : visit.sale ? 'Editar Consignado' : 'Criar Consignado'}}
+              <base-button :type="(component === 'create-payroll' || component === 'edit-payroll') ? 'danger' : 'default'" size="sm" @click="component =  visit.sale ? 'edit-payroll' : 'create-payroll'">
+                {{(component === 'create-payroll' || component === 'edit-payroll') ? 'Você está aqui!' : visit.payroll ? 'Editar Consignado' : 'Criar Consignado'}}
               </base-button>
             </p>
           </stats-card>
@@ -70,7 +70,7 @@
                 </div>
                 <div class="col text-right">
                   <el-tooltip content="Ver Detalhes" placement="top">
-                    <base-button class="icon icon-shape bg-white text-dark rounded-circle shadow">
+                    <base-button class="icon icon-shape bg-white text-dark rounded-circle shadow" :disabled="!visit.sale" @click="details_sale = true">
                       <i class="fas fa-search-plus fa-lg"></i>
                     </base-button>
                   </el-tooltip>
@@ -129,7 +129,7 @@
                 </div>
                 <div class="col text-right">
                   <el-tooltip content="Ver Detalhes" placement="top">
-                    <base-button class="icon icon-shape bg-white text-dark rounded-circle shadow">
+                    <base-button class="icon icon-shape bg-white text-dark rounded-circle shadow" :disabled="!visit.payroll" @click="details_payroll = true">
                       <i class="fas fa-search-plus fa-lg"></i>
                     </base-button>
                   </el-tooltip>
@@ -143,30 +143,18 @@
             </div>
 
             <div class="mt-3" v-else>
-              <div class="display-2 text-white">49</div>
+              <div class="display-2 text-white">{{visit.payroll.total_amount}}</div>
               <span class=" text-white">Produtos</span>
               <ul class="list-unstyled my-4">
                 <li>
                   <div class="d-flex align-items-center">
                     <div>
                       <div class="icon icon-xs icon-shape bg-white shadow rounded-circle">
-                        <i class="fas fa-hand-holding-usd"></i>
+                        <i class="fas fa-money-bill-wave"></i>
                       </div>
                     </div>
                     <div>
-                      <span class="pl-2 text-sm text-white">Valor Total: </span>
-                    </div>
-                  </div>
-                </li>
-                <li>
-                  <div class="d-flex align-items-center">
-                    <div>
-                      <div class="icon icon-xs icon-shape bg-white shadow rounded-circle">
-                        <i class="fas fa-hand-holding-usd"></i>
-                      </div>
-                    </div>
-                    <div>
-                      <span class="pl-2 text-sm text-white">Valor Total: </span>
+                      <span class="pl-2 text-sm text-white">Valor Total: {{visit.payroll.total_price | currency}}</span>
                     </div>
                   </div>
                 </li>
@@ -277,6 +265,102 @@
         </base-button>
       </template>
     </modal>
+    <modal :show.sync="details_sale" size="lg" v-if="visit.sale">
+      <template slot="header">
+        <h6 slot="header" class="modal-title">Detalhes do Pedido</h6>
+      </template>
+
+      <div class="card-body">
+          <ul class="list-group list-group-flush list my--3" >
+              <li class="list-group-item px-0" v-for="product in visit.sale.products" :key="product.reference">
+                <div class="row align-items-center">
+                  <div class="col-auto">
+                    <div class="avatar rounded-circle">
+                      <img :src="product.thumbnail" alt="Image product" width="35%">
+                    </div>
+                  </div>
+                  <div class="col">
+                    <small>Referência:</small>
+                    <h5 class="mb-0">{{product.reference}}</h5>
+                  </div>
+                  <div class="col">
+                    <small>Cor:</small>
+                    <h5 class="mb-0">{{product.color}}</h5>
+                  </div>
+                  <div class="col">
+                    <small>Tamanho:</small>
+                    <h5 class="mb-0">{{product.size}}</h5>
+                  </div>
+                  <div class="col">
+                    <small>Quantidade:</small>
+                    <h5 class="mb-0">{{product.amount}}</h5>
+                  </div>
+                  <div class="col">
+                    <small>Preço:</small>
+                    <h5 class="mb-0">{{product.price | currency}}</h5>
+                  </div>
+                  <div class="col">
+                    <small>Total:</small>
+                    <h5 class="mb-0">{{(product.price * product.amount) | currency}}</h5>
+                  </div>
+                </div>
+              </li>
+            </ul>
+        </div>
+
+      <template slot="footer">
+        <base-button type="link" class="ml-auto" @click="details_sale = false">Fechar</base-button>
+      </template>
+    </modal>
+    <modal :show.sync="details_payroll" size="lg" v-if="visit.payroll">
+      <template slot="header">
+        <h6 slot="header" class="modal-title">Detalhes do Consignado</h6>
+      </template>
+
+
+      <div class="card-body">
+        <ul class="list-group list-group-flush list my--3" >
+          <li class="list-group-item px-0" v-for="product in visit.payroll.products" :key="product.reference">
+            <div class="row align-items-center">
+              <div class="col-auto">
+                <div class="avatar rounded-circle">
+                  <img :src="product.thumbnail" alt="Image product" width="35%">
+                </div>
+              </div>
+              <div class="col">
+                <small>Referência:</small>
+                <h5 class="mb-0">{{product.reference}}</h5>
+              </div>
+              <div class="col">
+                <small>Cor:</small>
+                <h5 class="mb-0">{{product.color}}</h5>
+              </div>
+              <div class="col">
+                <small>Tamanho:</small>
+                <h5 class="mb-0">{{product.size}}</h5>
+              </div>
+              <div class="col">
+                <small>Quantidade:</small>
+                <h5 class="mb-0">{{product.amount}}</h5>
+              </div>
+              <div class="col">
+                <small>Preço:</small>
+                <h5 class="mb-0">{{product.price | currency}}</h5>
+              </div>
+              <div class="col">
+                <small>Total:</small>
+                <h5 class="mb-0">{{(product.price * product.amount) | currency}}</h5>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <template slot="footer">
+        <base-button type="link" class="ml-auto" @click="details_payroll = false">Fechar
+        </base-button>
+      </template>
+    </modal>
   </div>
 </template>
 
@@ -335,6 +419,8 @@
     data () {
       return {
         edit_info: false,
+        details_sale: false,
+        details_payroll: false,
         component: '',
         customers: [],
         sellers: []

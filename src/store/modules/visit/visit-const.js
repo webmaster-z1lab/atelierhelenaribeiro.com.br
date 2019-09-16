@@ -9,9 +9,9 @@ export const DELETE         = 'DELETE';
 export const DELETE_IMAGE   = 'DELETE_IMAGE';
 
 export const CREATE_SALE   = 'CREATE_SALE';
-export const EDIT_SALE     = 'CREATE_SALE';
+export const EDIT_SALE     = 'EDIT_SALE';
 export const SET_SALE      = 'SET_SALE';
 
 export const CREATE_PAYROLL   = 'CREATE_PAYROLL';
-export const EDIT_PAYROLL     = 'CREATE_PAYROLL';
+export const EDIT_PAYROLL     = 'EDIT_PAYROLL';
 export const SET_PAYROLL      = 'SET_PAYROLL';

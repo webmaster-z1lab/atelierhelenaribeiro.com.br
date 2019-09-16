@@ -178,7 +178,7 @@
         packing: {},
         fuseSearch: null,
         payroll: {
-          visit: this.visit,
+          visit: this.visit.id,
           products: []
         }
       }
@@ -250,7 +250,7 @@
           this.CREATE_PAYROLL(this.payroll)
             .then(response => {
               notifyVue(this.$notify, 'Consginado criado com sucesso', 'success');
-              this.$router.push({name: 'sale.visit.edit', params: {id: this.visit.id}})
+              location.reload();
             })
             .catch(error => notifyError(this.$notify, error));
         } else {

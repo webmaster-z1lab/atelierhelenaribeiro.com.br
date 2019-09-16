@@ -7,3 +7,6 @@ export const SET      = 'SET';
 export const CREATE   = 'CREATE';
 export const EDIT     = 'EDIT';
 export const DELETE   = 'DELETE';
+
+export const GET_PACKING_CURRENT      = 'GET_PACKING_CURRENT';
+export const SET_PACKING_CURRENT      = 'SET_PACKING_CURRENT';

@@ -158,6 +158,10 @@
       packing: {
         type: Object,
         required: true
+      },
+      sumProducts: {
+        type: Number,
+        required: true
       }
     },
     components: {
@@ -199,7 +203,7 @@
         if (this.type_discount_money) {
           this.sale.discount = value;
         } else {
-          this.sale.discount = (this.sumProductsValue * value) / 100;
+          this.sale.discount = (this.sumProducts * value) / 100;
         }
       }
     },

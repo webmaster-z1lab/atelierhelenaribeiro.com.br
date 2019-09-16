@@ -25,7 +25,7 @@
 
     <div class="row">
       <div class="col-8">
-        <component :is="component" :sale="sale" :packing="packing" :validated="validated"/>
+        <component :is="component" :sale="sale" :packing="packing" :validated="validated" :sum-products="sumProductsValue"/>
       </div>
       <div class="col-4">
         <div class="card">
@@ -53,7 +53,7 @@
             <span class="h4">
               Valor Final
             </span>
-              <div class="h2">{{(sumProductsValue - sale.discount) | currency}}</div>
+              <div class="h2" :class="{'text-danger': (sumProductsValue - sale.discount) < 0}">{{(sumProductsValue - sale.discount) | currency}}</div>
             </div>
 
             <div class="row" v-if="component !== 'cart'">
@@ -95,7 +95,7 @@
   import Cart from './Partials/Cart'
   import PaymentMethod from './Partials/PaymentMethod'
 
-  import {mapActions, mapState} from 'vuex';
+  import {mapActions} from 'vuex';
   import {CREATE_SALE} from "@/store/modules/visit/visit-const";
 
   import {notifyVue, notifyError} from "@/utils";
@@ -106,6 +106,12 @@
     name: 'create',
     $_veeValidate: {
       validator: 'new'
+    },
+    props: {
+      visit: {
+        type: Object,
+        required: true
+      }
     },
     components: {
       Cart,
@@ -130,9 +136,6 @@
       }
     },
     computed: {
-      ...mapState('visit', {
-        visit: state => state.visit
-      }),
       sumProductsValue(){
         return sumBy(this.sale.products, function (o) {
           return (o.price * o.amount)
@@ -165,6 +168,11 @@
                   return;
                 }
 
+                if ((this.sumProductsValue - this.sale.discount) < 0) {
+                  notifyVue(this.$notify, 'O valor de desconto não pode ser maior que o Valor Total do pedido!', 'danger', 'ni ni-fat-remove');
+                  return;
+                }
+
                 this.CREATE_SALE(this.sale)
                   .then(response => {
                     notifyVue(this.$notify, 'Pedido criado com sucesso', 'success');
@@ -179,7 +187,7 @@
         }
       }
     },
-    async created() {
+    async mounted() {
       await http.get('packings/current', {seller: this.visit.seller.id}).then(response => {this.packing = response.data}).catch(error => console.dir(error));
     }
   };

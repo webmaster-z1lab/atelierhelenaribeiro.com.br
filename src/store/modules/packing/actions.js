@@ -31,6 +31,20 @@ export default {
         })
     })
   },
+  [constants.GET_PACKING_CURRENT]: async ({ commit }, id) => {
+    return await new Promise(async (resolve, reject) => {
+      await commit(constants.LOADING);
+
+      await http.get('packings/current', {seller: id}).then(async response => {
+        await commit(constants.SET_PACKING_CURRENT, response.data);
+        await commit(constants.LOADING);
+        resolve(response.data);
+      }).catch(error => {
+        reject(error);
+        commit(constants.LOADING);
+      })
+    })
+  },
   [constants.CREATE]: async ({ commit }, data) => {
     return await new Promise(async (resolve, reject) => {
       await commit(constants.LOADING);

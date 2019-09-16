@@ -61,18 +61,23 @@
             <el-table-column min-width="60px" align="right" label="Ações">
               <div slot-scope="{$index, row}" class="d-flex">
                 <el-tooltip content="Visualizar" placement="top">
-                  <router-link :to="{name: 'sale.packing.show', params: {id: row.id}}" class="table-action" data-toggle="tooltip" data-original-title="Show">
+                  <router-link :to="{name: 'sale.packing.show', params: {id: row.id}}" class="table-action">
                     <i class="fas fa-eye"></i>
                   </router-link>
                 </el-tooltip>
                 <el-tooltip content="Editar" placement="top">
-                  <router-link :to="{name: 'sale.packing.edit', params: {id: row.id}}" class="table-action" data-toggle="tooltip" data-original-title="Edit">
-                    <i class="fas fa-user-edit"></i>
+                  <router-link :to="{name: 'sale.packing.edit', params: {id: row.id}}" class="table-action">
+                    <i class="fas fa-pencil-alt"></i>
+                  </router-link>
+                </el-tooltip>
+                <el-tooltip content="Dar Baixa" placement="top">
+                  <router-link :to="{name: 'sale.packing.checkout', params: {id: row.seller_id}}" class="table-action">
+                    <i class="fas fa-cart-arrow-down"></i>
                   </router-link>
                 </el-tooltip>
                 <el-tooltip content="Deletar" placement="top">
-                  <a href="#!" @click.prevent="destroy(row)" class="table-action table-action-delete" data-toggle="tooltip" data-original-title="Delete">
-                    <i class="fas fa-trash"></i>
+                  <a href="#!" @click.prevent="destroy(row)" class="table-action table-action-delete">
+                    <i class="fas fa-trash-alt"></i>
                   </a>
                 </el-tooltip>
               </div>

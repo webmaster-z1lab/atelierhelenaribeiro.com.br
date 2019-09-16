@@ -25,7 +25,7 @@
 
     <div class="row">
       <div class="col-8">
-        <component :is="component" :sale="sale" :packing="packing" :validated="validated"/>
+        <component :is="component" :sale="sale" :packing="packing" :validated="validated" :sum-products="sumProductsValue"/>
       </div>
       <div class="col-4">
         <div class="card">
@@ -53,7 +53,7 @@
             <span class="h4">
               Valor Final
             </span>
-              <div class="h2">{{(sumProductsValue - sale.discount) | currency}}</div>
+              <div class="h2" :class="{'text-danger': (sumProductsValue - sale.discount) < 0}">{{(sumProductsValue - sale.discount) | currency}}</div>
             </div>
 
             <div class="row" v-if="component !== 'cart'">

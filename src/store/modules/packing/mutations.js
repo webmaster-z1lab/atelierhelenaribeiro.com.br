@@ -10,6 +10,9 @@ export default {
   [constants.SET]: (state, packing) => {
     state.packing = packing
   },
+  [constants.SET_PACKING_CURRENT]: (state, packing) => {
+    state.packing_current = packing
+  },
   [constants.CREATE]: (state, packing) => {
     state.packings.push(packing)
   },

@@ -60,19 +60,19 @@
 
             <el-table-column min-width="60px" align="right" label="Ações">
               <div slot-scope="{$index, row}" class="d-flex">
-                <el-tooltip content="Visualizar" placement="top">
-                  <router-link :to="{name: 'sale.visit.show', params: {id: row.id}}" class="table-action" data-toggle="tooltip" data-original-title="Show">
-                    <i class="fas fa-eye"></i>
-                  </router-link>
-                </el-tooltip>
+<!--                <el-tooltip content="Visualizar" placement="top">-->
+<!--                  <router-link :to="{name: 'sale.visit.show', params: {id: row.id}}" class="table-action" data-toggle="tooltip" data-original-title="Show">-->
+<!--                    <i class="fas fa-eye"></i>-->
+<!--                  </router-link>-->
+<!--                </el-tooltip>-->
                 <el-tooltip content="Editar" placement="top">
                   <router-link :to="{name: 'sale.visit.edit', params: {id: row.id}}" class="table-action" data-toggle="tooltip" data-original-title="Edit">
-                    <i class="fas fa-user-edit"></i>
+                    <i class="fas fa-pencil-alt"></i>
                   </router-link>
                 </el-tooltip>
                 <el-tooltip content="Deletar" placement="top">
                   <a href="#!" @click.prevent="destroy(row)" class="table-action table-action-delete" data-toggle="tooltip" data-original-title="Delete">
-                    <i class="fas fa-trash"></i>
+                    <i class="fas fa-trash-alt"></i>
                   </a>
                 </el-tooltip>
               </div>

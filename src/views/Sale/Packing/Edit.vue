@@ -79,7 +79,7 @@
           <div class="form-row mt-4">
             <div class="col-lg-3">
               <base-input label="Vendedor" :error="getError('seller')" :valid="isValid('seller')">
-                <el-select v-model="packing.seller" filterable placeholder="Selecione o representante do cliente." name="seller" v-validate="'required'" :class="[{'is-invalid': getError('seller')}]">
+                <el-select v-model="packing.seller_id" filterable placeholder="Selecione o representante do cliente." name="seller" v-validate="'required'" :class="[{'is-invalid': getError('seller')}]">
                   <el-option v-for="seller in sellers" :key="seller.id" :label="seller.name" :value="seller.id"/>
                 </el-select>
               </base-input>
@@ -165,7 +165,7 @@
               amount: 1,
               color: data.products[0].color,
               size: data.products[0].size,
-              price: data.products[0].price,
+              price: data.products[0].price
             };
 
             this.packing.products.push(productNew);
@@ -199,7 +199,11 @@
           this.$validator.validateAll().then(
             async res => {
               if (res) {
-                this.EDIT(this.packing).then(res => {
+                this.EDIT({
+                  id: this.packing.id,
+                  seller: this.packing.seller_id,
+                  products: this.packing.products
+                }).then(res => {
                   notifyVue(this.$notify, 'Romaneio editado com sucesso', 'success');
                   this.$router.push({name: 'sale.packing.index'})
                 }).catch(error => notifyError(this.$notify, error));

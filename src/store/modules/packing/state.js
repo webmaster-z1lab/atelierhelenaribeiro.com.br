@@ -6,5 +6,6 @@ export default {
     seller: '',
     products: [],
     created_at: ''
-  }
+  },
+  packing_current: {}
 }

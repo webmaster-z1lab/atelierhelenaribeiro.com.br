@@ -8,7 +8,7 @@
           <span class="btn-inner--icon"><i class="fas fa-arrow-left"></i></span>
           <span class="btn-inner--text">Voltar</span>
         </router-link>
-        <base-button size="sm" type="primary" @click="edit_info = true">Editar Inf.</base-button>
+        <base-button size="sm" type="primary" @click="edit_info = true">Editar Visita</base-button>
       </div>
     </base-header-app>
 
@@ -19,11 +19,12 @@
             <div class="row">
               <div class="col">
                 <h5 class="card-title text-uppercase text-muted mb-0 text-white">Pedido</h5>
-                <span class="h2 font-weight-bold mb-0 text-white">R$ 0,00</span>
               </div>
             </div>
             <p class="mt-3 mb-0 text-sm">
-              <base-button type="default" size="sm" @click="component = 'create-sale'">Ver</base-button>
+              <base-button :type="component === 'create-sale' ? 'danger' : 'default'" size="sm" @click="component = 'create-sale'">
+                {{component === 'create-sale' ? 'Você está aqui!' : visit.sale ? 'Editar Pedido' : 'Criar Pedido'}}
+              </base-button>
             </p>
           </stats-card>
         </div>
@@ -32,11 +33,12 @@
             <div class="row">
               <div class="col">
                 <h5 class="card-title text-uppercase text-muted mb-0 text-white">Consignado</h5>
-                <span class="h2 font-weight-bold mb-0 text-white">0 <span class="small">produtos</span></span>
               </div>
             </div>
             <p class="mt-3 mb-0 text-sm">
-              <base-button type="default" size="sm" @click="component = 'create-payroll'">Ver</base-button>
+              <base-button :type="component === 'create-payroll' ? 'danger' : 'default'" size="sm" @click="component = 'create-payroll'">
+                {{component === 'create-payroll' ? 'Você está aqui!' : visit.sale ? 'Editar Consignado' : 'Criar Consignado'}}
+              </base-button>
             </p>
           </stats-card>
         </div>
@@ -45,17 +47,16 @@
             <div class="row">
               <div class="col">
                 <h5 class="card-title text-uppercase text-muted mb-0 text-white">Devolução</h5>
-                <span class="h2 font-weight-bold mb-0 text-white">0 <span class="small">produtos</span></span>
               </div>
             </div>
             <p class="mt-3 mb-0 text-sm">
-              <base-button type="default" size="sm" @click="notify">Ver</base-button>
+              <base-button type="default" size="sm" disabled>Ver</base-button>
             </p>
           </stats-card>
         </div>
 
         <div class="col-12">
-          <component :is="component" :key="component" v-if="component"/>
+          <component :is="component" :key="component" :visit="visit" v-if="component"/>
         </div>
       </div>
       <div class="row" v-else>
@@ -136,35 +137,41 @@
               </div>
             </div>
 
-            <img src="/img/svg/undraw_shopping_eii3.svg" alt="" width="60%">
-            <div class="display-2 text-white">49</div>
-            <span class=" text-white">Produtos</span>
-            <ul class="list-unstyled my-4">
-              <li>
-                <div class="d-flex align-items-center">
-                  <div>
-                    <div class="icon icon-xs icon-shape bg-white shadow rounded-circle">
-                      <i class="fas fa-hand-holding-usd"></i>
+            <img src="/img/svg/undraw_shopping_eii3.svg" alt="" :width="!visit.payroll ? '54%' : '60%'">
+            <div class="mt-3" v-if="!visit.payroll">
+              <span class="pl-2 text-sm text-white">Nenhum consignado foi feito!</span>
+            </div>
+
+            <div class="mt-3" v-else>
+              <div class="display-2 text-white">49</div>
+              <span class=" text-white">Produtos</span>
+              <ul class="list-unstyled my-4">
+                <li>
+                  <div class="d-flex align-items-center">
+                    <div>
+                      <div class="icon icon-xs icon-shape bg-white shadow rounded-circle">
+                        <i class="fas fa-hand-holding-usd"></i>
+                      </div>
+                    </div>
+                    <div>
+                      <span class="pl-2 text-sm text-white">Valor Total: </span>
                     </div>
                   </div>
-                  <div>
-                    <span class="pl-2 text-sm text-white">Valor Total: </span>
-                  </div>
-                </div>
-              </li>
-              <li>
-                <div class="d-flex align-items-center">
-                  <div>
-                    <div class="icon icon-xs icon-shape bg-white shadow rounded-circle">
-                      <i class="fas fa-hand-holding-usd"></i>
+                </li>
+                <li>
+                  <div class="d-flex align-items-center">
+                    <div>
+                      <div class="icon icon-xs icon-shape bg-white shadow rounded-circle">
+                        <i class="fas fa-hand-holding-usd"></i>
+                      </div>
+                    </div>
+                    <div>
+                      <span class="pl-2 text-sm text-white">Valor Total: </span>
                     </div>
                   </div>
-                  <div>
-                    <span class="pl-2 text-sm text-white">Valor Total: </span>
-                  </div>
-                </div>
-              </li>
-            </ul>
+                </li>
+              </ul>
+            </div>
 
             <!--Footer-->
             <base-button slot="footer" type="primary" v-if="!visit.payroll" @click="component = 'create-payroll'">Criar Consignado</base-button>
@@ -181,7 +188,7 @@
                 </div>
                 <div class="col text-right">
                   <el-tooltip content="Ver Detalhes" placement="top">
-                    <base-button class="icon icon-shape bg-white text-dark rounded-circle shadow">
+                    <base-button class="icon icon-shape bg-white text-dark rounded-circle shadow" disabled>
                       <i class="fas fa-search-plus fa-lg"></i>
                     </base-button>
                   </el-tooltip>
@@ -189,35 +196,41 @@
               </div>
             </div>
 
-            <img src="/img/svg/undraw_empty_xct9.svg" alt="" width="60%">
-            <div class="display-2 text-white">49</div>
-            <span class=" text-white">Produtos</span>
-            <ul class="list-unstyled my-4">
-              <li>
-                <div class="d-flex align-items-center">
-                  <div>
-                    <div class="icon icon-xs icon-shape bg-white shadow rounded-circle">
-                      <i class="fas fa-hand-holding-usd"></i>
+            <img src="/img/svg/undraw_empty_xct9.svg" alt="" :width="true ? '54%' : '60%'">
+            <div class="mt-3" v-if="true">
+              <span class="pl-2 text-sm text-white">Nenhum consignado foi feito!</span>
+            </div>
+
+            <div class="mt-3" v-else>
+              <div class="display-2 text-white">49</div>
+              <span class=" text-white">Produtos</span>
+              <ul class="list-unstyled my-4">
+                <li>
+                  <div class="d-flex align-items-center">
+                    <div>
+                      <div class="icon icon-xs icon-shape bg-white shadow rounded-circle">
+                        <i class="fas fa-hand-holding-usd"></i>
+                      </div>
+                    </div>
+                    <div>
+                      <span class="pl-2 text-sm text-white">Valor Total: </span>
                     </div>
                   </div>
-                  <div>
-                    <span class="pl-2 text-sm text-white">Valor Total: </span>
-                  </div>
-                </div>
-              </li>
-              <li>
-                <div class="d-flex align-items-center">
-                  <div>
-                    <div class="icon icon-xs icon-shape bg-white shadow rounded-circle">
-                      <i class="fas fa-hand-holding-usd"></i>
+                </li>
+                <li>
+                  <div class="d-flex align-items-center">
+                    <div>
+                      <div class="icon icon-xs icon-shape bg-white shadow rounded-circle">
+                        <i class="fas fa-hand-holding-usd"></i>
+                      </div>
+                    </div>
+                    <div>
+                      <span class="pl-2 text-sm text-white">Valor Total: </span>
                     </div>
                   </div>
-                  <div>
-                    <span class="pl-2 text-sm text-white">Valor Total: </span>
-                  </div>
-                </div>
-              </li>
-            </ul>
+                </li>
+              </ul>
+            </div>
 
             <!--Footer-->
             <base-button slot="footer" type="primary" disabled>Criar Devolução</base-button>
@@ -270,7 +283,7 @@
 <style>
   .card-sale {
     background: url('/img/svg/undraw_empty_cart_co35.svg') no-repeat right, linear-gradient(87deg, #2dce89 0, #2dcecc 100%) !important;
-    background-size: 25%, 100% !important;
+    background-size: 20%, 100% !important;
   }
   .card-payroll {
     background: url('/img/svg/undraw_shopping_eii3.svg') no-repeat right, linear-gradient(87deg, #5e72e4 0, #825ee4 100%) !important;
@@ -278,7 +291,7 @@
   }
   .card-devolution {
     background: url('/img/svg/undraw_empty_xct9.svg') no-repeat right, linear-gradient(87deg, #fb6340 0, #fbb140 100%) !important;
-    background-size: 25%, 100% !important;
+    background-size: 23%, 100% !important;
   }
 </style>
 

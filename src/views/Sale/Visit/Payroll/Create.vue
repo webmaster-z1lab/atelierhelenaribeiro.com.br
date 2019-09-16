@@ -149,7 +149,7 @@
   import Fuse from 'fuse.js';
   import clientPaginationMixin from '@/mixins/client-pagination';
 
-  import {mapActions, mapState, mapMutations} from 'vuex';
+  import {mapActions} from 'vuex';
   import {CREATE_PAYROLL} from "@/store/modules/visit/visit-const";
 
   import {notifyVue, notifyError} from "@/utils";
@@ -160,6 +160,12 @@
   export default {
     name: 'create',
     mixins: [clientPaginationMixin],
+    props: {
+      visit: {
+        type: Object,
+        required: true
+      }
+    },
     components: {
       [Select.name]: Select,
       [Option.name]: Option,
@@ -178,9 +184,6 @@
       }
     },
     computed: {
-      ...mapState('visit', {
-        visit: state => state.visit
-      }),
       sumProductsValue(){
         return sumBy(this.payroll.products, function (o) {
           return (o.price * o.amount)

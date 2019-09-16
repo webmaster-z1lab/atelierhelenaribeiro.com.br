@@ -60,7 +60,7 @@
               </el-tooltip>
               <el-tooltip content="Editar" placement="top">
                 <router-link :to="{name: 'stock.product.edit', params: {id: row.id}}" class="table-action" data-toggle="tooltip" data-original-title="Show">
-                  <i class="fas fa-user-edit"></i>
+                  <i class="fas fa-pencil-alt"></i>
                 </router-link>
               </el-tooltip>
             </div>

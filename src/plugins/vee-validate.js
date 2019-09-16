@@ -67,9 +67,19 @@ const beforeToday = {
   }
 };
 
+const equal = {
+  getMessage(field, args, data) {
+    return (data && data.message) || `O valor do campo ${field} deve ser igual a ${args}.`;
+  },
+  validate(value, args) {
+    return value === args[0];
+  }
+};
+
 Validator.extend('phone', phone);
 Validator.extend('cep', cep);
 Validator.extend('cnpj', cnpj);
 Validator.extend('cpf', cpf);
 Validator.extend('document', document);
 Validator.extend('before_today', beforeToday);
+Validator.extend('equal', equal);

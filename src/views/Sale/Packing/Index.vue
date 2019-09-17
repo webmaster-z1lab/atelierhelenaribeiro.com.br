@@ -53,7 +53,7 @@
             </el-table-column>
             <el-table-column label="Status" sortable>
               <template v-slot="{row}">
-                <badge rounded type="primary">{{row.status}}</badge>
+                <badge rounded :type="statusPacking(row.status).color">{{statusPacking(row.status).translate}}</badge>
               </template>
             </el-table-column>
             <el-table-column prop="seller.name" label="Vendedor" sortable/>
@@ -70,17 +70,17 @@
                     <i class="fas fa-eye"></i>
                   </router-link>
                 </el-tooltip>
-                <el-tooltip content="Editar" placement="top">
+                <el-tooltip content="Editar" placement="top" v-if="row.status === 'opened'">
                   <router-link :to="{name: 'sale.packing.edit', params: {id: row.id}}" class="table-action">
                     <i class="fas fa-pencil-alt"></i>
                   </router-link>
                 </el-tooltip>
-                <el-tooltip content="Dar Baixa" placement="top" v-if="row.status === 'opened'">
+                <el-tooltip content="Dar Baixa" placement="top" v-if="row.status !== 'closed'">
                   <router-link :to="{name: 'sale.packing.checkout', params: {id: row.seller_id}}" class="table-action">
                     <i class="fas fa-cart-arrow-down"></i>
                   </router-link>
                 </el-tooltip>
-                <el-tooltip content="Deletar" placement="top">
+                <el-tooltip content="Deletar" placement="top" v-if="row.status === 'opened'">
                   <a href="#!" @click.prevent="destroy(row)" class="table-action table-action-delete">
                     <i class="fas fa-trash-alt"></i>
                   </a>
@@ -143,6 +143,24 @@
     methods: {
       ...mapActions('packing', [GET_ALL, DELETE]),
       ...mapMutations('packing', [LOADING]),
+      statusPacking(status) {
+        const arr = {
+          opened: {
+            translate: 'Aberto',
+            color: 'default'
+          },
+          in_transit: {
+            translate: 'Travado',
+            color: 'warning'
+          },
+          closed: {
+            translate: 'Fechado',
+            color: 'danger'
+          }
+        };
+
+        return arr[status]
+      },
       async searchApi(value) {
         let result = [];
         this.LOADING();

@@ -68,10 +68,10 @@
 
                   <div class="form-row">
                     <div class="col-lg-6">
-                      <money-input label="Valor em Cheque" v-model="check" name="check" :error="getError('check')" :valid="isValid('check')" v-validate="'required|min_value:1'"/>
+                      <money-input label="Valor em Cheque" v-model="check" name="check" :error="getError('check')" :valid="isValid('check')" v-validate="'required'"/>
                     </div>
                     <div class="col-lg-6">
-                      <money-input label="Valor em Dinheiro" v-model="money" name="money" :error="getError('money')" :valid="isValid('money')" v-validate="'required|min_value:1'"/>
+                      <money-input label="Valor em Dinheiro" v-model="money" name="money" :error="getError('money')" :valid="isValid('money')" v-validate="'required'"/>
                     </div>
                   </div>
                 </card>

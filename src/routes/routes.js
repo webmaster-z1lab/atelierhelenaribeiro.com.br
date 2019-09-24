@@ -39,7 +39,6 @@ const CheckoutSalePacking = () => import(/* webpackChunkName: "sale" */ '@/views
 const IndexSaleVisit = () => import(/* webpackChunkName: "sale" */ '@/views/Sale/Visit/Index.vue');
 const CreateSaleVisit = () => import(/* webpackChunkName: "sale" */ '@/views/Sale/Visit/Create.vue');
 const EditSaleVisit = () => import(/* webpackChunkName: "sale" */ '@/views/Sale/Visit/Edit.vue');
-const ShowSaleVisit = () => import(/* webpackChunkName: "sale" */ '@/views/Sale/Visit/Show.vue');
 
 // Starter
 const Home = () => import(/* webpackChunkName: "home" */ '@/views/Home.vue');
@@ -154,8 +153,7 @@ const routes = [
       ...withPrefix('/sale/visit', 'sale.visit.', true, 'Visita', [
         {path: '/', name: 'index', component: IndexSaleVisit, meta: {BreadCrumb: 'Listagem'}},
         {path: '/create', name: 'create', component: CreateSaleVisit, meta: {BreadCrumb: 'Criação'}},
-        {path: '/edit/:id', name: 'edit', component: EditSaleVisit, props: true, meta: {BreadCrumb: 'Edição'}},
-        {path: '/show/:id', name: 'show', component: ShowSaleVisit, props: true, meta: {BreadCrumb: 'Exibição'}}
+        {path: '/edit/:id', name: 'edit', component: EditSaleVisit, props: true, meta: {BreadCrumb: 'Edição'}}
       ])
     ]
   },

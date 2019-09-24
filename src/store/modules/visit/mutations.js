@@ -4,6 +4,9 @@ export default {
   [constants.LOADING]: state => {
     state.loading = !state.loading
   },
+  [constants.CHANGE_COMPONENT]: (state, data) => {
+    state.component = data || ""
+  },
   [constants.LIST]: (state, visits) => {
     state.visits = visits
   },
@@ -19,16 +22,14 @@ export default {
   [constants.DELETE]: (state, visit) => {
     state.visits.splice(state.visits.indexOf(visit), 1)
   },
-  [constants.SET_SALE]: (state, sale) => {
-    state.sale = sale
+  [constants.DELETE_SALE]: state => {
+    state.visit.sale = {amount: 0, price: 0};
+    state.visit.sales = [];
   },
-  [constants.CREATE_SALE]: (state, sale) => {
-    state.sale = sale
-  },
-  [constants.SET_PAYROLL]: (state, payroll) => {
-    state.payroll = payroll
-  },
-  [constants.CREATE_PAYROLL]: (state, payroll) => {
-    state.payroll = payroll
-  },
+  [constants.DELETE_PAYROLL]: state => {
+    state.visit.payroll_sale = {amount: 0, price: 0};
+    state.visit.payroll_sales = [];
+    state.visit.payroll = {amount: 0, price: 0};
+    state.visit.payrolls = [];
+  }
 }

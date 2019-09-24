@@ -20,7 +20,7 @@
                 <span class="btn-inner--text">Voltar</span>
               </router-link>
               <el-tooltip content="Editar Produto" placement="top">
-                <router-link :to="{name: 'ale.packing.edit', params: {id: id}}" class="btn btn-icon btn-fab btn-sm btn-warning">
+                <router-link :to="{name: 'sale.packing.edit', params: {id: id}}" class="btn btn-icon btn-fab btn-sm btn-warning">
                   <span class="btn-inner--icon"><i class="fas fa-user-edit"></i></span>
                   <span class="btn-inner--text">Editar</span>
                 </router-link>
@@ -35,8 +35,6 @@
         </div>
         <div class="mx-4">
           <ul class="list-group list-group-flush list mt--3">
-            <h6 class="heading-small text-muted mb-4">Informações do Produto</h6>
-
             <div class="row align-items-center">
               <div class="col mb-4">
                 <h4>Vendedor:</h4>

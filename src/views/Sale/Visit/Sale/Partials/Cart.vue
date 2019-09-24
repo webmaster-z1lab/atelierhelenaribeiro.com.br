@@ -2,6 +2,10 @@
   <div class="row">
     <div class="col-12">
       <card>
+        <div slot="header">
+          <h3 class="mb-0">Produtos Do Romaneio</h3>
+        </div>
+
         <div class="d-flex">
           <div class="form-group">
             <div class="input-group has-label">
@@ -48,19 +52,19 @@
     <div class="col-12">
       <card>
         <div slot="header">
-          <h3 class="mb-0">Lista de Produtos</h3>
+          <h3 class="mb-0">Pedido</h3>
         </div>
 
         <form class="needs-validation">
           <div class="card-body">
             <div class="text-center" v-show="emptySale">
-              <img src="/img/svg/undraw_empty_cart_co35.svg" alt="Empty sale" width="30%">
+              <img src="/img/svg/undraw_empty_cart_co35.svg" alt="Empty sale" width="20%">
 
               <h4 class="mt-5">Nada foi adicionado ao carrinho!</h4>
             </div>
             <div v-show="!emptySale">
               <ul class="list-group list-group-flush list my--3" >
-                <li class="list-group-item px-0" v-for="product in sale.products" :key="product.reference">
+                <li class="list-group-item px-0" v-for="product in products" :key="product.reference">
                   <div class="row align-items-center">
                     <div class="col-auto">
                       <div class="avatar rounded-circle">
@@ -109,27 +113,6 @@
                   </div>
                 </li>
               </ul>
-
-              <div class="form-row mt-5 mb--4">
-                <div class="col-lg-3">
-                  <div class="form-group">
-                    <label class="form-control-label">
-                      Aplicar Desconto
-                    </label>
-                    <div class="input-group has-label">
-                      <money class="form-control" v-model="discount" name="discount" v-bind="type_discount_money ? money : percentage"/>
-
-                      <div class="input-group-append">
-                        <el-tooltip content="Mudar Tipo" placement="top">
-                          <base-button type="primary" size="sm" @click="changeTypeDiscount">
-                            <i :class="type_discount_money ? 'fas fa-dollar-sign fa-lg' : 'fas fa-percentage fa-lg'"></i>
-                          </base-button>
-                        </el-tooltip>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </form>
@@ -151,7 +134,7 @@
     name: 'cart-sale',
     mixins: [clientPaginationMixin],
     props: {
-      sale: {
+      products: {
         type: Object,
         required: true
       },
@@ -174,57 +157,29 @@
     },
     data () {
       return {
-        fuseSearch: null,
-        type_discount_money: true,
-        discount: this.sale.discount,
-        money: {
-          decimal: ',',
-          thousands: '.',
-          prefix: 'R$ ',
-          suffix: '',
-          precision: 2,
-          masked: false
-        },
-        percentage: {
-          decimal: '',
-          thousands: '',
-          prefix: '',
-          suffix: ' %',
-          precision: 0,
-          masked: false
-        }
+        fuseSearch: null
       }
     },
     watch: {
       packing(value) {
         this.fuseSearch = new Fuse(value.products, {keys: ['reference', 'color', 'size'], threshold: 0.3})
-      },
-      discount(value) {
-        if (this.type_discount_money) {
-          this.sale.discount = value;
-        } else {
-          this.sale.discount = (this.sumProducts * value) / 100;
-        }
       }
     },
     computed: {
       emptySale() {
-        return isEmpty(this.sale.products)
+        return isEmpty(this.products)
       },
       tableData() {
         return this.packing.products
       }
     },
     methods: {
-      changeTypeDiscount() {
-        this.type_discount_money = !this.type_discount_money
-      },
       searchApi(value) {
         return this.fuseSearch.search(value);
       },
       addProduct(data) {
         if (data.amount) {
-          const productItem = this.sale.products.find(item => item.reference === data.reference);
+          const productItem = this.products.find(item => item.reference === data.reference);
 
           if (productItem) {
             productItem.amount++
@@ -238,7 +193,7 @@
               thumbnail: data.thumbnail
             };
 
-            this.sale.products.push(productNew);
+            this.products.push(productNew);
           }
 
           data.amount--;
@@ -252,7 +207,7 @@
         if (data.amount > 1) {
           data.amount--
         } else {
-          this.sale.products.splice(this.sale.products.indexOf(data), 1);
+          this.products.splice(this.products.indexOf(data), 1);
         }
 
         if (productItem) productItem.amount++
@@ -261,7 +216,7 @@
         const productItem = this.packing.products.find(item => item.reference === data.reference);
         if (productItem) productItem.amount += data.amount;
 
-        this.sale.products.splice(this.sale.products.indexOf(data), 1);
+        this.products.splice(this.products.indexOf(data), 1);
       }
     }
   };

@@ -22,8 +22,8 @@
               </div>
             </div>
             <p class="mt-3 mb-0 text-sm">
-              <base-button :type="(component === 'create-sale' || component === 'edit-sale') ? 'danger' : 'default'" size="sm" @click="component = visit.sale ? 'edit-sale' : 'create-sale'">
-                {{(component === 'create-sale' || component === 'edit-sale') ? 'Você está aqui!' : visit.sale ? 'Editar Pedido' : 'Criar Pedido'}}
+              <base-button :type="(component === 'create-sale' || component === 'edit-sale') ? 'danger' : 'default'" size="sm" @click="CHANGE_COMPONENT(!emptySale ? 'edit-sale' : 'create-sale')">
+                {{(component === 'create-sale' || component === 'edit-sale') ? 'Você está aqui!' : !emptySale ? 'Editar Pedido' : 'Criar Pedido'}}
               </base-button>
             </p>
           </stats-card>
@@ -36,8 +36,8 @@
               </div>
             </div>
             <p class="mt-3 mb-0 text-sm">
-              <base-button :type="(component === 'create-payroll' || component === 'edit-payroll') ? 'danger' : 'default'" size="sm" @click="component =  visit.sale ? 'edit-payroll' : 'create-payroll'">
-                {{(component === 'create-payroll' || component === 'edit-payroll') ? 'Você está aqui!' : visit.payroll ? 'Editar Consignado' : 'Criar Consignado'}}
+              <base-button :type="(component === 'create-payroll' || component === 'edit-payroll') ? 'danger' : 'default'" size="sm" @click="CHANGE_COMPONENT(!emptyPayroll ? 'edit-payroll' : 'create-payroll')">
+                {{(component === 'create-payroll' || component === 'edit-payroll') ? 'Você está aqui!' : !emptyPayroll ? 'Editar Consignado' : 'Criar Consignado'}}
               </base-button>
             </p>
           </stats-card>
@@ -70,7 +70,7 @@
                 </div>
                 <div class="col text-right">
                   <el-tooltip content="Ver Detalhes" placement="top">
-                    <base-button class="icon icon-shape bg-white text-dark rounded-circle shadow" :disabled="!visit.sale" @click="details_sale = true">
+                    <base-button class="icon icon-shape bg-white text-dark rounded-circle shadow" :disabled="emptySale" @click="details_sale = true">
                       <i class="fas fa-search-plus fa-lg"></i>
                     </base-button>
                   </el-tooltip>
@@ -79,44 +79,24 @@
             </div>
 
             <img src="/img/svg/undraw_empty_cart_co35.svg" alt="" width="50%">
-            <div class="mt-3" v-if="!visit.sale">
+            <div class="mt-3" v-if="emptySale">
               <span class="pl-2 text-sm text-white">Nenhum pedido foi feito!</span>
             </div>
 
             <div class="mt-3" v-else>
-              <div class="display-2 text-white mt-3">{{visit.sale.final_price | currency}}</div>
-              <span class=" text-white">Valor do Pedido</span>
-
-              <ul class="list-unstyled my-4">
-                <li>
-                  <div class="d-flex align-items-center">
-                    <div>
-                      <div class="icon icon-xs icon-shape bg-white shadow rounded-circle">
-                        <i class="fas fa-hand-holding-usd fa-lg"></i>
-                      </div>
-                    </div>
-                    <div>
-                      <span class="pl-2 text-sm text-white">Total de Desconto: {{visit.sale.discount | currency}}</span>
-                    </div>
-                  </div>
-                </li>
-                <li>
-                  <div class="d-flex align-items-center">
-                    <div>
-                      <div class="icon icon-xs icon-shape bg-white shadow rounded-circle">
-                        <i class="fas fa-boxes fa-lg"></i>
-                      </div>
-                    </div>
-                    <div>
-                      <span class="pl-2 text-sm text-white">Total de Produtos: {{visit.sale.total_amount}}</span>
-                    </div>
-                  </div>
-                </li>
-              </ul>
+              <div class="display-2 text-white mt-3">{{visit.sale.price | currency}}</div>
+              <span class=" text-white">Valor Total Do Pedido</span>
             </div>
 
-            <base-button slot="footer" type="primary" v-if="!visit.sale" @click="component = 'create-sale'">Criar Pedido</base-button>
-            <base-button slot="footer" type="warning" v-else @click="component = 'edit-sale'">Editar Pedido</base-button>
+            <base-button slot="footer" type="primary" v-if="emptySale" @click="CHANGE_COMPONENT('create-sale')">Criar Pedido</base-button>
+            <div class="row" slot="footer" v-else>
+              <div class="col">
+                <base-button type="warning" @click="CHANGE_COMPONENT('edit-sale')">Editar Pedido</base-button>
+              </div>
+              <div class="col">
+                <base-button type="danger" @click="removeSale">Apagar Pedido</base-button>
+              </div>
+            </div>
           </card>
         </div>
         <div class="col-lg-4">
@@ -129,7 +109,7 @@
                 </div>
                 <div class="col text-right">
                   <el-tooltip content="Ver Detalhes" placement="top">
-                    <base-button class="icon icon-shape bg-white text-dark rounded-circle shadow" :disabled="!visit.payroll" @click="details_payroll = true">
+                    <base-button class="icon icon-shape bg-white text-dark rounded-circle shadow" :disabled="emptyPayroll" @click="details_payroll = true">
                       <i class="fas fa-search-plus fa-lg"></i>
                     </base-button>
                   </el-tooltip>
@@ -137,33 +117,26 @@
               </div>
             </div>
 
-            <img src="/img/svg/undraw_shopping_eii3.svg" alt="" :width="!visit.payroll ? '54%' : '60%'">
-            <div class="mt-3" v-if="!visit.payroll">
+            <img src="/img/svg/undraw_shopping_eii3.svg" alt="" :width="emptyPayroll ? '54%' : '60%'">
+            <div class="mt-3" v-if="emptyPayroll">
               <span class="pl-2 text-sm text-white">Nenhum consignado foi feito!</span>
             </div>
 
             <div class="mt-3" v-else>
-              <div class="display-2 text-white">{{visit.payroll.total_amount}}</div>
-              <span class=" text-white">Produtos</span>
-              <ul class="list-unstyled my-4">
-                <li>
-                  <div class="d-flex align-items-center">
-                    <div>
-                      <div class="icon icon-xs icon-shape bg-white shadow rounded-circle">
-                        <i class="fas fa-money-bill-wave"></i>
-                      </div>
-                    </div>
-                    <div>
-                      <span class="pl-2 text-sm text-white">Valor Total: {{visit.payroll.total_price | currency}}</span>
-                    </div>
-                  </div>
-                </li>
-              </ul>
+              <div class="display-2 text-white">{{visit.payrolls.price + visit.payroll_sales.price | currency}}</div>
+              <span class=" text-white">Valor Total Do Consignado</span>
             </div>
 
             <!--Footer-->
-            <base-button slot="footer" type="primary" v-if="!visit.payroll" @click="component = 'create-payroll'">Criar Consignado</base-button>
-            <base-button slot="footer" type="warning" v-else @click="component = 'edit-payroll'">Editar Consignado</base-button>
+            <base-button slot="footer" type="primary" v-if="emptyPayroll" @click="CHANGE_COMPONENT('create-payroll')">Criar Consignado</base-button>
+            <div class="row" slot="footer" v-else>
+              <div class="col">
+                <base-button type="warning" @click="CHANGE_COMPONENT('edit-payroll')">Editar Consignado</base-button>
+              </div>
+              <div class="col">
+                <base-button type="danger" @click="removePayroll">Apagar Consignado</base-button>
+              </div>
+            </div>
           </card>
         </div>
         <div class="col-lg-4">
@@ -265,14 +238,14 @@
         </base-button>
       </template>
     </modal>
-    <modal :show.sync="details_sale" size="lg" v-if="visit.sale">
+    <modal :show.sync="details_sale" size="lg" v-if="visit.sales">
       <template slot="header">
         <h6 slot="header" class="modal-title">Detalhes do Pedido</h6>
       </template>
 
       <div class="card-body">
           <ul class="list-group list-group-flush list my--3" >
-              <li class="list-group-item px-0" v-for="product in visit.sale.products" :key="product.reference">
+              <li class="list-group-item px-0" v-for="product in visit.sales" :key="product.reference">
                 <div class="row align-items-center">
                   <div class="col-auto">
                     <div class="avatar rounded-circle">
@@ -312,7 +285,7 @@
         <base-button type="link" class="ml-auto" @click="details_sale = false">Fechar</base-button>
       </template>
     </modal>
-    <modal :show.sync="details_payroll" size="lg" v-if="visit.payroll">
+    <modal :show.sync="details_payroll" size="lg" v-if="visit.payrolls || visit.payrolls_sales">
       <template slot="header">
         <h6 slot="header" class="modal-title">Detalhes do Consignado</h6>
       </template>
@@ -320,7 +293,7 @@
 
       <div class="card-body">
         <ul class="list-group list-group-flush list my--3" >
-          <li class="list-group-item px-0" v-for="product in visit.payroll.products" :key="product.reference">
+          <li class="list-group-item px-0" v-for="product in visit.payrolls" :key="product.reference">
             <div class="row align-items-center">
               <div class="col-auto">
                 <div class="avatar rounded-circle">
@@ -350,6 +323,39 @@
               <div class="col">
                 <small>Total:</small>
                 <h5 class="mb-0">{{(product.price * product.amount) | currency}}</h5>
+              </div>
+            </div>
+          </li>
+          <li class="list-group-item px-0" v-for="sale in visit.payrolls_sales" :key="sale.reference">
+            <div class="row align-items-center">
+              <div class="col-auto">
+                <div class="avatar rounded-circle">
+                  <img :src="sale.thumbnail" alt="Image product" width="35%">
+                </div>
+              </div>
+              <div class="col">
+                <small>Referência:</small>
+                <h5 class="mb-0">{{sale.reference}}</h5>
+              </div>
+              <div class="col">
+                <small>Cor:</small>
+                <h5 class="mb-0">{{sale.color}}</h5>
+              </div>
+              <div class="col">
+                <small>Tamanho:</small>
+                <h5 class="mb-0">{{sale.size}}</h5>
+              </div>
+              <div class="col">
+                <small>Quantidade:</small>
+                <h5 class="mb-0">{{sale.amount}}</h5>
+              </div>
+              <div class="col">
+                <small>Preço:</small>
+                <h5 class="mb-0">{{sale.price | currency}}</h5>
+              </div>
+              <div class="col">
+                <small>Total:</small>
+                <h5 class="mb-0">{{(sale.price * sale.amount) | currency}}</h5>
               </div>
             </div>
           </li>
@@ -389,11 +395,12 @@
   import CreatePayroll from './Payroll/Create';
   import EditPayroll from './Payroll/Edit';
 
-  import {mapActions, mapState} from 'vuex';
-  import {EDIT, GET} from "@/store/modules/visit/visit-const";
+  import {mapActions, mapState, mapMutations} from 'vuex';
+  import {EDIT, GET, DELETE_PAYROLL, DELETE_SALE, CHANGE_COMPONENT} from "@/store/modules/visit/visit-const";
 
   import {notifyVue, notifyError} from "@/utils";
-  import { Select, Option, Tooltip} from 'element-ui';
+  import {Select, Option, Tooltip} from 'element-ui';
+  import {isEmpty} from 'lodash';
   import {http} from "@/services";
 
   export default {
@@ -421,7 +428,6 @@
         edit_info: false,
         details_sale: false,
         details_payroll: false,
-        component: '',
         customers: [],
         sellers: []
       }
@@ -429,8 +435,15 @@
     computed: {
       ...mapState('visit', {
         loading: state => state.loading,
-        visit: state => state.visit
-      })
+        visit: state => state.visit,
+        component: state => state.component,
+      }),
+      emptySale() {
+        return isEmpty(this.visit.sales)
+      },
+      emptyPayroll() {
+        return isEmpty(this.visit.payrolls) || isEmpty(this.visit.payroll_sale)
+      }
     },
     async created() {
       await this.GET(this.id);
@@ -438,7 +451,14 @@
       await http.get('employees', {search: 'seller'}).then(response => this.sellers = response.data).catch(error => console.dir(error));
     },
     methods: {
-      ...mapActions('visit', [GET, EDIT]),
+      ...mapActions('visit', [GET, EDIT, DELETE_PAYROLL, DELETE_SALE]),
+      ...mapMutations('visit', [CHANGE_COMPONENT]),
+      removeSale() {
+        this.DELETE_SALE(this.visit.id).then(res => notifyVue(this.$notify, 'Pedido apagado!', 'success')).catch(error => notifyError(this.$notify, error));
+      },
+      removePayroll() {
+        this.DELETE_PAYROLL(this.visit.id).then(res => notifyVue(this.$notify, 'Consignado apagado!', 'success')).catch(error => notifyError(this.$notify, error));
+      },
       async submitForm() {
         try {
           this.$validator.validateAll().then(

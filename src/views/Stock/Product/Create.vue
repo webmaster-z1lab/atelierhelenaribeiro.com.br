@@ -27,12 +27,7 @@
               <base-input label="Tamanho" :error="getError('size')" :valid="isValid('size')">
                 <select name="size" class="form-control" v-model="size" :class="[{'is-invalid': getError('size')}]" v-validate="'required'">
                   <option value="" selected>Selecione o tamanho do produto.</option>
-                  <option value="P">P</option>
-                  <option value="M">M</option>
-                  <option value="G">G</option>
-                  <option value="Plus 1">PLUS 1</option>
-                  <option value="Plus 2">PLUS 2</option>
-                  <option value="Plus 3">PLUS 3</option>
+                  <option :value="item.name" :key="item.reference" v-for="item in sizes">{{item.name}}</option>
                 </select>
               </base-input>
             </div>
@@ -116,7 +111,8 @@
         price: 0,
         gallery: [],
         templates: [],
-        colors: []
+        colors: [],
+        sizes: []
       }
     },
     computed: {
@@ -126,6 +122,7 @@
     },
     async created() {
       await http.get('templates').then(res => {this.templates = res.data});
+      await http.get('sizes').then(res => {this.sizes = res.data});
       await http.get('colors').then(res => {this.colors = res.data});
     },
     methods: {

@@ -12,6 +12,9 @@ export const CREATE_SALE   = 'CREATE_SALE';
 export const EDIT_SALE     = 'EDIT_SALE';
 export const DELETE_SALE   = 'DELETE_SALE';
 
-export const CREATE_PAYROLL   = 'CREATE_PAYROLL';
 export const EDIT_PAYROLL     = 'EDIT_PAYROLL';
 export const DELETE_PAYROLL   = 'DELETE_PAYROLL';
+
+export const CREATE_DEVOLUTION   = 'CREATE_DEVOLUTION';
+export const EDIT_DEVOLUTION     = 'EDIT_DEVOLUTION';
+export const DELETE_DEVOLUTION   = 'DELETE_DEVOLUTION';

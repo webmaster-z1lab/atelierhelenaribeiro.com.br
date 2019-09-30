@@ -127,7 +127,7 @@
   import crudSettingsMixin from '@/mixins/crud-settings';
 
   import {mapActions, mapState, mapMutations} from 'vuex';
-  import {CREATE_DEVOLUTION, CHANGE_COMPONENT} from "@/store/modules/visit/visit-const";
+  import {EDIT_DEVOLUTION, CHANGE_COMPONENT} from "@/store/modules/visit/visit-const";
 
   import {notifyVue, notifyError} from "@/utils";
   import { Select, Option } from 'element-ui'
@@ -175,15 +175,30 @@
       }
     },
     methods: {
-      ...mapActions('visit', [CREATE_DEVOLUTION]),
+      ...mapActions('visit', [EDIT_DEVOLUTION]),
       ...mapMutations('visit', [CHANGE_COMPONENT]),
       addProduct() {
-        this.products.push({
-          reference: `${this.template}-${this.color}-${this.size}`,
-          amount: this.amount,
-          color: this.color,
-          size: this.size
-        });
+        try {
+          this.$validator.validateAll().then(
+            async res => {
+              if (res) {
+                this.products.push({
+                  reference: `${this.template}-${this.color}-${this.size}`,
+                  amount: this.amount,
+                  color: this.color,
+                  size: this.size
+                });
+
+                this.amount = 1;
+                this.color =  '';
+                this.size = '';
+                this.template = '';
+              }
+            }
+          )
+        } finally {
+          this.validated = true;
+        }
       },
       removeOne(data) {
         if (data.amount > 1) {
@@ -201,7 +216,7 @@
           return;
         }
 
-        this.CREATE_DEVOLUTION({visit_id: this.visit.id, data: this.products})
+        this.EDIT_DEVOLUTION({visit_id: this.visit.id, data: this.products})
           .then(response => {
             notifyVue(this.$notify, 'Devolução criada com sucesso!', 'success');
             this.CHANGE_COMPONENT()
@@ -210,10 +225,10 @@
       }
     },
     async mounted() {
+      this.products = this.visit.refunds;
       await http.get('templates').then(res => {this.templates = res.data});
       await http.get('colors').then(res => {this.colors = res.data});
       await http.get('sizes').then(res => {this.sizes = res.data});
-      await http.get('packings/current', {seller: this.visit.seller.id}).then(response => this.packing = response.data).catch(error => console.dir(error));
     }
   };
 </script>

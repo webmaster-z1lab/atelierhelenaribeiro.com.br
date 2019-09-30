@@ -31,5 +31,9 @@ export default {
     state.visit.payroll_sales = [];
     state.visit.payroll = {amount: 0, price: 0};
     state.visit.payrolls = [];
+  },
+  [constants.DELETE_DEVOLUTION]: state => {
+    state.visit.refund = {amount: 0, price: 0};
+    state.visit.refunds = [];
   }
 }

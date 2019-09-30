@@ -135,7 +135,7 @@
   import {isEmpty, sumBy} from 'lodash'
 
   export default {
-    name: 'edit',
+    name: 'create',
     $_veeValidate: {
       validator: 'new'
     },
@@ -178,12 +178,22 @@
       ...mapActions('visit', [CREATE_DEVOLUTION]),
       ...mapMutations('visit', [CHANGE_COMPONENT]),
       addProduct() {
-        this.products.push({
-          reference: `${this.template}-${this.color}-${this.size}`,
-          amount: this.amount,
-          color: this.color,
-          size: this.size
-        });
+        try {
+          this.$validator.validateAll().then(
+            async res => {
+              if (res) {
+                this.products.push({
+                  reference: `${this.template}-${this.color}-${this.size}`,
+                  amount: this.amount,
+                  color: this.color,
+                  size: this.size
+                })
+              }
+            }
+          )
+        } finally {
+          this.validated = true;
+        }
       },
       removeOne(data) {
         if (data.amount > 1) {
@@ -213,7 +223,6 @@
       await http.get('templates').then(res => {this.templates = res.data});
       await http.get('colors').then(res => {this.colors = res.data});
       await http.get('sizes').then(res => {this.sizes = res.data});
-      await http.get('packings/current', {seller: this.visit.seller.id}).then(response => this.packing = response.data).catch(error => console.dir(error));
     }
   };
 </script>

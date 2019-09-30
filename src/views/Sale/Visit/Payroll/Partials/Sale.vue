@@ -1,27 +1,13 @@
 <template>
-  <div class="row">
+  <div class="row justify-content-end">
     <div class="col-12">
       <card>
         <div slot="header">
-          <h3 class="mb-0">Lista de Produtos</h3>
-        </div>
-        <div class="d-flex">
-          <div class="form-group">
-            <div class="input-group has-label">
-              <div class="input-group-prepend">
-                <span class="input-group-text">
-                  <slot name="prepend">
-                    <i class="fas fa-search"></i>
-                  </slot>
-                </span>
-              </div>
-              <input type="text" class="form-control" placeholder="Buscar produto..." v-model.lazy="searchQuery">
-            </div>
-          </div>
+          <h3 class="mb-0">Romaneio</h3>
         </div>
 
-        <el-table :data="queriedData" header-row-class-name="thead-light" @sort-change="sortChange" v-if="packing.products">
-          <el-table-column prop="reference" label="Referência"/>
+        <el-table :data="queriedData" header-row-class-name="thead-light" @sort-change="sortChange">
+          <el-table-column prop="reference" label="Referência" sortable/>
           <el-table-column prop="color" label="Cor" sortable/>
           <el-table-column prop="size" label="Tamanho" sortable/>
           <el-table-column label="Preço" sortable>
@@ -48,7 +34,7 @@
         </el-table>
       </card>
     </div>
-    <div class="col-8">
+    <div class="col-12">
       <card>
         <div slot="header">
           <h3 class="mb-0">Consignado</h3>
@@ -57,13 +43,13 @@
         <form class="needs-validation">
           <div class="card-body">
             <div class="text-center" v-show="emptySale">
-              <img src="/img/svg/undraw_shopping_eii3.svg" alt="Empty sale" width="30%">
+              <img src="/img/svg/undraw_shopping_eii3.svg" alt="Empty sale" width="20%">
 
               <h4 class="mt-5">Nada foi adicionado ao carrinho!</h4>
             </div>
             <div v-show="!emptySale">
               <ul class="list-group list-group-flush list my--3" >
-                <li class="list-group-item px-0" v-for="product in payroll.products" :key="product.reference">
+                <li class="list-group-item px-0" v-for="product in products" :key="product.reference">
                   <div class="row align-items-center">
                     <div class="col-auto">
                       <div class="avatar rounded-circle">
@@ -146,11 +132,10 @@
 </template>
 
 <script>
-  import Fuse from 'fuse.js';
   import clientPaginationMixin from '@/mixins/client-pagination';
 
-  import {mapActions} from 'vuex';
-  import {CREATE_PAYROLL} from "@/store/modules/visit/visit-const";
+  import {mapActions, mapState} from 'vuex';
+  import {EDIT_PAYROLL} from "@/store/modules/visit/visit-const";
 
   import {notifyVue, notifyError} from "@/utils";
   import { Select, Option, Table, TableColumn, Tooltip} from 'element-ui'
@@ -158,14 +143,8 @@
   import {isEmpty, sumBy} from 'lodash'
 
   export default {
-    name: 'create',
+    name: 'sale',
     mixins: [clientPaginationMixin],
-    props: {
-      visit: {
-        type: Object,
-        required: true
-      }
-    },
     components: {
       [Select.name]: Select,
       [Option.name]: Option,
@@ -175,38 +154,38 @@
     },
     data () {
       return {
-        packing: {},
         fuseSearch: null,
-        payroll: {
-          visit: this.visit.id,
-          products: []
-        }
+        available: [],
+        products: []
       }
     },
     computed: {
-      sumProductsValue(){
-        return sumBy(this.payroll.products, function (o) {
+      ...mapState('visit', {
+        visit: state => state.visit
+      }),
+      sumProductsValue() {
+        return sumBy(this.products, function (o) {
           return (o.price * o.amount)
         })
       },
       sumProducts() {
-        return sumBy(this.payroll.products, 'amount')
+        return sumBy(this.products, 'amount')
       },
       emptySale() {
-        return isEmpty(this.payroll.products)
+        return isEmpty(this.products)
       },
       tableData() {
-        return this.packing.products
+        return this.available
       }
     },
     methods: {
-      ...mapActions('visit', [CREATE_PAYROLL]),
+      ...mapActions('visit', [EDIT_PAYROLL]),
       searchApi(value) {
         return this.fuseSearch.search(value);
       },
       addProduct(data) {
         if (data.amount) {
-          const productItem = this.payroll.products.find(item => item.reference === data.reference);
+          const productItem = this.products.find(item => item.reference === data.reference);
 
           if (productItem) {
             productItem.amount++
@@ -220,7 +199,7 @@
               thumbnail: data.thumbnail
             };
 
-            this.payroll.products.push(productNew);
+            this.products.push(productNew);
           }
 
           data.amount--;
@@ -229,40 +208,37 @@
         }
       },
       removeOne(data) {
-        const productItem = this.packing.products.find(item => item.reference === data.reference);
+        const productItem = this.available.find(item => item.reference === data.reference);
 
         if (data.amount > 1) {
           data.amount--
         } else {
-          this.payroll.products.splice(this.payroll.products.indexOf(data), 1);
+          this.products.splice(this.products.indexOf(data), 1);
         }
 
         if (productItem) productItem.amount++
       },
       removeAll(data) {
-        const productItem = this.packing.products.find(item => item.reference === data.reference);
+        const productItem = this.available.find(item => item.reference === data.reference);
         if (productItem) productItem.amount += data.amount;
 
-        this.payroll.products.splice(this.payroll.products.indexOf(data), 1);
+        this.products.splice(this.products.indexOf(data), 1);
       },
       async submitForm() {
-        if (!isEmpty(this.payroll.products)) {
-          this.CREATE_PAYROLL(this.payroll)
+        if (!isEmpty(this.products)) {
+          this.EDIT_PAYROLL({visit_id: this.visit.id, ext: '/sales', data: this.products})
             .then(response => {
-              notifyVue(this.$notify, 'Consginado criado com sucesso', 'success');
-              location.reload();
+              notifyVue(this.$notify, 'Venda de consignado realizada com sucesso', 'success');
             })
             .catch(error => notifyError(this.$notify, error));
         } else {
-          notifyVue(this.$notify, 'Adicione produtos antes de finalizar um consignado!', 'danger');
+          notifyVue(this.$notify, 'Adicione produtos antes de finalizar uma venda de consignado!', 'danger');
         }
       }
     },
-    async created() {
-      await http.get('packings/current',  {seller: this.visit.seller.id}).then(response => {
-        this.packing = response.data;
-        this.fuseSearch = new Fuse(response.data.products, {keys: ['reference', 'color', 'size'], threshold: 0.3})
-      }).catch(error => console.dir(error));
+    async mounted() {
+      await http.get(`visits/${this.visit.id}/payrolls/available`).then(response => this.available = response.data).catch(error => console.dir(error));
+      this.products = this.visit.payroll_sales
     }
   };
 </script>

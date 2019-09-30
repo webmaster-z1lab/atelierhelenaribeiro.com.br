@@ -28,7 +28,6 @@
             <div class="h2">{{sumProductsValue | currency}}</div>
           </div>
 
-          <base-button type="secondary" size="sm" @click="CHANGE_COMPONENT()">Voltar</base-button>
           <base-button type="primary" size="sm" @click="submitForm">Finalizar Pedido</base-button>
         </div>
       </div>
@@ -83,36 +82,21 @@
     methods: {
       ...mapActions('visit', [CREATE_SALE]),
       ...mapMutations('visit', [CHANGE_COMPONENT]),
-      sendPayment() {
+      async submitForm() {
         if (isEmpty(this.products)) {
-          notifyVue(this.$notify, 'Adicione produtos antes de ir para área de pagamento!', 'warning');
-
+          notifyVue(this.$notify, 'Adicione produtos!', 'danger');
           return;
         }
-
-        this.component = 'payment-method'
-      },
-      async submitForm() {
-        try {
-          this.$validator.validateAll().then(
-            async res => {
-              if (res) {
-                this.CREATE_SALE({visit_id: this.visit.id, data: this.products})
-                  .then(response => {
-                    notifyVue(this.$notify, 'Pedido criado com sucesso', 'success');
-                    this.CHANGE_COMPONENT()
-                  })
-                  .catch(error => notifyError(this.$notify, error));
-              }
-            }
-          )
-        } finally {
-          this.validated = true;
-        }
+        this.CREATE_SALE({visit_id: this.visit.id, data: this.products})
+          .then(response => {
+            notifyVue(this.$notify, 'Pedido criado com sucesso', 'success');
+            this.CHANGE_COMPONENT()
+          })
+          .catch(error => notifyError(this.$notify, error));
       }
     },
     async mounted() {
-      await http.get('packings/current', {seller: this.visit.seller.id}).then(response => {this.packing = response.data}).catch(error => console.dir(error));
+      await http.get('packings/current', {seller: this.visit.seller.id}).then(response => this.packing = response.data).catch(error => console.dir(error));
     }
   };
 </script>

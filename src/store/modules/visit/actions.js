@@ -153,26 +153,11 @@ export default {
       });
     })
   },
-  [constants.CREATE_PAYROLL]: async ({ commit }, data) => {
+  [constants.EDIT_PAYROLL]: async ({ commit }, {visit_id, ext, data}) => {
     return await new Promise(async (resolve, reject) => {
       await commit(constants.LOADING);
 
-      await http.post('payrolls', data).then(async response => {
-        await commit(constants.EDIT, response.data);
-        await commit(constants.LOADING);
-
-        resolve(response.data);
-      }).catch(error => {
-        reject(error);
-        commit(constants.LOADING);
-      })
-    })
-  },
-  [constants.EDIT_PAYROLL]: async ({ commit }, data) => {
-    return await new Promise(async (resolve, reject) => {
-      await commit(constants.LOADING);
-
-      await http.put(`payrolls/${data.id}`, data).then(async response => {
+      await http.put(`visits/${visit_id}/payrolls${ext}`, {products: data}).then(async response => {
         await commit(constants.EDIT, response.data);
         await commit(constants.LOADING);
 
@@ -203,6 +188,67 @@ export default {
           await http.delete(`visits/${id}/payrolls`, {})
             .then(async response => {
               await commit(constants.DELETE_PAYROLL);
+              await commit(constants.LOADING);
+
+              resolve(response.data);
+            }).catch(error => {
+              reject(error);
+              commit(constants.LOADING);
+            });
+        }
+      });
+    })
+  },
+  [constants.CREATE_DEVOLUTION]: async ({ commit }, {visit_id, data}) => {
+    return await new Promise(async (resolve, reject) => {
+      await commit(constants.LOADING);
+
+      await http.post(`visits/${visit_id}/refunds`, {products: data}).then(async response => {
+        await commit(constants.EDIT, response.data);
+        await commit(constants.LOADING);
+
+        resolve(response.data);
+      }).catch(error => {
+        reject(error);
+        commit(constants.LOADING);
+      })
+    })
+  },
+  [constants.EDIT_DEVOLUTION]: async ({ commit }, {visit_id, data}) => {
+    return await new Promise(async (resolve, reject) => {
+      await commit(constants.LOADING);
+
+      await http.put(`visits/${visit_id}/refunds`, {products: data}).then(async response => {
+        await commit(constants.EDIT, response.data);
+        await commit(constants.LOADING);
+
+        resolve(response.data);
+      })
+        .catch(error => {
+          reject(error);
+          commit(constants.LOADING);
+        })
+    })
+  },
+  [constants.DELETE_DEVOLUTION]: async ({ commit }, id) => {
+    return await new Promise(async (resolve, reject) => {
+      swal({
+        title: 'Você tem Certeza?',
+        text: `Ao fazer isso os dados não poderão ser recuperados!`,
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonClass: 'btn btn-success btn-fill',
+        cancelButtonClass: 'btn btn-danger btn-fill',
+        confirmButtonText: 'Sim, apagar!',
+        cancelButtonText: 'Cancelar',
+        buttonsStyling: false
+      }).then(async response => {
+        if (response.value) {
+          await commit(constants.LOADING);
+
+          await http.delete(`visits/${id}/refunds`, {})
+            .then(async response => {
+              await commit(constants.DELETE_DEVOLUTION);
               await commit(constants.LOADING);
 
               resolve(response.data);

@@ -4,15 +4,23 @@
 
     <base-header-app>
       <div class="col-lg-6 col-5 text-right">
-        <router-link :to="{name: 'sale.visit.index'}" class="btn btn-icon btn-fab btn-sm btn-secondary">
+        <router-link :to="{name: 'sale.visit.index'}" class="btn btn-icon btn-fab btn-sm btn-secondary"
+                     v-if="!component">
           <span class="btn-inner--icon"><i class="fas fa-arrow-left"></i></span>
           <span class="btn-inner--text">Voltar</span>
         </router-link>
+        <base-button size="sm" type="secondary" @click="CHANGE_COMPONENT()" v-else>
+          <span class="btn-inner--icon"><i class="fas fa-arrow-left"></i></span>
+          <span class="btn-inner--text">Voltar</span>
+        </base-button>
         <base-button size="sm" type="primary" @click="edit_info = true">Editar Visita</base-button>
+        <base-button size="sm" type="danger" @click="finalize_visit = true">Finalizar Visita</base-button>
       </div>
     </base-header-app>
 
-    <div class="container-fluid mt--6">
+    <finalize-visit @close="finalize_visit = false" v-if="finalize_visit"/>
+
+    <div class="container-fluid mt--6" v-else>
       <div class="row" v-if="component">
         <div class="col-lg-4">
           <stats-card class="card-sale">
@@ -22,7 +30,8 @@
               </div>
             </div>
             <p class="mt-3 mb-0 text-sm">
-              <base-button :type="(component === 'create-sale' || component === 'edit-sale') ? 'danger' : 'default'" size="sm" @click="CHANGE_COMPONENT(!emptySale ? 'edit-sale' : 'create-sale')">
+              <base-button :type="(component === 'create-sale' || component === 'edit-sale') ? 'danger' : 'default'"
+                           size="sm" @click="CHANGE_COMPONENT(!emptySale ? 'edit-sale' : 'create-sale')">
                 {{(component === 'create-sale' || component === 'edit-sale') ? 'Você está aqui!' : !emptySale ? 'Editar Pedido' : 'Criar Pedido'}}
               </base-button>
             </p>
@@ -36,8 +45,9 @@
               </div>
             </div>
             <p class="mt-3 mb-0 text-sm">
-              <base-button :type="(component === 'create-payroll' || component === 'edit-payroll') ? 'danger' : 'default'" size="sm" @click="CHANGE_COMPONENT(!emptyPayroll ? 'edit-payroll' : 'create-payroll')">
-                {{(component === 'create-payroll' || component === 'edit-payroll') ? 'Você está aqui!' : !emptyPayroll ? 'Editar Consignado' : 'Criar Consignado'}}
+              <base-button :type="component === 'payroll' ? 'danger' : 'default'" size="sm"
+                           @click="CHANGE_COMPONENT('payroll')">
+                {{component === 'payroll' ? 'Você está aqui!' : !emptyPayroll ? 'Editar Consignado' : 'Criar Consignado'}}
               </base-button>
             </p>
           </stats-card>
@@ -50,7 +60,11 @@
               </div>
             </div>
             <p class="mt-3 mb-0 text-sm">
-              <base-button type="default" size="sm" disabled>Ver</base-button>
+              <base-button
+                :type="(component === 'create-devolution' || component === 'edit-devolution') ? 'danger' : 'default'"
+                size="sm" @click="CHANGE_COMPONENT(!emptyDevolution ? 'edit-devolution' : 'create-devolution')">
+                {{(component === 'create-devolution' || component === 'edit-devolution') ? 'Você está aqui!' : !emptyDevolution ? 'Editar Devolução' : 'Criar Devolução'}}
+              </base-button>
             </p>
           </stats-card>
         </div>
@@ -61,7 +75,8 @@
       </div>
       <div class="row" v-else>
         <div class="col-lg-4">
-          <card gradient="success" header-classes="bg-transparent" footer-classes="bg-transparent" body-classes="px-lg-7" class="card-pricing border-0 text-center mb-4">
+          <card gradient="success" header-classes="bg-transparent" footer-classes="bg-transparent"
+                body-classes="px-lg-7" class="card-pricing border-0 text-center mb-4">
 
             <div slot="header">
               <div class="row">
@@ -70,7 +85,8 @@
                 </div>
                 <div class="col text-right">
                   <el-tooltip content="Ver Detalhes" placement="top">
-                    <base-button class="icon icon-shape bg-white text-dark rounded-circle shadow" :disabled="emptySale" @click="details_sale = true">
+                    <base-button class="icon icon-shape bg-white text-dark rounded-circle shadow" :disabled="emptySale"
+                                 @click="details_sale = true">
                       <i class="fas fa-search-plus fa-lg"></i>
                     </base-button>
                   </el-tooltip>
@@ -85,10 +101,12 @@
 
             <div class="mt-3" v-else>
               <div class="display-2 text-white mt-3">{{visit.sale.price | currency}}</div>
-              <span class=" text-white">Valor Total Do Pedido</span>
+              <span class=" text-white">Valor total do Pedido</span>
             </div>
 
-            <base-button slot="footer" type="primary" v-if="emptySale" @click="CHANGE_COMPONENT('create-sale')">Criar Pedido</base-button>
+            <base-button slot="footer" type="primary" v-if="emptySale" @click="CHANGE_COMPONENT('create-sale')">Criar
+              Pedido
+            </base-button>
             <div class="row" slot="footer" v-else>
               <div class="col">
                 <base-button type="warning" @click="CHANGE_COMPONENT('edit-sale')">Editar Pedido</base-button>
@@ -100,7 +118,8 @@
           </card>
         </div>
         <div class="col-lg-4">
-          <card gradient="primary" header-classes="bg-transparent" footer-classes="bg-transparent" body-classes="px-lg-7" class="card-pricing border-0 text-center mb-4">
+          <card gradient="primary" header-classes="bg-transparent" footer-classes="bg-transparent"
+                body-classes="px-lg-7" class="card-pricing border-0 text-center mb-4">
 
             <div slot="header">
               <div class="row">
@@ -109,7 +128,8 @@
                 </div>
                 <div class="col text-right">
                   <el-tooltip content="Ver Detalhes" placement="top">
-                    <base-button class="icon icon-shape bg-white text-dark rounded-circle shadow" :disabled="emptyPayroll" @click="details_payroll = true">
+                    <base-button class="icon icon-shape bg-white text-dark rounded-circle shadow"
+                                 :disabled="emptyPayroll" @click="details_payroll = true">
                       <i class="fas fa-search-plus fa-lg"></i>
                     </base-button>
                   </el-tooltip>
@@ -123,15 +143,17 @@
             </div>
 
             <div class="mt-3" v-else>
-              <div class="display-2 text-white">{{visit.payrolls.price + visit.payroll_sales.price | currency}}</div>
-              <span class=" text-white">Valor Total Do Consignado</span>
+              <div class="display-2 text-white">{{visit.payroll.price + visit.payroll_sale.price | currency}}</div>
+              <span class=" text-white">Valor total do Consignado</span>
             </div>
 
             <!--Footer-->
-            <base-button slot="footer" type="primary" v-if="emptyPayroll" @click="CHANGE_COMPONENT('create-payroll')">Criar Consignado</base-button>
+            <base-button slot="footer" type="primary" v-if="emptyPayroll" @click="CHANGE_COMPONENT('payroll')">Criar
+              Consignado
+            </base-button>
             <div class="row" slot="footer" v-else>
               <div class="col">
-                <base-button type="warning" @click="CHANGE_COMPONENT('edit-payroll')">Editar Consignado</base-button>
+                <base-button type="warning" @click="CHANGE_COMPONENT('payroll')">Editar Consignado</base-button>
               </div>
               <div class="col">
                 <base-button type="danger" @click="removePayroll">Apagar Consignado</base-button>
@@ -140,7 +162,8 @@
           </card>
         </div>
         <div class="col-lg-4">
-          <card gradient="warning" header-classes="bg-transparent" footer-classes="bg-transparent" body-classes="px-lg-7" class="card-pricing border-0 text-center mb-4">
+          <card gradient="warning" header-classes="bg-transparent" footer-classes="bg-transparent"
+                body-classes="px-lg-7" class="card-pricing border-0 text-center mb-4">
 
             <div slot="header">
               <div class="row">
@@ -149,7 +172,8 @@
                 </div>
                 <div class="col text-right">
                   <el-tooltip content="Ver Detalhes" placement="top">
-                    <base-button class="icon icon-shape bg-white text-dark rounded-circle shadow" disabled>
+                    <base-button class="icon icon-shape bg-white text-dark rounded-circle shadow"
+                                 :disabled="emptyDevolution" @click="details_devolution = true">
                       <i class="fas fa-search-plus fa-lg"></i>
                     </base-button>
                   </el-tooltip>
@@ -157,44 +181,28 @@
               </div>
             </div>
 
-            <img src="/img/svg/undraw_empty_xct9.svg" alt="" :width="true ? '54%' : '60%'">
-            <div class="mt-3" v-if="true">
-              <span class="pl-2 text-sm text-white">Nenhum consignado foi feito!</span>
+            <img src="/img/svg/undraw_empty_xct9.svg" alt="" :width="emptyDevolution ? '54%' : '60%'">
+            <div class="mt-3" v-if="emptyDevolution">
+              <span class="pl-2 text-sm text-white">Nenhuma devolução foi feita!</span>
             </div>
 
             <div class="mt-3" v-else>
-              <div class="display-2 text-white">49</div>
-              <span class=" text-white">Produtos</span>
-              <ul class="list-unstyled my-4">
-                <li>
-                  <div class="d-flex align-items-center">
-                    <div>
-                      <div class="icon icon-xs icon-shape bg-white shadow rounded-circle">
-                        <i class="fas fa-hand-holding-usd"></i>
-                      </div>
-                    </div>
-                    <div>
-                      <span class="pl-2 text-sm text-white">Valor Total: </span>
-                    </div>
-                  </div>
-                </li>
-                <li>
-                  <div class="d-flex align-items-center">
-                    <div>
-                      <div class="icon icon-xs icon-shape bg-white shadow rounded-circle">
-                        <i class="fas fa-hand-holding-usd"></i>
-                      </div>
-                    </div>
-                    <div>
-                      <span class="pl-2 text-sm text-white">Valor Total: </span>
-                    </div>
-                  </div>
-                </li>
-              </ul>
+              <div class="display-2 text-white">{{visit.refund.price | currency}}</div>
+              <span class=" text-white">Valor total da Devolução</span>
             </div>
 
             <!--Footer-->
-            <base-button slot="footer" type="primary" disabled>Criar Devolução</base-button>
+            <base-button slot="footer" type="primary" v-if="emptyDevolution"
+                         @click="CHANGE_COMPONENT('create-devolution')">Criar Devolução
+            </base-button>
+            <div class="row" slot="footer" v-else>
+              <div class="col">
+                <base-button type="warning" @click="CHANGE_COMPONENT('edit-devolution')">Editar Devolução</base-button>
+              </div>
+              <div class="col">
+                <base-button type="danger" @click="removeDevolution">Apagar Devolução</base-button>
+              </div>
+            </div>
           </card>
         </div>
       </div>
@@ -217,7 +225,8 @@
         </div>
         <div class="col-4">
           <base-input label="Vendedor" :error="getError('seller')" :valid="isValid('seller')">
-            <el-select v-model="visit.seller" filterable placeholder="Selecione o vendedor." name="seller" v-validate="'required'" :class="[{'is-invalid': getError('seller')}]">
+            <el-select v-model="visit.seller" filterable placeholder="Selecione o vendedor." name="seller"
+                       v-validate="'required'" :class="[{'is-invalid': getError('seller')}]">
               <el-option v-for="item in sellers" :key="item.id" :label="item.name" :value="item.id"/>
             </el-select>
           </base-input>
@@ -234,8 +243,7 @@
 
       <template slot="footer">
         <base-button type="primary" @click="submitForm">Salvar</base-button>
-        <base-button type="link" class="ml-auto" @click="edit_info = false">Fechar
-        </base-button>
+        <base-button type="link" class="ml-auto" @click="edit_info = false">Fechar</base-button>
       </template>
     </modal>
     <modal :show.sync="details_sale" size="lg" v-if="visit.sales">
@@ -244,42 +252,42 @@
       </template>
 
       <div class="card-body">
-          <ul class="list-group list-group-flush list my--3" >
-              <li class="list-group-item px-0" v-for="product in visit.sales" :key="product.reference">
-                <div class="row align-items-center">
-                  <div class="col-auto">
-                    <div class="avatar rounded-circle">
-                      <img :src="product.thumbnail" alt="Image product" width="35%">
-                    </div>
-                  </div>
-                  <div class="col">
-                    <small>Referência:</small>
-                    <h5 class="mb-0">{{product.reference}}</h5>
-                  </div>
-                  <div class="col">
-                    <small>Cor:</small>
-                    <h5 class="mb-0">{{product.color}}</h5>
-                  </div>
-                  <div class="col">
-                    <small>Tamanho:</small>
-                    <h5 class="mb-0">{{product.size}}</h5>
-                  </div>
-                  <div class="col">
-                    <small>Quantidade:</small>
-                    <h5 class="mb-0">{{product.amount}}</h5>
-                  </div>
-                  <div class="col">
-                    <small>Preço:</small>
-                    <h5 class="mb-0">{{product.price | currency}}</h5>
-                  </div>
-                  <div class="col">
-                    <small>Total:</small>
-                    <h5 class="mb-0">{{(product.price * product.amount) | currency}}</h5>
-                  </div>
+        <ul class="list-group list-group-flush list my--3">
+          <li class="list-group-item px-0" v-for="product in visit.sales" :key="product.reference">
+            <div class="row align-items-center">
+              <div class="col-auto">
+                <div class="avatar rounded-circle">
+                  <img :src="product.thumbnail" alt="Image product" width="35%">
                 </div>
-              </li>
-            </ul>
-        </div>
+              </div>
+              <div class="col">
+                <small>Referência:</small>
+                <h5 class="mb-0">{{product.reference}}</h5>
+              </div>
+              <div class="col">
+                <small>Cor:</small>
+                <h5 class="mb-0">{{product.color}}</h5>
+              </div>
+              <div class="col">
+                <small>Tamanho:</small>
+                <h5 class="mb-0">{{product.size}}</h5>
+              </div>
+              <div class="col">
+                <small>Quantidade:</small>
+                <h5 class="mb-0">{{product.amount}}</h5>
+              </div>
+              <div class="col">
+                <small>Preço:</small>
+                <h5 class="mb-0">{{product.price | currency}}</h5>
+              </div>
+              <div class="col">
+                <small>Total:</small>
+                <h5 class="mb-0">{{(product.price * product.amount) | currency}}</h5>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
 
       <template slot="footer">
         <base-button type="link" class="ml-auto" @click="details_sale = false">Fechar</base-button>
@@ -292,7 +300,7 @@
 
 
       <div class="card-body">
-        <ul class="list-group list-group-flush list my--3" >
+        <ul class="list-group list-group-flush list my--3">
           <li class="list-group-item px-0" v-for="product in visit.payrolls" :key="product.reference">
             <div class="row align-items-center">
               <div class="col-auto">
@@ -363,8 +371,55 @@
       </div>
 
       <template slot="footer">
-        <base-button type="link" class="ml-auto" @click="details_payroll = false">Fechar
-        </base-button>
+        <base-button type="link" class="ml-auto" @click="details_payroll = false">Fechar</base-button>
+      </template>
+    </modal>
+    <modal :show.sync="details_devolution" size="lg" v-if="visit.refunds">
+      <template slot="header">
+        <h6 slot="header" class="modal-title">Detalhes do Consignado</h6>
+      </template>
+
+
+      <div class="card-body">
+        <ul class="list-group list-group-flush list my--3">
+          <li class="list-group-item px-0" v-for="product in visit.refunds" :key="product.reference">
+            <div class="row align-items-center">
+              <div class="col-auto">
+                <div class="avatar rounded-circle">
+                  <img :src="product.thumbnail" alt="Image product" width="35%">
+                </div>
+              </div>
+              <div class="col">
+                <small>Referência:</small>
+                <h5 class="mb-0">{{product.reference}}</h5>
+              </div>
+              <div class="col">
+                <small>Cor:</small>
+                <h5 class="mb-0">{{product.color}}</h5>
+              </div>
+              <div class="col">
+                <small>Tamanho:</small>
+                <h5 class="mb-0">{{product.size}}</h5>
+              </div>
+              <div class="col">
+                <small>Quantidade:</small>
+                <h5 class="mb-0">{{product.amount}}</h5>
+              </div>
+              <div class="col">
+                <small>Preço:</small>
+                <h5 class="mb-0">{{product.price | currency}}</h5>
+              </div>
+              <div class="col">
+                <small>Total:</small>
+                <h5 class="mb-0">{{(product.price * product.amount) | currency}}</h5>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <template slot="footer">
+        <base-button type="link" class="ml-auto" @click="details_devolution = false">Fechar</base-button>
       </template>
     </modal>
   </div>
@@ -375,10 +430,12 @@
     background: url('/img/svg/undraw_empty_cart_co35.svg') no-repeat right, linear-gradient(87deg, #2dce89 0, #2dcecc 100%) !important;
     background-size: 20%, 100% !important;
   }
+
   .card-payroll {
     background: url('/img/svg/undraw_shopping_eii3.svg') no-repeat right, linear-gradient(87deg, #5e72e4 0, #825ee4 100%) !important;
     background-size: 25%, 100% !important;
   }
+
   .card-devolution {
     background: url('/img/svg/undraw_empty_xct9.svg') no-repeat right, linear-gradient(87deg, #fb6340 0, #fbb140 100%) !important;
     background-size: 23%, 100% !important;
@@ -388,15 +445,24 @@
 <script>
   import MaskInput from '@/components/App/Inputs/Mask';
   import HtmlEditor from '@/components/Inputs/HtmlEditor';
+  import FinalizeVisit from './Partials/FinalizeVisit';
   import crudSettingsMixin from '@/mixins/crud-settings';
 
   import CreateSale from './Sale/Create';
   import EditSale from './Sale/Edit';
-  import CreatePayroll from './Payroll/Create';
-  import EditPayroll from './Payroll/Edit';
+  import Payroll from './Payroll/Index';
+  import CreateDevolution from './Devolution/Create';
+  import EditDevolution from './Devolution/Edit';
 
   import {mapActions, mapState, mapMutations} from 'vuex';
-  import {EDIT, GET, DELETE_PAYROLL, DELETE_SALE, CHANGE_COMPONENT} from "@/store/modules/visit/visit-const";
+  import {
+    EDIT,
+    GET,
+    DELETE_PAYROLL,
+    DELETE_SALE,
+    DELETE_DEVOLUTION,
+    CHANGE_COMPONENT
+  } from "@/store/modules/visit/visit-const";
 
   import {notifyVue, notifyError} from "@/utils";
   import {Select, Option, Tooltip} from 'element-ui';
@@ -406,13 +472,14 @@
   export default {
     name: 'edit',
     mixins: [crudSettingsMixin],
-    props:{
+    props: {
       id: {
         type: String,
         required: true
       }
     },
     components: {
+      FinalizeVisit,
       HtmlEditor,
       MaskInput,
       [Select.name]: Select,
@@ -420,16 +487,19 @@
       [Tooltip.name]: Tooltip,
       CreateSale,
       EditSale,
-      CreatePayroll,
-      EditPayroll,
+      Payroll,
+      CreateDevolution,
+      EditDevolution
     },
-    data () {
+    data() {
       return {
         edit_info: false,
         details_sale: false,
         details_payroll: false,
+        details_devolution: false,
+        finalize_visit: false,
         customers: [],
-        sellers: []
+        sellers: [],
       }
     },
     computed: {
@@ -443,6 +513,9 @@
       },
       emptyPayroll() {
         return isEmpty(this.visit.payrolls) || isEmpty(this.visit.payroll_sale)
+      },
+      emptyDevolution() {
+        return isEmpty(this.visit.refunds)
       }
     },
     async created() {
@@ -451,13 +524,16 @@
       await http.get('employees', {search: 'seller'}).then(response => this.sellers = response.data).catch(error => console.dir(error));
     },
     methods: {
-      ...mapActions('visit', [GET, EDIT, DELETE_PAYROLL, DELETE_SALE]),
+      ...mapActions('visit', [GET, EDIT, DELETE_PAYROLL, DELETE_SALE, DELETE_DEVOLUTION]),
       ...mapMutations('visit', [CHANGE_COMPONENT]),
       removeSale() {
         this.DELETE_SALE(this.visit.id).then(res => notifyVue(this.$notify, 'Pedido apagado!', 'success')).catch(error => notifyError(this.$notify, error));
       },
       removePayroll() {
         this.DELETE_PAYROLL(this.visit.id).then(res => notifyVue(this.$notify, 'Consignado apagado!', 'success')).catch(error => notifyError(this.$notify, error));
+      },
+      removeDevolution() {
+        this.DELETE_DEVOLUTION(this.visit.id).then(res => notifyVue(this.$notify, 'Devolução apagada!', 'success')).catch(error => notifyError(this.$notify, error));
       },
       async submitForm() {
         try {

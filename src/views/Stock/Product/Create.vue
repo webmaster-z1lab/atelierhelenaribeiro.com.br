@@ -7,9 +7,9 @@
     <div class="container-fluid mt--6">
       <card>
         <div slot="header">
-          <h3 class="mb-0">Criando Produto</h3>
+          <h3 class="mb-0">Adicionar Produto</h3>
           <p class="text-sm mb-0">
-            Preencha os dados abaixo para adicionar um novo produto ao sistema.
+            Preencha os dados abaixo para adicionar um novo produto ao sistema
           </p>
         </div>
 

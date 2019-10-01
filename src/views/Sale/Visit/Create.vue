@@ -8,7 +8,7 @@
       <div class="col-12">
         <card>
           <div slot="header">
-            <h3 class="mb-0">Criando Visita</h3>
+            <h3 class="mb-0">Nova visita</h3>
           </div>
 
           <form class="needs-validation" @submit.prevent="submitForm">

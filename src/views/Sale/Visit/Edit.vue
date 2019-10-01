@@ -21,6 +21,60 @@
     <finalize-visit @close="finalize_visit = false" v-if="finalize_visit"/>
 
     <div class="container-fluid mt--6" v-else>
+      <div class="row">
+        <div class="col-12">
+          <stats-card class="bg-gradient-success">
+            <div class="row">
+              <div class="col">
+                <h5 class="card-title text-uppercase text-muted mb-0 text-white">Dados da Visita</h5>
+                <span class="h2 font-weight-bold mb-0 text-white">{{visit.customer.company_name}}</span>
+              </div>
+              <div class="col-auto">
+                <div class="icon icon-shape bg-white text-dark rounded-circle shadow">
+                  <i class="ni ni-shop"></i>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12">
+                <ul class="list-unstyled my-4">
+                  <li>
+                    <div class="d-flex align-items-center mb-2">
+                      <div>
+                        <div class="icon icon-xs icon-shape bg-white shadow rounded-circle"><i class="far fa-user"></i></div>
+                      </div>
+                      <div><span class="pl-2 text-sm text-white">{{visit.customer.contact}}</span></div>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="d-flex align-items-center mb-2">
+                      <div>
+                        <div class="icon icon-xs icon-shape bg-white shadow rounded-circle"><i class="fas fa-id-card-alt"></i>
+                        </div>
+                      </div>
+                      <div><span class="pl-2 text-sm text-white">{{visit.seller.name}}</span></div>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="d-flex align-items-center mb-2">
+                      <div>
+                        <div class="icon icon-xs icon-shape bg-white shadow rounded-circle"><i class="fas fa-calendar-alt"></i></div>
+                      </div>
+                      <div><span class="pl-2 text-sm text-white">{{visit.date}}</span></div>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div slot="footer">
+              <h5 class="card-title text-uppercase text-muted mb-0 text-white">Anotações</h5>
+              <div class="text-sm text-white mb-0" v-html="visit.annotations"></div>
+            </div>
+          </stats-card>
+        </div>
+      </div>
+
       <div class="row" v-if="component">
         <div class="col-lg-4">
           <stats-card class="card-sale">

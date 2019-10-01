@@ -7,6 +7,7 @@ export const SET              = 'SET';
 export const CREATE           = 'CREATE';
 export const EDIT             = 'EDIT';
 export const DELETE           = 'DELETE';
+export const FINALIZE         = 'FINALIZE';
 
 export const CREATE_SALE   = 'CREATE_SALE';
 export const EDIT_SALE     = 'EDIT_SALE';

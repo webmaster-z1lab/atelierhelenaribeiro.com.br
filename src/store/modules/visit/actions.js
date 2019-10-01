@@ -62,6 +62,22 @@ export default {
         })
     })
   },
+  [constants.FINALIZE]: async ({ commit }, {visit_id, data}) => {
+    return await new Promise(async (resolve, reject) => {
+      await commit(constants.LOADING);
+
+      await http.post(`visits/${visit_id}`, data).then(async response => {
+        await commit(constants.EDIT, response.data);
+        await commit(constants.LOADING);
+
+        resolve(response.data);
+      })
+        .catch(error => {
+          reject(error);
+          commit(constants.LOADING);
+        })
+    })
+  },
   [constants.DELETE]: async ({ commit }, data) => {
     return await new Promise(async (resolve, reject) => {
       swal({

@@ -7,9 +7,9 @@
     <div class="container-fluid mt--6">
       <card>
         <div slot="header">
-          <h3 class="mb-0">Baixa De Romaneio</h3>
+          <h3 class="mb-0">Baixa de Romaneio</h3>
           <p class="text-sm mb-0">
-            Aqui voçê irá conferir os produtos e valores a serem recebidos ao final de cada viagem.
+            Aqui você irá conferir os produtos e valores a serem recebidos ao final de cada viagem
           </p>
         </div>
 
@@ -83,7 +83,7 @@
               <div class="card-body text-right">
                 <div class="row justify-content-between align-items-center">
                   <div class="col-auto">
-                    <span class="d-block h3">Resumo de Baixa</span>
+                    <span class="d-block h3">Resumo da Baixa</span>
                   </div>
                 </div>
                 <div class="row">

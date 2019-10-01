@@ -18,10 +18,10 @@
     </div>
     <div class="form-row">
       <div class="col-lg-4">
-        <base-input name="city" label="Cidade" :value="address.city" disabled/>
+        <base-input name="city" label="Cidade" :value="address.city" placeholder="Digite um CEP" disabled/>
       </div>
       <div class="col-lg-2">
-        <base-input name="state" label="Estado" :value="address.state" disabled/>
+        <base-input name="state" label="Estado" :value="address.state" placeholder="Digite um CEP" disabled/>
       </div>
       <div class="col-lg-2">
         <base-input type="number" name="number" label="Número" v-model="address.number" placeholder="00"

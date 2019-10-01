@@ -46,9 +46,9 @@
             </div>
           </div>
           <el-table :data="queriedData" row-key="id" header-row-class-name="thead-light" @sort-change="sortChange">
-            <el-table-column label="ID" sortable>
+            <el-table-column label="Cliente" sortable>
               <template v-slot="{row}">
-                <router-link :to="{name: 'sale.visit.edit', params: {id: row.id}}" class="table-action">{{row.id}}</router-link>
+                <router-link :to="{name: 'sale.visit.edit', params: {id: row.id}}" class="table-action">{{row.customer.company_name}}</router-link>
               </template>
             </el-table-column>
             <el-table-column prop="seller.name" label="Vendedor" sortable/>
@@ -60,9 +60,9 @@
 
             <el-table-column min-width="60px" align="right" label="Ações">
               <div slot-scope="{$index, row}" class="d-flex">
-                <el-tooltip content="Editar" placement="top">
-                  <router-link :to="{name: 'sale.visit.edit', params: {id: row.id}}" class="table-action" data-toggle="tooltip" data-original-title="Edit">
-                    <i class="fas fa-pencil-alt"></i>
+                <el-tooltip content="Visualizar" placement="top">
+                  <router-link :to="{name: 'sale.visit.edit', params: {id: row.id}}" class="table-action" data-toggle="tooltip" data-original-title="View">
+                    <i class="fas fa-eye"></i>
                   </router-link>
                 </el-tooltip>
                 <el-tooltip content="Deletar" placement="top">

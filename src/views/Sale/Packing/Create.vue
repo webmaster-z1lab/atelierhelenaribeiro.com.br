@@ -7,13 +7,14 @@
     <div class="container-fluid mt--6">
       <card>
         <div slot="header">
-          <h3 class="mb-0">Criando Romaneio</h3>
+          <h3 class="mb-0">Criar Romaneio</h3>
           <p class="text-sm mb-0">
-            Preencha os dados abaixo.
+            Preencha os dados abaixo
           </p>
         </div>
 
-        <h5 class="heading mb-4">Busca de Produtos</h5>
+        <h5 class="heading">Busca de Produtos</h5>
+        <p class="text-sm mb-4">Digite uma referência (ou parte dela) e precione enter para pesquisar</p>
         <div class="col-4 justify-content-center justify-content-sm-between flex-wrap">
           <div class="form-group">
             <div class="input-group has-label">

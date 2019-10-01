@@ -24,16 +24,16 @@
               <base-input name="trading_name" label="Nome Fantasia" v-model="customer.trading_name"/>
             </div>
             <div class="col-lg-4">
-              <mask-input placeholder="000.000.000-00 ou 00.000.000/0000-00" name="document" label="Documento" v-model="customer.document" :mask="['###.###.###-##', '##.###.###/####-##']"
+              <mask-input placeholder="000.000.000-00 | 00.000.000/0000-00" name="document" label="Documento (CPF ou CNPJ)" v-model="customer.document" :mask="['###.###.###-##', '##.###.###/####-##']"
                           validate="required|document" :key="customer.id"/>
             </div>
           </div>
           <div class="form-row">
             <div class="col-lg-3">
-              <base-input name="state_registration" label="Inscrição Estadual" v-model="customer.state_registration"/>
+              <base-input name="state_registration" label="Inscrição Estadual" placeholder="000.000.000/0000" v-model="customer.state_registration"/>
             </div>
             <div class="col-lg-3">
-              <base-input name="municipal_registration" label="Inscrição Municipal" v-model="customer.municipal_registration"/>
+              <base-input name="municipal_registration" label="Inscrição Municipal" placeholder="0.000.000-0" v-model="customer.municipal_registration"/>
             </div>
             <div class="col-lg-3">
               <base-input label="Tipo" :error="getError('status')" :valid="isValid('status')">
@@ -103,7 +103,7 @@
                           :error="getError(`document_owners-${key}`)" :valid="isValid(`document_owners-${key}`)" v-validate="'cpf'"/>
             </div>
             <div class="col-lg-2">
-              <mask-input :name="`birth_date-${key}`" placeholder="##/##/####" label="Data de Nascimento" v-model="owner.birth_date" :mask="'##/##/####'" :masked="true"
+              <mask-input :name="`birth_date-${key}`" placeholder="DD/MM/AAAA" label="Data de Nascimento" v-model="owner.birth_date" :mask="'##/##/####'" :masked="true"
                           :error="getError(`birth_date-${key}`)" :valid="isValid(`birth_date-${key}`)" v-validate="'date_format:dd/MM/yyyy|before_today'"/>
             </div>
             <div class="col-lg-2">

@@ -17,17 +17,17 @@
         <div class="dropdown-header noti-title">
           <h6 class="text-overflow m-0">Bem Vindo!</h6>
         </div>
-        <a href="javascript:;" class="dropdown-item">
+        <!--<a href="javascript:;" class="dropdown-item">
           <i class="ni ni-single-02"></i>
           <span>Meu Perfil</span>
-        </a>
-        <a href="javascript:;" class="dropdown-item">
-          <i class="ni ni-support-16"></i>
+        </a>-->
+        <a href="https://z1lab.com.br" class="dropdown-item" target="_blank">
+          <i class="far fa-life-ring"></i>
           <span>Suporte</span>
         </a>
         <div class="dropdown-divider"></div>
         <a href="javascript:;" class="dropdown-item" @click="logout()">
-          <i class="ni ni-user-run"></i>
+          <i class="fas fa-sign-out-alt"></i>
           <span>Sair</span>
         </a>
       </div>

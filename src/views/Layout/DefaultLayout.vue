@@ -12,9 +12,9 @@
         <sidebar-item :link="{name: 'Estoque',icon: 'fas fa-boxes text-warning'}">
           <sidebar-item :link="{ name: 'Produtos', path: '/stock/products'}"/>
         </sidebar-item>
-        <sidebar-item :link="{name: 'Venda',icon: 'fas fa-cart-arrow-down text-success'}">
-          <sidebar-item :link="{ name: 'Romaneio', path: '/sale/packing'}"/>
-          <sidebar-item :link="{ name: 'Visita', path: '/sale/visit'}"/>
+        <sidebar-item :link="{name: 'Vendas',icon: 'fas fa-cart-arrow-down text-success'}">
+          <sidebar-item :link="{ name: 'Romaneios', path: '/sale/packing'}"/>
+          <sidebar-item :link="{ name: 'Visitas', path: '/sale/visit'}"/>
         </sidebar-item>
       </template>
     </side-bar>
@@ -33,47 +33,47 @@
 </template>
 
 <script>
-  import PerfectScrollbar from 'perfect-scrollbar';
-  import 'perfect-scrollbar/css/perfect-scrollbar.css';
+    import PerfectScrollbar from 'perfect-scrollbar';
+    import 'perfect-scrollbar/css/perfect-scrollbar.css';
 
-  function hasElement(className) {
-    return document.getElementsByClassName(className).length > 0;
-  }
-
-  function initScrollbar(className) {
-    if (hasElement(className)) {
-      new PerfectScrollbar(`.${className}`);
-    } else {
-      // try to init it later in case this component is loaded async
-      setTimeout(() => {
-        initScrollbar(className);
-      }, 100);
+    function hasElement(className) {
+        return document.getElementsByClassName(className).length > 0;
     }
-  }
 
-  import DefaultNavbar from './Partials/DefaultNavbar';
-  import DefaultFooter from './Partials/DefaultFooter';
-  import {FadeTransition} from 'vue2-transitions';
-
-  export default {
-    name: 'default-layout',
-    components: {
-      DefaultFooter,
-      DefaultNavbar,
-      FadeTransition
-    },
-    methods: {
-      initScrollbar() {
-        let isWindows = navigator.platform.startsWith('Win');
-        if (isWindows) {
-          initScrollbar('scrollbar-inner');
+    function initScrollbar(className) {
+        if (hasElement(className)) {
+            new PerfectScrollbar(`.${className}`);
+        } else {
+            // try to init it later in case this component is loaded async
+            setTimeout(() => {
+                initScrollbar(className);
+            }, 100);
         }
-      }
-    },
-    mounted() {
-      this.initScrollbar()
     }
-  };
+
+    import DefaultNavbar from './Partials/DefaultNavbar';
+    import DefaultFooter from './Partials/DefaultFooter';
+    import {FadeTransition} from 'vue2-transitions';
+
+    export default {
+        name: 'default-layout',
+        components: {
+            DefaultFooter,
+            DefaultNavbar,
+            FadeTransition
+        },
+        methods: {
+            initScrollbar() {
+                let isWindows = navigator.platform.startsWith('Win');
+                if (isWindows) {
+                    initScrollbar('scrollbar-inner');
+                }
+            }
+        },
+        mounted() {
+            this.initScrollbar()
+        }
+    };
 </script>
 
 <style>

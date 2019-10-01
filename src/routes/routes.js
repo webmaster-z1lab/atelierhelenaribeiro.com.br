@@ -141,7 +141,7 @@ const routes = [
     component: DefaultLayout,
     redirect: {name: 'sale.packing.index'},
     name: 'sale',
-    meta: {BreadCrumb: 'Venda'},
+    meta: {BreadCrumb: 'Vendas'},
     children: [
       ...withPrefix('/sale/packing', 'sale.packing.', true, 'Romaneio', [
         {path: '/', name: 'index', component: IndexSalePacking, meta: {BreadCrumb: 'Listagem'}},

@@ -75,7 +75,7 @@
                     <i class="fas fa-pencil-alt"></i>
                   </router-link>
                 </el-tooltip>
-                <el-tooltip content="Dar Baixa" placement="top" v-if="row.status !== 'closed'">
+                <el-tooltip content="Dar baixa" placement="top" v-if="row.status !== 'closed'">
                   <router-link :to="{name: 'sale.packing.checkout', params: {id: row.seller_id}}" class="table-action">
                     <i class="fas fa-cart-arrow-down"></i>
                   </router-link>
@@ -150,8 +150,8 @@
             color: 'default'
           },
           in_transit: {
-            translate: 'Travado',
-            color: 'warning'
+            translate: 'Em trânsito',
+            color: 'info'
           },
           closed: {
             translate: 'Fechado',

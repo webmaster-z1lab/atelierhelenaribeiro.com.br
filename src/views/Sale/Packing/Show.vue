@@ -19,13 +19,19 @@
                 <span class="btn-inner--icon"><i class="fas fa-user-edit"></i></span>
                 <span class="btn-inner--text">Voltar</span>
               </router-link>
-              <el-tooltip content="Editar Produto" placement="top">
+              <el-tooltip content="Fechar romaneio" placement="top">
+                <router-link :to="{name: 'sale.packing.checkout', params: {id: seller_id}}" class="btn btn-icon btn-fab btn-sm btn-info">
+                  <span class="btn-inner--icon"><i class="fas fa-cart-arrow-down"></i></span>
+                  <span class="btn-inner--text">Dar baixa</span>
+                </router-link>
+              </el-tooltip>
+              <el-tooltip content="Editar" placement="top">
                 <router-link :to="{name: 'sale.packing.edit', params: {id: id}}" class="btn btn-icon btn-fab btn-sm btn-warning">
                   <span class="btn-inner--icon"><i class="fas fa-user-edit"></i></span>
                   <span class="btn-inner--text">Editar</span>
                 </router-link>
               </el-tooltip>
-              <el-tooltip content="Apagar Produto" placement="top">
+              <el-tooltip content="Apagar" placement="top">
                 <base-button type="danger" size="sm" @click="destroy">
                   <i class="fas fa-trash"></i>Deletar
                 </base-button>

@@ -4,7 +4,7 @@
     <base-nav v-model="showMenu" type="light" :transparent="true" menu-classes="justify-content-end" class="navbar-horizontal navbar-main" expand="lg">
       <div slot="brand" class="navbar-wrapper">
         <router-link class="navbar-brand" to="/">
-          <img src="img/brand/white.png">
+          <img src="/img/brand/chr-icon.png"> H. Ribeiro
         </router-link>
       </div>
 
@@ -13,7 +13,7 @@
           <div class="row">
             <div class="col-6 collapse-brand">
               <router-link to="/">
-                <img src="img/brand/green.png">
+                <img src="/img/brand/chr-icon.png"> H. Ribeiro
               </router-link>
             </div>
             <div class="col-6 collapse-close">

@@ -32,7 +32,7 @@
             <p class="mt-3 mb-0 text-sm">
               <base-button :type="(component === 'create-sale' || component === 'edit-sale') ? 'danger' : 'default'"
                            size="sm" @click="CHANGE_COMPONENT(!emptySale ? 'edit-sale' : 'create-sale')">
-                {{(component === 'create-sale' || component === 'edit-sale') ? 'Você está aqui!' : !emptySale ? 'Editar Pedido' : 'Criar Pedido'}}
+                {{(component === 'create-sale' || component === 'edit-sale') ? 'Você está aqui' : !emptySale ? 'Editar Pedido' : 'Criar Pedido'}}
               </base-button>
             </p>
           </stats-card>
@@ -63,7 +63,7 @@
               <base-button
                 :type="(component === 'create-devolution' || component === 'edit-devolution') ? 'danger' : 'default'"
                 size="sm" @click="CHANGE_COMPONENT(!emptyDevolution ? 'edit-devolution' : 'create-devolution')">
-                {{(component === 'create-devolution' || component === 'edit-devolution') ? 'Você está aqui!' : !emptyDevolution ? 'Editar Devolução' : 'Criar Devolução'}}
+                {{(component === 'create-devolution' || component === 'edit-devolution') ? 'Você está aqui' : !emptyDevolution ? 'Editar Devolução' : 'Criar Devolução'}}
               </base-button>
             </p>
           </stats-card>
@@ -527,13 +527,13 @@
       ...mapActions('visit', [GET, EDIT, DELETE_PAYROLL, DELETE_SALE, DELETE_DEVOLUTION]),
       ...mapMutations('visit', [CHANGE_COMPONENT]),
       removeSale() {
-        this.DELETE_SALE(this.visit.id).then(res => notifyVue(this.$notify, 'Pedido apagado!', 'success')).catch(error => notifyError(this.$notify, error));
+        this.DELETE_SALE(this.visit.id).then(res => notifyVue(this.$notify, 'Pedido removido!', 'success')).catch(error => notifyError(this.$notify, error));
       },
       removePayroll() {
-        this.DELETE_PAYROLL(this.visit.id).then(res => notifyVue(this.$notify, 'Consignado apagado!', 'success')).catch(error => notifyError(this.$notify, error));
+        this.DELETE_PAYROLL(this.visit.id).then(res => notifyVue(this.$notify, 'Consignado removido!', 'success')).catch(error => notifyError(this.$notify, error));
       },
       removeDevolution() {
-        this.DELETE_DEVOLUTION(this.visit.id).then(res => notifyVue(this.$notify, 'Devolução apagada!', 'success')).catch(error => notifyError(this.$notify, error));
+        this.DELETE_DEVOLUTION(this.visit.id).then(res => notifyVue(this.$notify, 'Devolução removida!', 'success')).catch(error => notifyError(this.$notify, error));
       },
       async submitForm() {
         try {

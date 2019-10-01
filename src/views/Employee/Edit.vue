@@ -18,33 +18,33 @@
 
           <div class="form-row">
             <div class="col-lg-3">
-              <base-input name="name" label="Nome" v-model="employee.name" :error="getError('name')" :valid="isValid('name')" v-validate="'required'"/>
+              <base-input name="name" label="Nome" placeholder="João das Neves" v-model="employee.name" :error="getError('name')" :valid="isValid('name')" v-validate="'required'"/>
             </div>
             <div class="col-lg-3">
-              <base-input type="email" name="email" label="Email" v-model="employee.email" :error="getError('email')" :valid="isValid('email')" v-validate="'email'"/>
+              <base-input type="email" name="email" placeholder="joao@email.com" label="Email" v-model="employee.email" :error="getError('email')" :valid="isValid('email')" v-validate="'email'"/>
             </div>
             <div class="col-lg-3">
               <mask-input placeholder="000.000.000-00" name="document" label="CPF" v-model="employee.document" :mask="'###.###.###-##'" validate="required|cpf" :key="employee.id"/>
             </div>
             <div class="col-lg-3">
-              <base-input name="identity" label="Identidade" v-model="employee.identity" :error="getError('identity')" :valid="isValid('identity')" v-validate="'required'"/>
+              <base-input name="identity" label="Identidade" placeholder="MG 00.000.000" v-model="employee.identity" :error="getError('identity')" :valid="isValid('identity')" v-validate="'required'"/>
             </div>
             <div class="col-lg-3">
-              <base-input name="work_card" label="Carteira de Trabalho" v-model="employee.work_card" :error="getError('work_card')" :valid="isValid('work_card')" v-validate="'required'"/>
+              <base-input name="work_card" label="Carteira de Trabalho (CTPS/Série)" placeholder="0000000/00000" v-model="employee.work_card" :error="getError('work_card')" :valid="isValid('work_card')" v-validate="'required'"/>
             </div>
             <div class="col-lg-3">
-              <mask-input name="birth_date" placeholder="##/##/####" label="Data de Nascimento" v-model="employee.birth_date" :mask="'##/##/####'" :masked="true" :key="employee.id"
+              <mask-input name="birth_date" placeholder="DD/MM/AAAA" label="Data de Nascimento" v-model="employee.birth_date" :mask="'##/##/####'" :masked="true" :key="employee.id"
                           validate="required|date_format:dd/MM/yyyy|before_today"/>
             </div>
             <div class="col-lg-3">
-              <mask-input name="admission_date" placeholder="##/##/####" label="Data de Admissão" v-model="employee.admission_date" :mask="'##/##/####'" :masked="true" :key="employee.id"
+              <mask-input name="admission_date" placeholder="DD/MM/AAAA" label="Data de Admissão" v-model="employee.admission_date" :mask="'##/##/####'" :masked="true" :key="employee.id"
                           validate="required|date_format:dd/MM/yyyy|before_today"/>
             </div>
             <div class="col-lg-3">
               <money-input label="Remuneração" v-model="employee.remuneration" name="remuneration" :key="employee.id"/>
             </div>
             <div class="col-lg-4">
-              <phone-input :phone="employee.phone" name="phone" :validate="true"/>
+              <phone-input :phone="employee.phone" placeholder="(00) 00000-0000" name="phone" :validate="true"/>
             </div>
             <div class="col-lg-4">
               <base-input label="Cargo" :error="getError('type')" :valid="isValid('type')">
